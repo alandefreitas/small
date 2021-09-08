@@ -6,6 +6,7 @@
 #define SMALL_SCOPE_GUARD_H
 
 #include <utility>
+#include <functional>
 #include <iostream>
 
 #include "throw.h"
@@ -13,7 +14,7 @@
 namespace small {
     namespace detail {
         /// \brief The common functions in a scope guard
-        /// \note Adapted from abseil
+        /// \note Adapted from folly / abseil
         class scope_guard_impl_base {
           public:
             /// \brief Tell the scope guard not to run the function

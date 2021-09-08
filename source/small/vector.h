@@ -6,11 +6,11 @@
 #define SMALL_SMALL_VECTOR_H
 
 #include <cassert>
-#include <cstdlib>
-#include <ratio>
-#include <new>
 #include <cstddef>
+#include <cstdlib>
 #include <cstring>
+#include <new>
+#include <ratio>
 
 #include "detail/exception/scope_guard.h"
 #include "detail/exception/throw.h"
@@ -1189,20 +1189,27 @@ namespace small {
         /// \brief Shirt the range [first, last] to [new_first, new_last] and fill the range
         /// [first, new_first] with the `create` function
         template <class Construct, class T2 = value_type, std::enable_if_t<std::is_trivially_copyable_v<T2>, int> = 0>
-        void shift_right_and_construct(T *const first, T *const last, T *const new_last,
-                                       Construct &&create) {
+        void shift_right_and_construct(T *const first, T *const last, T *const new_last, Construct &&create) {
             // Move elements backward from [first, last] to [new_first, new_last]
             std::move_backward(first, last, new_last);
 
             // Create elements backward
             const auto n_create = new_last - last;
             if (n_create > 0) {
+                // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=59124
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
+#endif
                 T *const end = first - 1;
                 T *create_out = first + n_create - 1;
                 while (create_out != end) {
                     *create_out = create();
                     --create_out;
                 }
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
             }
         }
 

@@ -197,8 +197,8 @@ namespace small {
     } // namespace detail
 
     /// \section Final aliases for references
-    template <class String> using codepoint_reference = detail::codepoint_reference_impl<false, String>;
-    template <class String> using const_codepoint_reference = detail::codepoint_reference_impl<true, String>;
+    template <class String> using external_codepoint_reference = detail::codepoint_reference_impl<false, String>;
+    template <class String> using const_external_codepoint_reference = detail::codepoint_reference_impl<true, String>;
 
     namespace detail {
         /// \brief An iterator for accessing codepoints in a string

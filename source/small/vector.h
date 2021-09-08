@@ -200,7 +200,7 @@ namespace small {
 
             auto n = rhs.size();
             make_size(n);
-            if constexpr (relocate_use_memcpy) {
+            if constexpr (std::is_trivially_copy_constructible_v<value_type>) {
                 std::memcpy((void *)begin().base(), (void *)rhs.begin().base(), n * sizeof(T));
             } else {
                 {
@@ -209,7 +209,7 @@ namespace small {
                     rollback.dismiss();
                 }
             }
-            this->set_size(n);
+            this->set_internal_size(n);
         }
 
         /// \brief Move constructor
@@ -221,7 +221,7 @@ namespace small {
             }
 
             if (rhs.is_external()) {
-                this->data_.pdata_.heap_ = rhs.data_.pdata_.heap_;
+                this->data_.heap_storage_.pointer_ = rhs.data_.heap_storage_.pointer_;
                 size_ = rhs.size_;
                 rhs.size_ = 0;
                 this->data_.set_capacity(rhs.data_.get_capacity());
@@ -231,13 +231,13 @@ namespace small {
                     rhs.size_ = 0;
                 } else {
                     auto n = rhs.size();
-                    if constexpr (relocate_use_memcpy) {
+                    if constexpr (std::is_trivially_move_constructible_v<value_type>) {
                         std::memcpy((void *)begin().base(), (void *)rhs.begin().base(), n * sizeof(T));
                     } else {
                         std::uninitialized_copy(std::make_move_iterator(rhs.begin()),
                                                 std::make_move_iterator(rhs.end()), begin());
                     }
-                    this->set_size(n);
+                    this->set_internal_size(n);
                     rhs.clear();
                 }
             }
@@ -253,12 +253,12 @@ namespace small {
                     }
                 } else if (rhs.size() < capacity()) {
                     const size_t n = rhs.size();
-                    if constexpr (relocate_use_memcpy) {
+                    if constexpr (std::is_trivially_copy_assignable_v<value_type>) {
                         std::memcpy((void *)begin().base(), (void *)rhs.begin().base(), n * sizeof(T));
                     } else {
                         partially_uninitialized_copy(rhs.begin(), n, begin(), size());
                     }
-                    this->set_size(n);
+                    this->set_internal_size(n);
                 } else {
                     assign(rhs.begin(), rhs.end());
                 }
@@ -293,18 +293,18 @@ namespace small {
                             rhs.size_ = 0;
                         } else {
                             const size_t n = rhs.size();
-                            if constexpr (relocate_use_memcpy) {
+                            if constexpr (std::is_trivially_move_assignable_v<value_type>) {
                                 std::memcpy((void *)data_.buffer(), (void *)rhs.data_.buffer(), n * sizeof(T));
                             } else {
                                 partially_uninitialized_copy(std::make_move_iterator(rhs.data_.buffer()), n,
                                                              this->data_.buffer(), size());
                             }
-                            this->set_size(n);
+                            this->set_internal_size(n);
                             rhs.clear();
                         }
                     } else {
                         // rhs is external
-                        this->data_.pdata_.heap_ = rhs.data_.pdata_.heap_;
+                        this->data_.heap_storage_.pointer_ = rhs.data_.heap_storage_.pointer_;
                         // this was already reset above, so it's empty and internal.
                         size_ = rhs.size_;
                         rhs.size_ = 0;
@@ -437,9 +437,9 @@ namespace small {
             const bool both_external = this->is_external() && rhs.is_external();
             if (both_external) {
                 std::swap(size_, rhs.size_);
-                auto *tmp = data_.pdata_.heap_;
-                data_.pdata_.heap_ = rhs.data_.pdata_.heap_;
-                rhs.data_.pdata_.heap_ = tmp;
+                auto *tmp = data_.heap_storage_.pointer_;
+                data_.heap_storage_.pointer_ = rhs.data_.heap_storage_.pointer_;
+                rhs.data_.heap_storage_.pointer_ = tmp;
                 const auto capacity_ = this->data_.get_capacity();
                 this->set_capacity(rhs.data_.get_capacity());
                 rhs.data_.set_capacity(capacity_);
@@ -462,13 +462,13 @@ namespace small {
                 {
                     // If it fails, destruct the old large values we haven't moved
                     auto rollback = make_guard([&] {
-                        old_small.set_size(i);
+                        old_small.set_internal_size(i);
                         if constexpr (!std::is_trivially_destructible_v<T>) {
                             for (; i < old_large.size(); ++i) {
                                 old_large[i].~value_type();
                             }
                         }
-                        old_large.set_size(ci);
+                        old_large.set_internal_size(ci);
                     });
                     // Move elements from the larger vector to the small one
                     for (; i < old_large.size(); ++i) {
@@ -480,8 +480,8 @@ namespace small {
                     }
                     rollback.dismiss();
                 }
-                old_small.set_size(i);
-                old_large.set_size(ci);
+                old_small.set_internal_size(i);
+                old_large.set_internal_size(ci);
                 return;
             }
 
@@ -489,7 +489,7 @@ namespace small {
             auto &old_external = rhs.is_external() ? rhs : *this;
             auto &old_internal = rhs.is_external() ? *this : rhs;
             auto old_external_capacity = old_external.capacity();
-            auto old_external_heap = old_external.data_.pdata_.heap_;
+            auto old_external_heap = old_external.data_.heap_storage_.pointer_;
 
             // Store a pointer to the old external / new internal buffer
             auto old_external_buffer = old_external.data_.buffer();
@@ -511,7 +511,7 @@ namespace small {
                     }
                     // Reset sizes
                     old_internal.size_ = 0;
-                    old_external.data_.pdata_.heap_ = old_external_heap;
+                    old_external.data_.heap_storage_.pointer_ = old_external_heap;
                     old_external.set_capacity(old_external_capacity);
                 });
                 // Move elements from old internal to old external buffer
@@ -525,7 +525,7 @@ namespace small {
             }
 
             // Adjust pointers
-            old_internal.data_.pdata_.heap_ = old_external_heap;
+            old_internal.data_.heap_storage_.pointer_ = old_external_heap;
             std::swap(size_, rhs.size_);
             old_internal.set_capacity(old_external_capacity);
 
@@ -710,29 +710,31 @@ namespace small {
                 new (data_.buffer() + size_) value_type(std::forward<Args>(args)...);
                 this->increment_size(1);
                 return *(data_.buffer() + size_);
-            }
-            if constexpr (!should_use_heap) {
-                throw_exception<std::length_error>("emplace_back: max_size exceeded in small_vector");
+            } else {
+                if constexpr (!should_use_heap) {
+                    throw_exception<std::length_error>("emplace_back: max_size exceeded in small_vector");
+                } else {
+                    // Handle external vectors
+                    size_type old_size = size();
+                    size_type old_capacity = capacity();
+                    const bool needs_to_grow = old_capacity == old_size;
+                    if (needs_to_grow) {
+                        // Internal vector
+                        make_size(
+                            old_size + 1, [&](void *p) { new (p) value_type(std::forward<Args>(args)...); }, old_size);
+                    } else {
+                        // External vector
+                        new (data_.heap() + old_size) value_type(std::forward<Args>(args)...);
+                    }
+                    this->increment_size(1);
+                    return *(data_.heap() + old_size);
+                }
             }
 
-            // Handle external vectors
-            size_type old_size = size();
-            size_type old_capacity = capacity();
-            const bool needs_to_grow = old_capacity == old_size;
-            if (needs_to_grow) {
-                // Internal vector
-                make_size(
-                    old_size + 1, [&](void *p) { new (p) value_type(std::forward<Args>(args)...); }, old_size);
-            } else {
-                // External vector
-                new (data_.heap() + old_size) value_type(std::forward<Args>(args)...);
-            }
-            this->increment_size(1);
-            return *(data_.heap() + old_size);
         }
 
         /// \brief Remove element from end of small array
-        constexpr void pop_back() { downsize(size() - 1); }
+        constexpr void pop_back() { destroy_and_downsize(size() - 1); }
 
         /// \brief Emplace element to a position in small array
         template <class... Args> constexpr iterator emplace(const_iterator position, Args &&...args) {
@@ -749,7 +751,7 @@ namespace small {
 
         /// \brief Copy element to a position in small array
         constexpr iterator insert(const_iterator position, const value_type &x) {
-            return insert(position, value_type(x));
+            return insert(position, 1, x);
         }
 
         /// \brief Move element to a position in small array
@@ -823,9 +825,7 @@ namespace small {
 
         /// \brief Erase element at a position in small array
         constexpr iterator erase(const_iterator position) {
-            std::move(unconst(position) + 1, end(), unconst(position));
-            downsize(size() - 1);
-            return unconst(position);
+            return erase(position, std::next(position));
         }
 
         /// \brief Erase range of elements in the small array
@@ -834,25 +834,31 @@ namespace small {
                 return unconst(first);
             }
             if constexpr (is_relocatable_v<value_type> && using_std_allocator) {
+                // Directly destroy elements before mem moving
                 if constexpr (!std::is_trivially_destructible_v<T>) {
                     for (auto it = first; it != last; ++it) {
                         it->~value_type();
                     }
                 }
-                if (last - first >= cend() - last) {
+                // Move elements directly in memory
+                const auto n_erase = last - first;
+                const auto n_after_erase = cend() - last;
+                if (n_erase >= n_after_erase) {
                     std::memcpy((void *)first.base(), (void *)last.base(), (cend() - last) * sizeof(T));
                 } else {
                     std::memmove((void *)first.base(), (void *)last.base(), (cend() - last) * sizeof(T));
                 }
             } else {
+                // Move elements in memory
                 std::move(unconst(last), end(), unconst(first));
             }
-            downsize(size() - std::distance(first, last));
+            // Directly set internal size. Elements are already destroyed.
+            set_internal_size(size() - std::distance(first, last));
             return unconst(first);
         }
 
         /// \brief Clear elements in the small array
-        constexpr void clear() noexcept { downsize(0); }
+        constexpr void clear() noexcept { destroy_and_downsize(0); }
 
         /// \brief Resize the small array
         /// If we are using a vector to store the data, resize will not
@@ -860,7 +866,7 @@ namespace small {
         /// than the small_vector capacity
         constexpr void resize(size_type n) {
             if (n <= size()) {
-                downsize(n);
+                destroy_and_downsize(n);
                 return;
             }
             auto extra = n - size();
@@ -933,7 +939,7 @@ namespace small {
 
         /// \brief Set the size variable
         /// This sets the size and maintains the inline bit
-        void set_size(std::size_t sz) {
+        void set_internal_size(std::size_t sz) {
             assert(sz <= clear_size_mask);
             size_ = (is_external_mask & size_) | size_type(sz);
         }
@@ -946,7 +952,7 @@ namespace small {
             if (is_external()) {
                 auto alloc_instance = enable_allocator_type::get_allocator();
                 std::allocator_traits<allocator_type>::deallocate(alloc_instance, data(), capacity());
-                data_.pdata_.heap_ = nullptr;
+                data_.heap_storage_.pointer_ = nullptr;
             }
         }
 
@@ -955,7 +961,7 @@ namespace small {
         void copy_inline_trivial(vector const &rhs) {
             // Copy the whole buffer to maintain the loop with fixed size
             std::copy(rhs.data_.buffer(), rhs.data_.buffer() + num_inline_elements, data_.buffer());
-            this->set_size(rhs.size());
+            this->set_internal_size(rhs.size());
         }
 
         /// \brief Copy the inline storage from rhs vector when type is not trivially copyable
@@ -996,47 +1002,51 @@ namespace small {
             // Invariants
             if (new_size > max_size()) {
                 throw_exception<std::length_error>("make_size: max_size exceeded in small_vector");
-            }
-            if constexpr (!should_use_heap) {
-                return;
-            }
-
-            // New heap pointer
-            size_type new_capacity = std::max(new_size, compute_new_size());
-            auto alloc_instance = enable_allocator_type::get_allocator();
-            value_type *new_heap_ptr = std::allocator_traits<allocator_type>::allocate(alloc_instance, new_capacity);
-
-            // Copy data
-            {
-                auto rollback = make_guard([&] {
-                    std::allocator_traits<allocator_type>::deallocate(alloc_instance, new_heap_ptr, new_capacity);
-                });
-                if constexpr (InsertVersion::value) {
-                    // move the begin()/end() range to the new_heap_ptr/new_emplaced_size range and insert the new
-                    // element
-                    this->move_to_uninitialized_emplace(begin().base(), end().base(), new_heap_ptr, new_emplaced_size,
-                                                        std::forward<EmplaceFunc>(emplace_func));
+            } else {
+                if constexpr (!should_use_heap) {
+                    return;
                 } else {
-                    // move the begin()/end() range to the range starting at new_heap_ptr
-                    this->move_to_uninitialized(begin().base(), end().base(), new_heap_ptr);
+                    // New heap pointer
+                    size_type new_capacity = std::max(new_size, compute_new_size());
+                    auto alloc_instance = enable_allocator_type::get_allocator();
+                    value_type *new_heap_ptr =
+                        std::allocator_traits<allocator_type>::allocate(alloc_instance, new_capacity);
+
+                    // Copy data
+                    {
+                        auto rollback = make_guard([&] {
+                            std::allocator_traits<allocator_type>::deallocate(alloc_instance, new_heap_ptr,
+                                                                              new_capacity);
+                        });
+                        if constexpr (InsertVersion::value) {
+                            // move the begin()/end() range to the new_heap_ptr/new_emplaced_size range and insert the new element
+                            this->move_to_uninitialized_emplace(begin().base(), end().base(), new_heap_ptr,
+                                                                new_emplaced_size,
+                                                                std::forward<EmplaceFunc>(emplace_func));
+                        } else {
+                            // move the begin()/end() range to the range starting at new_heap_ptr
+                            this->move_to_uninitialized(begin().base(), end().base(), new_heap_ptr);
+                        }
+                        rollback.dismiss();
+                    }
+
+                    // Destruct values we already copied
+                    if constexpr (!std::is_trivially_destructible_v<T>) {
+                        for (auto &val : *this) {
+                            val.~value_type();
+                        }
+                    }
+
+                    // Free the old heap
+                    free_heap();
+
+                    // Store the new pointer
+                    data_.heap_storage_.pointer_ = new_heap_ptr;
+                    this->set_external(true);
+                    this->set_capacity(new_capacity);
                 }
-                rollback.dismiss();
             }
 
-            // Destruct values we already copied
-            if constexpr (!std::is_trivially_destructible_v<T>) {
-                for (auto &val : *this) {
-                    val.~value_type();
-                }
-            }
-
-            // Free the old heap
-            free_heap();
-
-            // Store the new pointer
-            data_.pdata_.heap_ = new_heap_ptr;
-            this->set_external(true);
-            this->set_capacity(new_capacity);
         }
 
         /// \brief Move from begin/end range to uninitialized range out/pos and call the emplace function at pos
@@ -1114,7 +1124,7 @@ namespace small {
                 return capacity() * 2;
             }
             // Apply usual growth factor
-            return std::min((GrowthFactor::num * capacity()) / GrowthFactor::den + 1, max_size());
+            return std::min((static_cast<size_type>(GrowthFactor::num) * capacity()) / static_cast<size_type>(GrowthFactor::den) + 1, max_size());
         }
 
         /// \brief Copy some elements as initialized and some as uninitialized
@@ -1134,49 +1144,49 @@ namespace small {
 
         /// \brief Move elements to the right a construct at the new location
         template <class Construct, class T2 = value_type, std::enable_if_t<!std::is_trivially_copyable_v<T2>, int> = 0>
-        void shift_right_and_construct(T *const first, T *const last_constructed, T *const real_last,
+        void shift_right_and_construct(T *const first, T *const last, T *const new_last,
                                        Construct &&create) {
             // Input is same as output
-            if (last_constructed == real_last) {
+            if (last == new_last) {
                 return;
             }
 
             // Input and output for the elements moving
-            T *out = real_last;
-            T *in = last_constructed;
+            T *out = new_last;
+            T *in = last;
             {
                 // In case anything goes wrong
                 auto rollback = make_guard([&] {
                     // Destroy the out/last range
-                    if (out < last_constructed) {
-                        out = last_constructed - 1;
+                    if (out < last) {
+                        out = last - 1;
                     }
-                    for (auto it = out + 1; it != real_last; ++it) {
+                    for (auto it = out + 1; it != new_last; ++it) {
                         it->~T();
                     }
                 });
 
-                // Allocate elements in "in" copying from "out"
-                while (in != first && out > last_constructed) {
+                // Move elements from "in" to uninitialized "out"
+                while (in != first && out > last) {
                     // Out must be decremented before an exception can be thrown so that
                     // the rollback guard knows where to start.
-                    --out;
-                    new (out) T(std::move(*(--in)));
+                    --out; --in;
+                    new (out) T(std::move(*in));
                 }
 
-                // Move elements from "in" to "out"
+                // Move elements from "in" to initialized "out"
                 while (in != first) {
-                    --out;
-                    *out = std::move(*(--in));
+                    --out; --in;
+                    *out = std::move(*in);
                 }
 
-                // Allocate and construct elements in "out"
-                while (out > last_constructed) {
+                // Construct elements in uninitialized "out"
+                while (out > last) {
                     --out;
                     new (out) T(create());
                 }
 
-                // Create elements in out
+                // Construct elements in initialized "out"
                 while (out != first) {
                     --out;
                     *out = create();
@@ -1227,8 +1237,10 @@ namespace small {
             size_ += size_type(n);
         }
 
-        /// \brief Decrement the internal size
-        void downsize(std::size_t n) {
+        /// \brief Destroy elements after n and decrement the internal size
+        /// If elements are relocatable and we are erasing elements, we should directly destroy the
+        /// appropriate elements and call set_internal_size
+        void destroy_and_downsize(std::size_t n) {
             assert(n <= size());
             // Destroy extra elements
             if constexpr (!std::is_trivially_destructible_v<T>) {
@@ -1236,7 +1248,8 @@ namespace small {
                     it->~value_type();
                 }
             }
-            this->set_size(n);
+            // Set internal size
+            this->set_internal_size(n);
         }
 
         /// Unconst an iterator
@@ -1247,7 +1260,7 @@ namespace small {
         /// This is usual storage we use when the vector is not inline.
         /// This class doesn't handle allocations directly though.
         struct heap_storage_type {
-            value_type *heap_{nullptr};
+            value_type *pointer_{nullptr};
             size_type capacity_;
             size_type get_capacity() const { return capacity_; }
             void set_capacity(size_type c) { capacity_ = c; }
@@ -1257,20 +1270,20 @@ namespace small {
         /// This is a union that might be storing a inline or heap array at a given time
         union data_type {
             /// \brief Storage when the vector is inline
-            inline_storage_type storage_;
+            inline_storage_type inline_storage_;
 
             /// \brief Storage when the vector is in the heap
-            heap_storage_type pdata_;
+            heap_storage_type heap_storage_;
 
             /// \brief By default, we have a heap element pointing to nullptr (size == 0)
             explicit data_type() {
-                pdata_.heap_ = nullptr;
-                pdata_.capacity_ = 0;
+                heap_storage_.pointer_ = nullptr;
+                heap_storage_.capacity_ = 0;
             }
 
             /// \brief Get a pointer to the buffer if it's inline
             value_type *buffer() noexcept {
-                void *vp = &storage_;
+                void *vp = &inline_storage_;
                 return static_cast<value_type *>(vp);
             }
 
@@ -1278,16 +1291,16 @@ namespace small {
             value_type const *buffer() const noexcept { return const_cast<data_type *>(this)->buffer(); }
 
             /// \brief Get a pointer to the array if it's not inline
-            value_type *heap() noexcept { return pdata_.heap_; }
+            value_type *heap() noexcept { return heap_storage_.pointer_; }
 
             /// \brief Get a const pointer to the array if it's not inline
-            value_type const *heap() const noexcept { return pdata_.heap_; }
+            value_type const *heap() const noexcept { return heap_storage_.pointer_; }
 
             /// \brief Get the current allocated capacity if it's not inline
-            size_type get_capacity() const { return pdata_.get_capacity(); }
+            size_type get_capacity() const { return heap_storage_.get_capacity(); }
 
             /// \brief Set the current allocated capacity if it's not inline
-            void set_capacity(size_type c) { pdata_.set_capacity(c); }
+            void set_capacity(size_type c) { heap_storage_.set_capacity(c); }
         };
 
         /// \brief Internal array or vector

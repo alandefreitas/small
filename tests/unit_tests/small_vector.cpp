@@ -1183,7 +1183,7 @@ TEST_CASE("Vector") {
             REQUIRE(sizeof(custom_type) == 160);
             REQUIRE(sizeof(custom_type *) == 8);
             REQUIRE(sizeof(custom_type) / sizeof(custom_type *) == 20);
-            REQUIRE(sizeof(custom_type *) / sizeof(custom_type) == 0);
+            REQUIRE(sizeof(custom_type) > sizeof(custom_type *));
             REQUIRE(vector<custom_type, 5>::requested_inline_size == 5);
             REQUIRE(vector<custom_type, 5>::value_size == 160);
             REQUIRE(vector<custom_type, 5>::pointer_size == 8);

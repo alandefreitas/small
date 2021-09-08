@@ -7,6 +7,7 @@ include(${Catch2_DIR}/Catch.cmake)
 # Create a common catch main for all tests
 add_library(catch_main catch_main.cpp)
 target_link_libraries(catch_main PUBLIC Catch2::Catch2)
+target_compile_features(catch_main PUBLIC cxx_std_17)
 
 # Macro to create test targets and register with ctest
 # First parameter: filename without extension

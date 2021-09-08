@@ -7,6 +7,8 @@
 
 #include <iterator>
 
+#include "../traits/cpp_version.h"
+
 namespace small {
     /// Difference type for a custom iterator
     /// \note Adapted from https://github.com/danra/shift_proposal/
@@ -31,8 +33,13 @@ namespace small {
       private:
         /// An arbitrary type of size == 2
         struct two {
+#if has_cpp_attribute_maybe_unused
             [[maybe_unused]] char lx;
             [[maybe_unused]] char lxx;
+#else
+            char lx;
+            char lxx;
+#endif
         };
 
         /// Return type of size == 2 when UP doesn't has iterator category

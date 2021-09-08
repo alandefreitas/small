@@ -4,6 +4,7 @@
 #include <string>
 #include <string_view>
 #include <unordered_set>
+#include <numeric>
 
 #include <catch2/catch.hpp>
 

@@ -271,7 +271,7 @@ Unlike a `small::vector` or `small::string`, the asymptotic time complexities of
 
 For large containers, you can use `std` containers with custom allocators. Or for efficient large containers, you can use the abseil containers, implemented as B+-trees.
 
-## Community
+## Contributing
 
 ### Get Involved
 
@@ -300,7 +300,7 @@ The only thing we ask you is to make sure your contribution is not destructive. 
 
 In doubt, please open a [discussion](https://github.com/alandefreitas/small/discussions) first
 
-### Contributing Guidelines
+### Guidelines
 
 If contributing with code, please leave all warnings ON (`-DSMALL_BUILD_WITH_PEDANTIC_WARNINGS=ON`), use [cppcheck](http://cppcheck.sourceforge.net/), and [clang-format](https://clang.llvm.org/docs/ClangFormat.html).
 

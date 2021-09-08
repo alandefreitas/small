@@ -127,7 +127,7 @@ namespace small {
         using raw_value_type_array = value_type[num_inline_elements];
 
         /// \brief Type we would use for inline storage if we do
-        typedef typename std::aligned_storage<sizeof(raw_value_type_array), alignof(raw_value_type_array)>::type
+        typedef typename std::aligned_storage_t<sizeof(raw_value_type_array), alignof(raw_value_type_array)>
             inline_storage_data_type;
 
         /// \brief True if inline storage would always be empty
@@ -135,7 +135,7 @@ namespace small {
 
         /// \brief Final inline storage type
         /// This is the inline storage data type or (very rarely) just a pointer
-        typedef typename std::conditional<!inline_storage_empty, inline_storage_data_type, pointer>::type
+        typedef typename std::conditional_t<!inline_storage_empty, inline_storage_data_type, pointer>
             inline_storage_type;
 
         /// \brief An assumption about the size of a cache line
@@ -1247,7 +1247,7 @@ namespace small {
         /// This is usual storage we use when the vector is not inline.
         /// This class doesn't handle allocations directly though.
         struct heap_storage_type {
-            value_type *heap_;
+            value_type *heap_{nullptr};
             size_type capacity_;
             size_type get_capacity() const { return capacity_; }
             void set_capacity(size_type c) { capacity_ = c; }

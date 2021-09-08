@@ -27,7 +27,7 @@ namespace small {
     template <typename T> inline unsigned int lzcnt(T value) noexcept {
         unsigned long value_log2;
 #if !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32__)
-        _BitScanReverse64(&value_log2, value);
+        _BitScanReverse64(&value_log2, static_cast<unsigned>(value));
 #else
         _BitScanReverse(&value_log2, static_cast<unsigned long>(value));
 #endif

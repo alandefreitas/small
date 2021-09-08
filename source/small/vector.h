@@ -6,7 +6,10 @@
 #define SMALL_SMALL_VECTOR_H
 
 #include <cassert>
+#include <ratio>
 #include <new>
+#include <cstddef>
+#include <cstring>
 
 #include "detail/exception/scope_guard.h"
 #include "detail/exception/throw.h"
@@ -135,8 +138,10 @@ namespace small {
             inline_storage_type;
 
         /// \brief An assumption about the size of a cache line
+        /// \note Clang unfortunately defines __cpp_lib_hardware_interference_size without defining
+        /// hardware_constructive_interference_size.
         static constexpr std::size_t cache_line_size =
-#ifdef __cpp_lib_hardware_interference_size
+#if defined(__cpp_lib_hardware_interference_size) && not defined(__clang__)
             std::hardware_constructive_interference_size;
 #else
             2 * sizeof(std::max_align_t);

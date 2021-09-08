@@ -36,10 +36,10 @@ namespace small {
         };
 
         /// Return type of size == 2 when UP doesn't has iterator category
-        template <class UP> static two test(...) { return two{char(), char()}; };
+        template <class UP> static two test(...) { return two{char(), char()}; }
 
         /// Return type of size == 1 when UP has iterator category
-        template <class UP> static char test(typename UP::iterator_category * = 0) { return char(); };
+        template <class UP> static char test(typename UP::iterator_category * = 0) { return char(); }
 
       public:
         /// Indicates if I has a category iterator (when return type of test has size == 1)

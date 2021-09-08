@@ -5,6 +5,8 @@
 #ifndef SMALL_STRLEN_H
 #define SMALL_STRLEN_H
 
+#include <cstring>
+
 namespace small {
     /// \brief strlen for different character types
     template <typename T> inline std::size_t strlen(const T *str) {

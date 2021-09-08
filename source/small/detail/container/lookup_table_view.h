@@ -6,6 +6,7 @@
 #define SMALL_LOOKUP_TABLE_VIEW_H
 
 #include <optional>
+#include <cstring>
 
 #include "../algorithm/to_unsigned.h"
 #include "../algorithm/utf.h"

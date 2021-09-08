@@ -24,12 +24,12 @@ set_local_module_hints(catch2 ${catch2_VERSION_LOCK} ${catch2_VERSION_REQUIREMEN
 # Look for lock version
 if (NOT catch2_FOUND)
     semver_split(${catch2_VERSION_LOCK} catch2_VERSION_LOCK)
-    find_package(catch2 ${catch2_VERSION_LOCK_CORE} QUIET CONFIG)
+    find_package(Catch2 ${catch2_VERSION_LOCK_CORE} QUIET CONFIG)
 endif ()
 
 # Look for any version that matches our requirements
 if (NOT catch2_FOUND)
-    find_package(catch2 QUIET CONFIG)
+    find_package(Catch2 QUIET CONFIG)
     if (catch2_FOUND AND catch2_VERSION AND NOT DEFINED ENV{catch2_ROOT})
         semver_requirements_compatible(${catch2_VERSION} ${catch2_VERSION_REQUIREMENT} ok)
         if (NOT ok)
@@ -94,7 +94,7 @@ if (NOT catch2_FOUND)
 
         # Find package again
         set(ENV{catch2_ROOT} ${catch2_INSTALL_HINT})
-        find_package(catch2 REQUIRED CONFIG)
+        find_package(Catch2 REQUIRED CONFIG)
     endif ()
 endif ()
 version_requirement_message(catch2 VERSION_FOUND ${catch2_VERSION} VERSION_LOCK ${catch2_VERSION_LOCK} VERSION_REQUIREMENTS ${catch2_VERSION_REQUIREMENT} PREFIX_HINT ${catch2_PREFIX_HINT})

@@ -11,18 +11,6 @@
 /// \see https://en.cppreference.com/w/cpp/feature_test
 
 /*
- * Language features
- */
-#ifdef __has_include
-#if __has_include(<version>)
-#include <version>
-#endif
-#if __has_include(<ciso646>)
-#include <ciso646>
-#endif
-#endif
-
-/*
  * General
  */
 #ifndef __cplusplus
@@ -71,6 +59,579 @@
 #elif cplusplus >= 199711L
 #define cpp_rtti 199711L
 #endif
+
+/*
+ * Language features
+ */
+#ifdef __has_include
+#if __has_include(<version>)
+#include <version>
+#endif
+#if __has_include(<ciso646>)
+#include <ciso646>
+#endif
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_aggregate_bases
+#define cpp_aggregate_bases __cpp_aggregate_bases
+#endif
+#elif cplusplus >= 201603L
+#define cpp_aggregate_bases 201603L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_aggregate_nsdmi
+#define cpp_aggregate_nsdmi __cpp_aggregate_nsdmi
+#endif
+#elif cplusplus >= 201304L
+#define cpp_aggregate_nsdmi 201304L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_aggregate_paren_init
+#define cpp_aggregate_paren_init __cpp_aggregate_paren_init
+#endif
+#elif cplusplus >= 201902L
+#define cpp_aggregate_paren_init 201902L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_alias_templates
+#define cpp_alias_templates __cpp_alias_templates
+#endif
+#elif cplusplus >= 200704L
+#define cpp_alias_templates 200704L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_aligned_new
+#define cpp_aligned_new __cpp_aligned_new
+#endif
+#elif cplusplus >= 201606L
+#define cpp_aligned_new 201606L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_attributes
+#define cpp_attributes __cpp_attributes
+#endif
+#elif cplusplus >= 200809L
+#define cpp_attributes 200809L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_binary_literals
+#define cpp_binary_literals __cpp_binary_literals
+#endif
+#elif cplusplus >= 201304L
+#define cpp_binary_literals 201304L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_capture_star_this
+#define cpp_capture_star_this __cpp_capture_star_this
+#endif
+#elif cplusplus >= 201603L
+#define cpp_capture_star_this 201603L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_char8_t
+#define cpp_char8_t __cpp_char8_t
+#endif
+#elif cplusplus >= 201811L
+#define cpp_char8_t 201811L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_concepts
+#define cpp_concepts __cpp_concepts
+#endif
+#elif cplusplus >= 201907L
+#define cpp_concepts 201907L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_conditional_explicit
+#define cpp_conditional_explicit __cpp_conditional_explicit
+#endif
+#elif cplusplus >= 201806L
+#define cpp_conditional_explicit 201806L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_consteval
+#define cpp_consteval __cpp_consteval
+#endif
+#elif cplusplus >= 201811L
+#define cpp_consteval 201811L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_constexpr
+#define cpp_constexpr __cpp_constexpr
+#endif
+#elif cplusplus >= 200704L
+#define cpp_constexpr 200704L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_constexpr
+#define cpp_constexpr __cpp_constexpr
+#endif
+#elif cplusplus >= 201304L
+#define cpp_constexpr 201304L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_constexpr
+#define cpp_constexpr __cpp_constexpr
+#endif
+#elif cplusplus >= 201603L
+#define cpp_constexpr 201603L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_constexpr
+#define cpp_constexpr __cpp_constexpr
+#endif
+#elif cplusplus >= 201907L
+#define cpp_constexpr 201907L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_constexpr_dynamic_alloc
+#define cpp_constexpr_dynamic_alloc __cpp_constexpr_dynamic_alloc
+#endif
+#elif cplusplus >= 201907L
+#define cpp_constexpr_dynamic_alloc 201907L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_constexpr_in_decltype
+#define cpp_constexpr_in_decltype __cpp_constexpr_in_decltype
+#endif
+#elif cplusplus >= 201711L
+#define cpp_constexpr_in_decltype 201711L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_constinit
+#define cpp_constinit __cpp_constinit
+#endif
+#elif cplusplus >= 201907L
+#define cpp_constinit 201907L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_decltype
+#define cpp_decltype __cpp_decltype
+#endif
+#elif cplusplus >= 200707L
+#define cpp_decltype 200707L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_decltype_auto
+#define cpp_decltype_auto __cpp_decltype_auto
+#endif
+#elif cplusplus >= 201304L
+#define cpp_decltype_auto 201304L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_deduction_guides
+#define cpp_deduction_guides __cpp_deduction_guides
+#endif
+#elif cplusplus >= 201703L
+#define cpp_deduction_guides 201703L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_deduction_guides
+#define cpp_deduction_guides __cpp_deduction_guides
+#endif
+#elif cplusplus >= 201907L
+#define cpp_deduction_guides 201907L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_delegating_constructors
+#define cpp_delegating_constructors __cpp_delegating_constructors
+#endif
+#elif cplusplus >= 200604L
+#define cpp_delegating_constructors 200604L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_designated_initializers
+#define cpp_designated_initializers __cpp_designated_initializers
+#endif
+#elif cplusplus >= 201707L
+#define cpp_designated_initializers 201707L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_enumerator_attributes
+#define cpp_enumerator_attributes __cpp_enumerator_attributes
+#endif
+#elif cplusplus >= 201411L
+#define cpp_enumerator_attributes 201411L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_fold_expressions
+#define cpp_fold_expressions __cpp_fold_expressions
+#endif
+#elif cplusplus >= 201603L
+#define cpp_fold_expressions 201603L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_generic_lambdas
+#define cpp_generic_lambdas __cpp_generic_lambdas
+#endif
+#elif cplusplus >= 201304L
+#define cpp_generic_lambdas 201304L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_generic_lambdas
+#define cpp_generic_lambdas __cpp_generic_lambdas
+#endif
+#elif cplusplus >= 201707L
+#define cpp_generic_lambdas 201707L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_guaranteed_copy_elision
+#define cpp_guaranteed_copy_elision __cpp_guaranteed_copy_elision
+#endif
+#elif cplusplus >= 201606L
+#define cpp_guaranteed_copy_elision 201606L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_hex_float
+#define cpp_hex_float __cpp_hex_float
+#endif
+#elif cplusplus >= 201603L
+#define cpp_hex_float 201603L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_if_consteval
+#define cpp_if_consteval __cpp_if_consteval
+#endif
+#elif cplusplus >= 202106L
+#define cpp_if_consteval 202106L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_if_constexpr
+#define cpp_if_constexpr __cpp_if_constexpr
+#endif
+#elif cplusplus >= 201606L
+#define cpp_if_constexpr 201606L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_impl_coroutine
+#define cpp_impl_coroutine __cpp_impl_coroutine
+#endif
+#elif cplusplus >= 201902L
+#define cpp_impl_coroutine 201902L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_impl_destroying_delete
+#define cpp_impl_destroying_delete __cpp_impl_destroying_delete
+#endif
+#elif cplusplus >= 201806L
+#define cpp_impl_destroying_delete 201806L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_impl_three_way_comparison
+#define cpp_impl_three_way_comparison __cpp_impl_three_way_comparison
+#endif
+#elif cplusplus >= 201907L
+#define cpp_impl_three_way_comparison 201907L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_inheriting_constructors
+#define cpp_inheriting_constructors __cpp_inheriting_constructors
+#endif
+#elif cplusplus >= 200802L
+#define cpp_inheriting_constructors 200802L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_inheriting_constructors
+#define cpp_inheriting_constructors __cpp_inheriting_constructors
+#endif
+#elif cplusplus >= 201511L
+#define cpp_inheriting_constructors 201511L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_init_captures
+#define cpp_init_captures __cpp_init_captures
+#endif
+#elif cplusplus >= 201304L
+#define cpp_init_captures 201304L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_init_captures
+#define cpp_init_captures __cpp_init_captures
+#endif
+#elif cplusplus >= 201803L
+#define cpp_init_captures 201803L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_initializer_lists
+#define cpp_initializer_lists __cpp_initializer_lists
+#endif
+#elif cplusplus >= 200806L
+#define cpp_initializer_lists 200806L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_inline_variables
+#define cpp_inline_variables __cpp_inline_variables
+#endif
+#elif cplusplus >= 201606L
+#define cpp_inline_variables 201606L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_lambdas
+#define cpp_lambdas __cpp_lambdas
+#endif
+#elif cplusplus >= 200907L
+#define cpp_lambdas 200907L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_modules
+#define cpp_modules __cpp_modules
+#endif
+#elif cplusplus >= 201907L
+#define cpp_modules 201907L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_namespace_attributes
+#define cpp_namespace_attributes __cpp_namespace_attributes
+#endif
+#elif cplusplus >= 201411L
+#define cpp_namespace_attributes 201411L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_noexcept_function_type
+#define cpp_noexcept_function_type __cpp_noexcept_function_type
+#endif
+#elif cplusplus >= 201510L
+#define cpp_noexcept_function_type 201510L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_nontype_template_args
+#define cpp_nontype_template_args __cpp_nontype_template_args
+#endif
+#elif cplusplus >= 201411L
+#define cpp_nontype_template_args 201411L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_nontype_template_args
+#define cpp_nontype_template_args __cpp_nontype_template_args
+#endif
+#elif cplusplus >= 201911L
+#define cpp_nontype_template_args 201911L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_nontype_template_parameter_auto
+#define cpp_nontype_template_parameter_auto __cpp_nontype_template_parameter_auto
+#endif
+#elif cplusplus >= 201606L
+#define cpp_nontype_template_parameter_auto 201606L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_nsdmi
+#define cpp_nsdmi __cpp_nsdmi
+#endif
+#elif cplusplus >= 200809L
+#define cpp_nsdmi 200809L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_range_based_for
+#define cpp_range_based_for __cpp_range_based_for
+#endif
+#elif cplusplus >= 200907L
+#define cpp_range_based_for 200907L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_range_based_for
+#define cpp_range_based_for __cpp_range_based_for
+#endif
+#elif cplusplus >= 201603L
+#define cpp_range_based_for 201603L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_raw_strings
+#define cpp_raw_strings __cpp_raw_strings
+#endif
+#elif cplusplus >= 200710L
+#define cpp_raw_strings 200710L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_ref_qualifiers
+#define cpp_ref_qualifiers __cpp_ref_qualifiers
+#endif
+#elif cplusplus >= 200710L
+#define cpp_ref_qualifiers 200710L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_return_type_deduction
+#define cpp_return_type_deduction __cpp_return_type_deduction
+#endif
+#elif cplusplus >= 201304L
+#define cpp_return_type_deduction 201304L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_rvalue_references
+#define cpp_rvalue_references __cpp_rvalue_references
+#endif
+#elif cplusplus >= 200610L
+#define cpp_rvalue_references 200610L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_size_t_suffix
+#define cpp_size_t_suffix __cpp_size_t_suffix
+#endif
+#elif cplusplus >= 202011L
+#define cpp_size_t_suffix 202011L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_sized_deallocation
+#define cpp_sized_deallocation __cpp_sized_deallocation
+#endif
+#elif cplusplus >= 201309L
+#define cpp_sized_deallocation 201309L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_static_assert
+#define cpp_static_assert __cpp_static_assert
+#endif
+#elif cplusplus >= 200410L
+#define cpp_static_assert 200410L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_static_assert
+#define cpp_static_assert __cpp_static_assert
+#endif
+#elif cplusplus >= 201411L
+#define cpp_static_assert 201411L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_structured_bindings
+#define cpp_structured_bindings __cpp_structured_bindings
+#endif
+#elif cplusplus >= 201606L
+#define cpp_structured_bindings 201606L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_template_template_args
+#define cpp_template_template_args __cpp_template_template_args
+#endif
+#elif cplusplus >= 201611L
+#define cpp_template_template_args 201611L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_threadsafe_static_init
+#define cpp_threadsafe_static_init __cpp_threadsafe_static_init
+#endif
+#elif cplusplus >= 200806L
+#define cpp_threadsafe_static_init 200806L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_unicode_characters
+#define cpp_unicode_characters __cpp_unicode_characters
+#endif
+#elif cplusplus >= 200704L
+#define cpp_unicode_characters 200704L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_unicode_literals
+#define cpp_unicode_literals __cpp_unicode_literals
+#endif
+#elif cplusplus >= 200710L
+#define cpp_unicode_literals 200710L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_user_defined_literals
+#define cpp_user_defined_literals __cpp_user_defined_literals
+#endif
+#elif cplusplus >= 200809L
+#define cpp_user_defined_literals 200809L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_using_enum
+#define cpp_using_enum __cpp_using_enum
+#endif
+#elif cplusplus >= 201907L
+#define cpp_using_enum 201907L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_variable_templates
+#define cpp_variable_templates __cpp_variable_templates
+#endif
+#elif cplusplus >= 201304L
+#define cpp_variable_templates 201304L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_variadic_templates
+#define cpp_variadic_templates __cpp_variadic_templates
+#endif
+#elif cplusplus >= 200704L
+#define cpp_variadic_templates 200704L
+#endif
+
+#if cplusplus >= 201603L
+#ifdef __cpp_variadic_using
+#define cpp_variadic_using __cpp_variadic_using
+#endif
+#elif cplusplus >= 201611L
+#define cpp_variadic_using 201611L
+#endif
+
 
 /*
  * C++ attributes

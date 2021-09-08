@@ -8,6 +8,7 @@
 #include "intcmp.h"
 #include "leading_zeros.h"
 #include "strlen.h"
+#include "../traits/cpp_version.h"
 
 /// \headerfile Function to convert strings and chars from and to utf8
 /// Although our string data structure layout is quite different, many of these functions
@@ -15,17 +16,17 @@
 
 namespace small {
     /// Set the types for UTF in C++
-#if __cplusplus > 201703L && defined(__cpp_char8_t)
+#ifdef cpp_char8_t
     using utf8_char_type = char8_t;
 #else
     using utf8_char_type = char;
 #endif
 
-#if __cplusplus > 200704L && defined(__cpp_unicode_characters)
+#ifdef cpp_unicode_characters
     using utf16_char_type = char16_t;
     using utf32_char_type = char32_t;
 #else
-#warning Unicode characters not supported. Defaulting UTF-16 and UTF-32 to wchar_t
+    // Unicode characters not supported. Defaulting UTF-16 and UTF-32 to wchar_t
     // Before C++11
     using utf16_char_type = wchar_t;
     using utf32_char_type = wchar_t;

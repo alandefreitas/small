@@ -1,4 +1,4 @@
-# Small containers
+# Small
 
 > C++ Small Containers
 

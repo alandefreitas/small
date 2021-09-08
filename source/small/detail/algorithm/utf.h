@@ -5,10 +5,10 @@
 #ifndef SMALL_UTF_H
 #define SMALL_UTF_H
 
+#include "../traits/cpp_version.h"
 #include "intcmp.h"
 #include "leading_zeros.h"
 #include "strlen.h"
-#include "../traits/cpp_version.h"
 
 /// \headerfile Function to convert strings and chars from and to utf8
 /// Although our string data structure layout is quite different, many of these functions
@@ -577,7 +577,9 @@ namespace small {
         } else if constexpr (is_utf16_v<input_value_type>) {
             return static_cast<uint8_t>(from_utf16_to_utf8(source, source_count, dest, dest_count));
         } else {
-            std::copy(source, source + min_value(source_count, dest_count), dest);
+            using output_value_type = typename std::iterator_traits<OutputIt>::value_type;
+            std::transform(source, source + min_value(source_count, dest_count), dest,
+                           [](auto in) { static_cast<output_value_type>(in); });
             return static_cast<uint8_t>(min_value(source_count, dest_count));
         }
     }
@@ -592,7 +594,9 @@ namespace small {
         if constexpr (is_utf32_v<input_value_type>) {
             return static_cast<uint8_t>(from_utf32_to_utf16(*source, dest, dest_count));
         } else if constexpr (is_utf16_v<input_value_type>) {
-            std::copy(source, source + std::min(source_count, dest_count), dest);
+            using output_value_type = typename std::iterator_traits<OutputIt>::value_type;
+            std::transform(source, source + std::min(source_count, dest_count), dest,
+                           [](auto in) { return static_cast<output_value_type>(in); });
             return static_cast<uint8_t>(std::min(source_count, dest_count));
         } else {
             return from_utf8_to_utf16(source, source_count, dest, dest_count);
@@ -609,7 +613,10 @@ namespace small {
     uint8_t to_utf32(InputIt source, InputSize source_count, OutputIt dest, OutputSize dest_count) noexcept {
         using input_value_type = typename std::iterator_traits<InputIt>::value_type;
         if constexpr (is_utf32_v<input_value_type>) {
-            std::copy(source, source + min_value(source_count, dest_count), dest);
+            using output_value_type = typename std::iterator_traits<OutputIt>::value_type;
+            std::transform(source, source + min_value(source_count, dest_count), dest, [](auto in) {
+                return static_cast<output_value_type>(in);
+            });
             return min_value(source_count, dest_count);
         } else if constexpr (is_utf16_v<input_value_type>) {
             *dest = from_utf16_to_utf32(source, source_count);

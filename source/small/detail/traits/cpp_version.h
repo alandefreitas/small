@@ -6,6 +6,8 @@
 #define SMALL_CPP_VERSION_H
 
 /// \headerfile Feature testing support for C++17, C++14, C++11, ...
+/// Whenever the C++20 feature testing macros are unavailable, we recur to inferences
+/// according to the compiler and the current C++ version.
 /// \see https://en.cppreference.com/w/cpp/feature_test
 
 /*

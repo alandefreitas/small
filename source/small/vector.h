@@ -1186,17 +1186,23 @@ namespace small {
             }
         }
 
+        /// \brief Shirt the range [first, last] to [new_first, new_last] and fill the range
+        /// [first, new_first] with the `create` function
         template <class Construct, class T2 = value_type, std::enable_if_t<std::is_trivially_copyable_v<T2>, int> = 0>
-        void shift_right_and_construct(T *const first, T *const last_constructed, T *const real_last,
+        void shift_right_and_construct(T *const first, T *const last, T *const new_last,
                                        Construct &&create) {
-            // Move elements backward
-            std::move_backward(first, last_constructed, real_last);
+            // Move elements backward from [first, last] to [new_first, new_last]
+            std::move_backward(first, last, new_last);
 
-            // Create elements in out
-            T *const end = first - 1;
-            T *out = first + (real_last - last_constructed) - 1;
-            for (; out != end; --out) {
-                *out = create();
+            // Create elements backward
+            constexpr auto n_create = new_last - last;
+            if (n_create > 0) {
+                T *const end = first - 1;
+                T *create_out = first + n_create - 1;
+                while (create_out != end) {
+                    *create_out = create();
+                    --create_out;
+                }
             }
         }
 

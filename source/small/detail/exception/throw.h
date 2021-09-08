@@ -40,7 +40,7 @@ namespace small {
 #ifndef SMALL_DISABLE_EXCEPTIONS
         try {
             return static_cast<ThrowFn &&>(thrower)();
-        } catch (std::exception &e) {
+        } catch (std::exception &) {
             return static_cast<CatchFn &&>(catcher)();
         }
 #else

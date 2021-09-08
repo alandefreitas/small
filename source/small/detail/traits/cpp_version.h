@@ -16,8 +16,9 @@
 #ifndef __cplusplus
 #error "__cplusplus macro undefined"
 #else
-#if defined(_MSC_VER) && cplusplus == 199711L
-// MSVC hack when it doesn't report __cplusplus correctly
+#if defined(_MSC_VER) && __cplusplus == 199711L
+// It's common for MSVC to report 199711L regardless of the C++ version
+// This is a MSVC hack we use when it doesn't report __cplusplus correctly
 // \see https://docs.microsoft.com/en-us/cpp/build/reference/zc-cplusplus?view=msvc-160
 // \see https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
 #if _MSC_VER <= 1924 // Visual Studio 2019 -> C++17
@@ -72,7 +73,17 @@
 #endif
 #endif
 
-#if cplusplus >= 201603L
+// Feature test to check if we can rely on C++20 feature-testing
+// This is a C++ feature but most compilers implement it in C++17
+// We can check this with the oldest feature there is, which is __cpp_static_assert
+// If feature testing is available, we use it for other features
+// Else, we recur to inferences about the compiler version
+#if __cpp_static_assert
+#define cpp_feature_testing 201911L
+#endif
+
+
+#ifdef cpp_feature_testing
 #ifdef __cpp_aggregate_bases
 #define cpp_aggregate_bases __cpp_aggregate_bases
 #endif
@@ -80,7 +91,7 @@
 #define cpp_aggregate_bases 201603L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_aggregate_nsdmi
 #define cpp_aggregate_nsdmi __cpp_aggregate_nsdmi
 #endif
@@ -88,7 +99,7 @@
 #define cpp_aggregate_nsdmi 201304L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_aggregate_paren_init
 #define cpp_aggregate_paren_init __cpp_aggregate_paren_init
 #endif
@@ -96,7 +107,7 @@
 #define cpp_aggregate_paren_init 201902L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_alias_templates
 #define cpp_alias_templates __cpp_alias_templates
 #endif
@@ -104,7 +115,7 @@
 #define cpp_alias_templates 200704L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_aligned_new
 #define cpp_aligned_new __cpp_aligned_new
 #endif
@@ -112,7 +123,7 @@
 #define cpp_aligned_new 201606L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_attributes
 #define cpp_attributes __cpp_attributes
 #endif
@@ -120,7 +131,7 @@
 #define cpp_attributes 200809L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_binary_literals
 #define cpp_binary_literals __cpp_binary_literals
 #endif
@@ -128,7 +139,7 @@
 #define cpp_binary_literals 201304L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_capture_star_this
 #define cpp_capture_star_this __cpp_capture_star_this
 #endif
@@ -136,7 +147,7 @@
 #define cpp_capture_star_this 201603L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_char8_t
 #define cpp_char8_t __cpp_char8_t
 #endif
@@ -144,7 +155,7 @@
 #define cpp_char8_t 201811L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_concepts
 #define cpp_concepts __cpp_concepts
 #endif
@@ -152,7 +163,7 @@
 #define cpp_concepts 201907L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_conditional_explicit
 #define cpp_conditional_explicit __cpp_conditional_explicit
 #endif
@@ -160,7 +171,7 @@
 #define cpp_conditional_explicit 201806L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_consteval
 #define cpp_consteval __cpp_consteval
 #endif
@@ -168,7 +179,7 @@
 #define cpp_consteval 201811L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_constexpr
 #define cpp_constexpr __cpp_constexpr
 #endif
@@ -176,7 +187,7 @@
 #define cpp_constexpr 200704L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_constexpr
 #define cpp_constexpr __cpp_constexpr
 #endif
@@ -184,7 +195,7 @@
 #define cpp_constexpr 201304L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_constexpr
 #define cpp_constexpr __cpp_constexpr
 #endif
@@ -192,7 +203,7 @@
 #define cpp_constexpr 201603L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_constexpr
 #define cpp_constexpr __cpp_constexpr
 #endif
@@ -200,7 +211,7 @@
 #define cpp_constexpr 201907L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_constexpr_dynamic_alloc
 #define cpp_constexpr_dynamic_alloc __cpp_constexpr_dynamic_alloc
 #endif
@@ -208,7 +219,7 @@
 #define cpp_constexpr_dynamic_alloc 201907L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_constexpr_in_decltype
 #define cpp_constexpr_in_decltype __cpp_constexpr_in_decltype
 #endif
@@ -216,7 +227,7 @@
 #define cpp_constexpr_in_decltype 201711L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_constinit
 #define cpp_constinit __cpp_constinit
 #endif
@@ -224,7 +235,7 @@
 #define cpp_constinit 201907L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_decltype
 #define cpp_decltype __cpp_decltype
 #endif
@@ -232,7 +243,7 @@
 #define cpp_decltype 200707L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_decltype_auto
 #define cpp_decltype_auto __cpp_decltype_auto
 #endif
@@ -240,7 +251,7 @@
 #define cpp_decltype_auto 201304L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_deduction_guides
 #define cpp_deduction_guides __cpp_deduction_guides
 #endif
@@ -248,7 +259,7 @@
 #define cpp_deduction_guides 201703L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_deduction_guides
 #define cpp_deduction_guides __cpp_deduction_guides
 #endif
@@ -256,7 +267,7 @@
 #define cpp_deduction_guides 201907L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_delegating_constructors
 #define cpp_delegating_constructors __cpp_delegating_constructors
 #endif
@@ -264,7 +275,7 @@
 #define cpp_delegating_constructors 200604L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_designated_initializers
 #define cpp_designated_initializers __cpp_designated_initializers
 #endif
@@ -272,7 +283,7 @@
 #define cpp_designated_initializers 201707L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_enumerator_attributes
 #define cpp_enumerator_attributes __cpp_enumerator_attributes
 #endif
@@ -280,7 +291,7 @@
 #define cpp_enumerator_attributes 201411L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_fold_expressions
 #define cpp_fold_expressions __cpp_fold_expressions
 #endif
@@ -288,7 +299,7 @@
 #define cpp_fold_expressions 201603L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_generic_lambdas
 #define cpp_generic_lambdas __cpp_generic_lambdas
 #endif
@@ -296,7 +307,7 @@
 #define cpp_generic_lambdas 201304L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_generic_lambdas
 #define cpp_generic_lambdas __cpp_generic_lambdas
 #endif
@@ -304,7 +315,7 @@
 #define cpp_generic_lambdas 201707L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_guaranteed_copy_elision
 #define cpp_guaranteed_copy_elision __cpp_guaranteed_copy_elision
 #endif
@@ -312,7 +323,7 @@
 #define cpp_guaranteed_copy_elision 201606L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_hex_float
 #define cpp_hex_float __cpp_hex_float
 #endif
@@ -320,7 +331,7 @@
 #define cpp_hex_float 201603L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_if_consteval
 #define cpp_if_consteval __cpp_if_consteval
 #endif
@@ -328,7 +339,7 @@
 #define cpp_if_consteval 202106L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_if_constexpr
 #define cpp_if_constexpr __cpp_if_constexpr
 #endif
@@ -336,7 +347,7 @@
 #define cpp_if_constexpr 201606L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_impl_coroutine
 #define cpp_impl_coroutine __cpp_impl_coroutine
 #endif
@@ -344,7 +355,7 @@
 #define cpp_impl_coroutine 201902L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_impl_destroying_delete
 #define cpp_impl_destroying_delete __cpp_impl_destroying_delete
 #endif
@@ -352,7 +363,7 @@
 #define cpp_impl_destroying_delete 201806L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_impl_three_way_comparison
 #define cpp_impl_three_way_comparison __cpp_impl_three_way_comparison
 #endif
@@ -360,7 +371,7 @@
 #define cpp_impl_three_way_comparison 201907L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_inheriting_constructors
 #define cpp_inheriting_constructors __cpp_inheriting_constructors
 #endif
@@ -368,7 +379,7 @@
 #define cpp_inheriting_constructors 200802L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_inheriting_constructors
 #define cpp_inheriting_constructors __cpp_inheriting_constructors
 #endif
@@ -376,7 +387,7 @@
 #define cpp_inheriting_constructors 201511L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_init_captures
 #define cpp_init_captures __cpp_init_captures
 #endif
@@ -384,7 +395,7 @@
 #define cpp_init_captures 201304L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_init_captures
 #define cpp_init_captures __cpp_init_captures
 #endif
@@ -392,7 +403,7 @@
 #define cpp_init_captures 201803L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_initializer_lists
 #define cpp_initializer_lists __cpp_initializer_lists
 #endif
@@ -400,7 +411,7 @@
 #define cpp_initializer_lists 200806L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_inline_variables
 #define cpp_inline_variables __cpp_inline_variables
 #endif
@@ -408,7 +419,7 @@
 #define cpp_inline_variables 201606L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_lambdas
 #define cpp_lambdas __cpp_lambdas
 #endif
@@ -416,7 +427,7 @@
 #define cpp_lambdas 200907L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_modules
 #define cpp_modules __cpp_modules
 #endif
@@ -424,7 +435,7 @@
 #define cpp_modules 201907L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_namespace_attributes
 #define cpp_namespace_attributes __cpp_namespace_attributes
 #endif
@@ -432,7 +443,7 @@
 #define cpp_namespace_attributes 201411L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_noexcept_function_type
 #define cpp_noexcept_function_type __cpp_noexcept_function_type
 #endif
@@ -440,7 +451,7 @@
 #define cpp_noexcept_function_type 201510L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_nontype_template_args
 #define cpp_nontype_template_args __cpp_nontype_template_args
 #endif
@@ -448,7 +459,7 @@
 #define cpp_nontype_template_args 201411L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_nontype_template_args
 #define cpp_nontype_template_args __cpp_nontype_template_args
 #endif
@@ -456,7 +467,7 @@
 #define cpp_nontype_template_args 201911L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_nontype_template_parameter_auto
 #define cpp_nontype_template_parameter_auto __cpp_nontype_template_parameter_auto
 #endif
@@ -464,7 +475,7 @@
 #define cpp_nontype_template_parameter_auto 201606L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_nsdmi
 #define cpp_nsdmi __cpp_nsdmi
 #endif
@@ -472,7 +483,7 @@
 #define cpp_nsdmi 200809L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_range_based_for
 #define cpp_range_based_for __cpp_range_based_for
 #endif
@@ -480,7 +491,7 @@
 #define cpp_range_based_for 200907L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_range_based_for
 #define cpp_range_based_for __cpp_range_based_for
 #endif
@@ -488,7 +499,7 @@
 #define cpp_range_based_for 201603L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_raw_strings
 #define cpp_raw_strings __cpp_raw_strings
 #endif
@@ -496,7 +507,7 @@
 #define cpp_raw_strings 200710L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_ref_qualifiers
 #define cpp_ref_qualifiers __cpp_ref_qualifiers
 #endif
@@ -504,7 +515,7 @@
 #define cpp_ref_qualifiers 200710L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_return_type_deduction
 #define cpp_return_type_deduction __cpp_return_type_deduction
 #endif
@@ -512,7 +523,7 @@
 #define cpp_return_type_deduction 201304L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_rvalue_references
 #define cpp_rvalue_references __cpp_rvalue_references
 #endif
@@ -520,7 +531,7 @@
 #define cpp_rvalue_references 200610L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_size_t_suffix
 #define cpp_size_t_suffix __cpp_size_t_suffix
 #endif
@@ -528,7 +539,7 @@
 #define cpp_size_t_suffix 202011L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_sized_deallocation
 #define cpp_sized_deallocation __cpp_sized_deallocation
 #endif
@@ -536,7 +547,7 @@
 #define cpp_sized_deallocation 201309L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_static_assert
 #define cpp_static_assert __cpp_static_assert
 #endif
@@ -544,7 +555,7 @@
 #define cpp_static_assert 200410L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_static_assert
 #define cpp_static_assert __cpp_static_assert
 #endif
@@ -552,7 +563,7 @@
 #define cpp_static_assert 201411L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_structured_bindings
 #define cpp_structured_bindings __cpp_structured_bindings
 #endif
@@ -560,7 +571,7 @@
 #define cpp_structured_bindings 201606L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_template_template_args
 #define cpp_template_template_args __cpp_template_template_args
 #endif
@@ -568,7 +579,7 @@
 #define cpp_template_template_args 201611L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_threadsafe_static_init
 #define cpp_threadsafe_static_init __cpp_threadsafe_static_init
 #endif
@@ -576,7 +587,7 @@
 #define cpp_threadsafe_static_init 200806L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_unicode_characters
 #define cpp_unicode_characters __cpp_unicode_characters
 #endif
@@ -584,7 +595,7 @@
 #define cpp_unicode_characters 200704L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_unicode_literals
 #define cpp_unicode_literals __cpp_unicode_literals
 #endif
@@ -592,7 +603,7 @@
 #define cpp_unicode_literals 200710L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_user_defined_literals
 #define cpp_user_defined_literals __cpp_user_defined_literals
 #endif
@@ -600,7 +611,7 @@
 #define cpp_user_defined_literals 200809L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_using_enum
 #define cpp_using_enum __cpp_using_enum
 #endif
@@ -608,7 +619,7 @@
 #define cpp_using_enum 201907L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_variable_templates
 #define cpp_variable_templates __cpp_variable_templates
 #endif
@@ -616,7 +627,7 @@
 #define cpp_variable_templates 201304L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_variadic_templates
 #define cpp_variadic_templates __cpp_variadic_templates
 #endif
@@ -624,7 +635,7 @@
 #define cpp_variadic_templates 200704L
 #endif
 
-#if cplusplus >= 201603L
+#ifdef cpp_feature_testing
 #ifdef __cpp_variadic_using
 #define cpp_variadic_using __cpp_variadic_using
 #endif

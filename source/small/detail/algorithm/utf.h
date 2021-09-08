@@ -26,10 +26,7 @@ namespace small {
     using utf16_char_type = char16_t;
     using utf32_char_type = char32_t;
 #else
-    // Unicode characters not supported. Defaulting UTF-16 and UTF-32 to wchar_t
-    // Before C++11
-    using utf16_char_type = wchar_t;
-    using utf32_char_type = wchar_t;
+    #error "Unicode characters not supported."
 #endif
 
     /// \struct Identify the utf8 type of a char type
@@ -195,7 +192,7 @@ namespace small {
     constexpr Result utf16_size(Char first_char, Size available_code_units = 2) noexcept {
         return is_utf16_high_surrogate(first_char) && available_code_units > 1
                    ? 2
-                   : std::min(Size(1), available_code_units);
+                   : static_cast<Result>(std::min(Size(1), available_code_units));
     }
 
     /// \brief Check if a char is a UTF32 is a continuation char
@@ -215,7 +212,7 @@ namespace small {
     /// \return Number of code units in this codepoint
     template <class Char32, class Size = size_t, class Result = uint8_t>
     constexpr Result utf32_size(Char32, Size available_code_units = 1) noexcept {
-        return std::min(Size(1), available_code_units);
+        return static_cast<Result>(std::min(Size(1), available_code_units));
     }
 
     /// \brief Get size a utf32 char would have when/if converted to utf8
@@ -233,21 +230,22 @@ namespace small {
             constexpr uint8_t lut[32] = {1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3,
                                          4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 7};
             return lut[31 - leading_zeros(integral_wide_char)];
+        } else {
+            if (integral_wide_char <= 0x7F) {
+                return 1;
+            } else if (integral_wide_char <= 0x7FF) {
+                return 2;
+            } else if (integral_wide_char <= 0xFFFF) {
+                return 3;
+            } else if (integral_wide_char <= 0x1FFFFF) {
+                return 4;
+            } else if (integral_wide_char <= 0x3FFFFFF) {
+                return 5;
+            } else if (integral_wide_char <= 0x7FFFFFFF) {
+                return 6;
+            }
+            return 7;
         }
-        if (integral_wide_char <= 0x7F) {
-            return 1;
-        } else if (integral_wide_char <= 0x7FF) {
-            return 2;
-        } else if (integral_wide_char <= 0xFFFF) {
-            return 3;
-        } else if (integral_wide_char <= 0x1FFFFF) {
-            return 4;
-        } else if (integral_wide_char <= 0x3FFFFFF) {
-            return 5;
-        } else if (integral_wide_char <= 0x7FFFFFFF) {
-            return 6;
-        }
-        return 7;
     }
 
     /// \brief Get size a utf32 char would have when/if converted to utf16
@@ -532,6 +530,7 @@ namespace small {
     /// \brief Convert a utf32 code point to a sequence of utf16 code units
     template <class OutputIt, class Char32, class Size = uint8_t>
     Size from_utf32_to_utf16(Char32 ch, OutputIt dest, Size utf16_size) noexcept {
+        using dest_value_type = typename std::iterator_traits<OutputIt>::value_type;
         if (utf16_size != 0) {
             if (ch <= 0x0000FFFF) {
                 /* UTF-16 surrogate values are illegal in UTF-32
@@ -540,18 +539,20 @@ namespace small {
                     *dest++ = 0x0000FFFD;
                 } else {
                     /* source is a BMP Character */
-                    *dest++ = ch;
+                    *dest = static_cast<dest_value_type>(ch);
+                    ++dest;
                 }
                 return 1;
             } else if (ch > 0x0010FFFF) {
                 /* U+10FFFF is the largest code point of Unicode Character Set */
-                *dest++ = 0x0000FFFD;
+                *dest = 0x0000FFFD;
+                ++dest;
                 return 1;
             } else {
                 /* source is a character in range 0xFFFF - 0x10FFFF */
                 ch -= 0x0010000UL;
-                *dest++ = (wchar_t)((ch >> 10) + 0xD800);
-                *dest++ = (wchar_t)((ch & 0x3FFUL) + 0xDC00);
+                *dest++ = static_cast<dest_value_type>((ch >> 10) + 0xD800);
+                *dest++ = static_cast<dest_value_type>((ch & 0x3FFUL) + 0xDC00);
                 return 2;
             }
         }
@@ -599,7 +600,7 @@ namespace small {
                            [](auto in) { return static_cast<output_value_type>(in); });
             return static_cast<uint8_t>(std::min(source_count, dest_count));
         } else {
-            return from_utf8_to_utf16(source, source_count, dest, dest_count);
+            return static_cast<uint8_t>(from_utf8_to_utf16(source, source_count, dest, dest_count));
         }
     }
 
@@ -617,7 +618,7 @@ namespace small {
             std::transform(source, source + min_value(source_count, dest_count), dest, [](auto in) {
                 return static_cast<output_value_type>(in);
             });
-            return min_value(source_count, dest_count);
+            return static_cast<uint8_t>(min_value(source_count, dest_count));
         } else if constexpr (is_utf16_v<input_value_type>) {
             *dest = from_utf16_to_utf32(source, source_count);
             return 1;

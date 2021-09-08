@@ -45,57 +45,57 @@
  */
 #if defined(__has_cpp_attribute) && __has_cpp_attribute(carries_dependency)
 #define has_cpp_attribute_carries_dependency __has_cpp_attribute(carries_dependency)
-#elif __cplusplus >= 200809L
+#elif __has_include(<version>) && __cplusplus >= 200809L
 #define has_cpp_attribute_carries_dependency 200809L
 #endif
 
 #if defined(__has_cpp_attribute) && __has_cpp_attribute(deprecated)
 #define has_cpp_attribute_deprecated __has_cpp_attribute(deprecated)
-#elif __cplusplus >= 201309L
+#elif __has_include(<version>) && __cplusplus >= 201309L
 #define has_cpp_attribute_deprecated 201309L
 #endif
 
 #if defined(__has_cpp_attribute) && __has_cpp_attribute(fallthrough)
 #define has_cpp_attribute_fallthrough __has_cpp_attribute(fallthrough)
-#elif __cplusplus >= 201603L
+#elif __has_include(<version>) && __cplusplus >= 201603L
 #define has_cpp_attribute_fallthrough 201603L
 #endif
 
 #if defined(__has_cpp_attribute) && __has_cpp_attribute(likely)
 #define has_cpp_attribute_likely __has_cpp_attribute(likely)
-#elif __cplusplus >= 201803L
+#elif __has_include(<version>) && __cplusplus >= 201803L
 #define has_cpp_attribute_likely 201803L
 #endif
 
 #if defined(__has_cpp_attribute) && __has_cpp_attribute(maybe_unused)
 #define has_cpp_attribute_maybe_unused __has_cpp_attribute(maybe_unused)
-#elif __cplusplus >= 201603L
+#elif __has_include(<version>) && __cplusplus >= 201603L
 #define has_cpp_attribute_maybe_unused 201603L
 #endif
 
 #if defined(__has_cpp_attribute) && __has_cpp_attribute(no_unique_address)
 #define has_cpp_attribute_no_unique_address __has_cpp_attribute(no_unique_address)
-#elif __cplusplus >= 201803L
+#elif __has_include(<version>) && __cplusplus >= 201803L
 #define has_cpp_attribute_no_unique_address 201803L
 #endif
 
 #if defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard)
 #define has_cpp_attribute_nodiscard __has_cpp_attribute(nodiscard)
-#elif __cplusplus >= 201603L
+#elif __has_include(<version>) && __cplusplus >= 201603L
 #define has_cpp_attribute_nodiscard 201603L
-#elif __cplusplus >= 201907L
+#elif __has_include(<version>) && __cplusplus >= 201907L
 #define has_cpp_attribute_nodiscard 201907L
 #endif
 
 #if defined(__has_cpp_attribute) && __has_cpp_attribute(noreturn)
 #define has_cpp_attribute_noreturn __has_cpp_attribute(noreturn)
-#elif __cplusplus >= 200809L
+#elif __has_include(<version>) && __cplusplus >= 200809L
 #define has_cpp_attribute_noreturn 200809L
 #endif
 
 #if defined(__has_cpp_attribute) && __has_cpp_attribute(unlikely)
 #define has_cpp_attribute_unlikely __has_cpp_attribute(unlikely)
-#elif __cplusplus >= 201803L
+#elif __has_include(<version>) && __cplusplus >= 201803L
 #define has_cpp_attribute_unlikely 201803L
 #endif
 

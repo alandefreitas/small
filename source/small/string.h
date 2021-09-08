@@ -207,7 +207,7 @@ namespace small {
             // Fill the buffer
             if constexpr (!is_same_utf_encoding_v<InputChar, value_type>) {
                 if (codeunits_per_codepoint == 1) {
-                    std::fill(buffer_.begin(), buffer_.begin() + count, cp);
+                    std::fill(buffer_.begin(), buffer_.begin() + count, static_cast<value_type>(cp));
                 } else {
                     to_utf(&cp, 1, buffer_.data(), codeunits_per_codepoint);
                     size_type n_to_copy = count;
@@ -1834,7 +1834,7 @@ namespace small {
                 if (d1 == d2) {
                     const size_type prev_codepoint = size_codepoints(first, last);
                     size_type first_offset = first - begin();
-                    std::copy(first2, last2, begin() + first_offset);
+                    std::transform(first2, last2, begin() + first_offset, [](auto ch) { return static_cast<value_type>(ch); });
                     const size_type new_codepoint = size_codepoints(first, last);
                     if constexpr (has_lookup_table) {
                         const bool prev_had_multibyte = cmp_not_equal(prev_codepoint, d1);
@@ -2960,7 +2960,7 @@ namespace small {
             value_type *fill_end = fill_begin + code_unit_increment;
             if constexpr (!is_same_utf_encoding_v<value_type, Char>) {
                 if (code_units_per_char == 1) {
-                    std::fill(fill_begin, fill_end, ch);
+                    std::fill(fill_begin, fill_end, static_cast<value_type>(ch));
                 } else {
                     // Fill buffer
                     to_utf(&ch, 1, fill_begin, code_unit_increment);

@@ -25,9 +25,6 @@
 #ifndef __cplusplus
 #error "__cplusplus macro undefined"
 #else
-#define cplusplus __cplusplus
-#endif
-
 #if defined(_MSC_VER) && cplusplus == 199711L
 // MSVC hack when it doesn't report __cplusplus correctly
 // \see https://docs.microsoft.com/en-us/cpp/build/reference/zc-cplusplus?view=msvc-160
@@ -54,6 +51,9 @@
 #define cplusplus 199711L
 #else // Assume C++17 by default
 #define cplusplus 201603L
+#endif
+#else
+#define cplusplus __cplusplus
 #endif
 #endif
 

@@ -6,6 +6,7 @@
 #define SMALL_SMALL_VECTOR_H
 
 #include <cassert>
+#include <cstdlib>
 #include <ratio>
 #include <new>
 #include <cstddef>
@@ -1351,11 +1352,11 @@ namespace small {
         return vector<std::remove_cv_t<T>, N_OUTPUT>(a, a + N_INPUT);
     }
 
-    template <class T, size_t N = std::max((sizeof(std::vector<T>) * 2) / sizeof(T), 5ul),
+    template <class T, size_t N = std::max((sizeof(std::vector<T>) * 2) / sizeof(T), std::size_t(5)),
               class Allocator = std::allocator<T>, class SizeType = size_t>
     using max_size_vector = vector<T, N, Allocator, std::false_type, SizeType>;
 
-    template <class T, size_t N = std::max((sizeof(std::vector<T>) * 2) / sizeof(T), 5ul),
+    template <class T, size_t N = std::max((sizeof(std::vector<T>) * 2) / sizeof(T), std::size_t(5)),
               class Allocator = std::allocator<T>, class SizeType = size_t>
     using inline_vector = vector<T, N, Allocator, std::true_type, SizeType>;
 

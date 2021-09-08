@@ -5,6 +5,7 @@
 #ifndef SMALL_VARIANT_VECTOR_H
 #define SMALL_VARIANT_VECTOR_H
 
+#include <cstdlib>
 #include <variant>
 #include <vector>
 
@@ -59,7 +60,7 @@ namespace small {
     ///
     /// \tparam T Array type
     /// \tparam N Array maximum expected size
-    template <class T, size_t N = std::max((sizeof(std::vector<T>) * 2) / sizeof(T), 5ul),
+    template <class T, size_t N = std::max((sizeof(std::vector<T>) * 2) / sizeof(T), std::size_t(5)),
               class Allocator = std::allocator<T>>
     class small_vector {
       private:

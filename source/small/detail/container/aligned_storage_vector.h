@@ -5,6 +5,8 @@
 #ifndef SMALL_MAX_SIZE_VECTOR_H
 #define SMALL_MAX_SIZE_VECTOR_H
 
+#include <cstdlib>
+
 #include "cassert"
 #include "vector"
 
@@ -31,7 +33,7 @@ namespace small {
     /// \note This is somewhat equivalent to boost::static_vector
     /// \tparam T Array type
     /// \tparam N Array maximum size
-    template <class T, size_t N = std::max((sizeof(std::vector<T>) * 4) / sizeof(T), 5ul)>
+    template <class T, size_t N = std::max((sizeof(std::vector<T>) * 4) / sizeof(T), std::size_t(5))>
     class aligned_storage_vector {
       public /* types */:
         // There's no custom allocator for aligned_storage_vector

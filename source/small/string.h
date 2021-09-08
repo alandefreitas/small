@@ -837,7 +837,7 @@ namespace small {
             if constexpr (has_lookup_table) {
                 const_lookup_table_type t = const_lookup_table();
                 const size_type look_size_in_bytes = lookup_table_type::size_for(buffer_.capacity(), t.size());
-                return buffer_.capacity() - null_char_size - div_ceil(look_size_in_bytes, sizeof(value_type));
+                return buffer_.capacity() - null_char_size - static_cast<size_type>(div_ceil(look_size_in_bytes, sizeof(value_type)));
             } else {
                 return buffer_.capacity() - null_char_size;
             }

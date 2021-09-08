@@ -182,7 +182,7 @@ namespace small {
         }
 
         /// \brief Copy constructor
-        vector(const vector &rhs) {
+        vector(const vector &rhs) : enable_allocator_type() {
             if constexpr (std::is_empty_v<allocator_type>) {
                 enable_allocator_type::set_allocator(allocator_type(
                     std::allocator_traits<allocator_type>::select_on_container_copy_construction(rhs.get_allocator())));
@@ -213,7 +213,7 @@ namespace small {
         }
 
         /// \brief Move constructor
-        vector(vector &&rhs) noexcept(std::is_nothrow_move_constructible<value_type>::value) {
+        vector(vector &&rhs) noexcept(std::is_nothrow_move_constructible<value_type>::value) : enable_allocator_type() {
             if constexpr (!std::is_empty_v<allocator_type>) {
                 enable_allocator_type::set_allocator(std::move(rhs.alloc_));
             } else {
@@ -320,7 +320,7 @@ namespace small {
       private:
         /// \section Lambda constructor from which we can construct
         template <typename InitFunc, std::enable_if_t<std::is_invocable_v<InitFunc, void *>, int> = 0>
-        vector(size_type n, InitFunc &&func, const allocator_type &alloc) {
+        vector(size_type n, InitFunc &&func, const allocator_type &alloc) : enable_allocator_type() {
             enable_allocator_type::set_allocator(alloc);
             make_size(n);
             assert(size() == 0);

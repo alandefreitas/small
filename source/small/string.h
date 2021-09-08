@@ -118,8 +118,8 @@ namespace small {
         using self_type = basic_string<CharT, N, Traits, WCharT, Allocator, CP_HINT_STEP, SizeType>;
 
         /// \section Types for iterating codepoints
-        using codepoint_reference = codepoint_reference<self_type>;
-        using const_codepoint_reference = const_codepoint_reference<self_type>;
+        using codepoint_reference = external_codepoint_reference<self_type>;
+        using const_codepoint_reference = const_external_codepoint_reference<self_type>;
         using codepoint_iterator = codepoint_iterator<self_type>;
         using const_codepoint_iterator = const_codepoint_iterator<self_type>;
         using reverse_codepoint_iterator = reverse_codepoint_iterator<self_type>;
@@ -2809,7 +2809,7 @@ namespace small {
 #ifndef SMALL_DISABLE_EXCEPTIONS
                 } catch (...) {
                     state |= std::ios_base::badbit;
-                    is.__setstate_nothrow(state);
+                    is.setstate(state);
                     if (is.exceptions() & std::ios_base::badbit) {
                         throw;
                     }
@@ -2845,7 +2845,9 @@ namespace small {
             std::ios_base::iostate state = std::ios_base::goodbit;
             typename std::basic_istream<CharT, Traits>::sentry sen(is, true);
             if (sen) {
+#ifndef SMALL_DISABLE_EXCEPTIONS
                 try {
+#endif
                     str.clear();
                     std::streamsize extra = 0;
                     while (true) {
@@ -2866,13 +2868,15 @@ namespace small {
                     }
                     if (extra == 0)
                         state |= std::ios_base::failbit;
+#ifndef SMALL_DISABLE_EXCEPTIONS
                 } catch (...) {
                     state |= std::ios_base::badbit;
-                    is.__setstate_nothrow(state);
+                    is.setstate(state);
                     if (is.exceptions() & std::ios_base::badbit) {
                         throw;
                     }
                 }
+#endif
                 is.setstate(state);
             }
             return is;

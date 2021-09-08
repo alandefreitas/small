@@ -510,7 +510,7 @@ namespace small {
             /// \section Equality
             template <bool RHS_IS_CONST>
             constexpr friend bool operator==(const iterator_impl &x, const iterator_impl<RHS_IS_CONST> &y) noexcept {
-                return x.multibyte_index_ == y.multibyte_index_;
+                return x.multibyte_index() == y.multibyte_index();
             }
 
             template <bool RHS_IS_CONST>
@@ -601,7 +601,7 @@ namespace small {
             template <bool RHS_IS_CONST>
             constexpr friend size_type operator-(const iterator_impl &x,
                                                  const iterator_impl<RHS_IS_CONST> &y) noexcept {
-                return x.multibyte_index_ - y.multibyte_index_;
+                return x.multibyte_index() - y.multibyte_index();
             }
 
             template <bool RHS_IS_CONST>

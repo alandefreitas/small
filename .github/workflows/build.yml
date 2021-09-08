@@ -87,7 +87,7 @@ jobs:
         run: cmake --build . --parallel ${{ matrix.config.cores }} --config ${{ matrix.config.config }}
       - name: Test
         working-directory: ./build
-        run: ctest --parallel ${{ matrix.config.cores }} -C ${{ matrix.config.config }}
+        run: ctest --parallel ${{ matrix.config.cores }} -C ${{ matrix.config.config }} --verbose
       - name: Install
         working-directory: ./build
         run: ${{ matrix.config.sudocmd }} cmake --install .

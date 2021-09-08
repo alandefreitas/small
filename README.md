@@ -120,7 +120,7 @@ Integration:
 
 === "Install"
 
-    Get the binary package from the [release section](https://github.com/alandefreitas/small/releases). These binaries refer to the last release version of small.
+    Get the binary package from the [release section](https://github.com/alandefreitas/small/releases). These binaries refer to the latest release version of small.
 
 === "Build from source"
 
@@ -187,7 +187,7 @@ Integration:
 
 === "File amalgamation"
 
-    Because containers are header-only, you can directly copy the contents from the `source` directory to your project.
+    Because containers are header-only, you can directly copy the contents from the `source` directory into your project.
 
     In that case, you are responsible for setting the appropriate target include directories and any compile definitions you might require.
 
@@ -208,7 +208,6 @@ All containers are optimized for the case when they're small but also efficient 
 - Explicit consideration of CPU cache sizes 
 - Explicit identification and consideration of L1 cache sizes 
 - Explicit identification and consideration of branch prediction 
-- Cache friendly node types 
 
 Most applications have many small lists and sets of elements. These containers avoid spending a lot of time with large containers
 that contain just a few elements. Small containers usually try to use the stack before dynamically allocating memory and try
@@ -258,17 +257,19 @@ All capacity and access functions contain extra overloads that accept codepoint 
 
 Access to codepoints is provided with an inline lookup-table trick that allows us to access codepoints in `O(log m)` time, where `m` is the number of multibyte code points in the strings. When there are no multibyte codepoints in the string, the string works as usual and no extra memory is required for the table.
 
-## Associative containers
+## Sets and Maps
 
-The small set/map classes use a more cache-friendly flat set/map and all other optimizations mentioned above for internal algorithms. As with the other containers a custom template parameter can be used to define the number of inline elements in the container.
+The small set/map classes use a more cache-friendly flat set/map and all other optimizations mentioned above for internal algorithms. As with other small containers, a custom template parameter can be used to define the number of inline elements in the container.
 
-The `small::default_inline_storage` and `small::is_relocatable` traits can also be defined for custom types, and all the usual set/map, ordered/unordered, uni/multi variants are also implemented:
+The `small::default_inline_storage` and `small::is_relocatable` trait can also be defined for custom types, and all the usual set/map, ordered/unordered, uni/multi variants are also provided:
 
 ```cpp
 --8<-- "examples/associative.cpp"
 ```
 
-Unlike a `small::vector` or `small::string`, the asymptotic time complexities of flat sets/maps is very different from the `std::` counterparts and should only be used when they are small. For large containers, you can use `std` containers. Or for efficient large containers, you can use the abseil containers, implemented as B+-trees.
+Unlike a `small::vector` or `small::string`, the asymptotic time complexities of flat sets/maps is very different from their `std::` counterparts and should only be used when they are small. Because they are internally implemented as arrays, manipulating these containers cost `O(n)`.
+
+For large containers, you can use `std` containers with custom allocators. Or for efficient large containers, you can use the abseil containers, implemented as B+-trees.
 
 ## Community
 

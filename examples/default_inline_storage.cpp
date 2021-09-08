@@ -18,14 +18,14 @@ int main() {
     for (const auto &x : v1) {
         std::cout << '<' << x.a << ',' << x.b << '>' << ' ';
     }
-    std::cout << "\n";
+    std::cout << "\n"; // <1,1.1> <2,2.2> <3,3.3> <4,4.4> <5,5.5>
 
     // Default inline storage for at least 10 elements
     small::vector<my_type> v2 = {{1, 1.1}, {2, 2.2}, {3, 3.3}, {4, 4.4}, {5, 5.5}};
     for (const auto &x : v2) {
         std::cout << '<' << x.a << ',' << x.b << '>' << ' ';
     }
-    std::cout << "\n";
+    std::cout << "\n"; // <1,1.1> <2,2.2> <3,3.3> <4,4.4> <5,5.5>
 
     return 0;
 }

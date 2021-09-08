@@ -53,10 +53,10 @@
 - [Vectors](#vectors)
 - [Strings](#strings)
 - [Sets and Maps](#sets-and-maps)
-- [Community](#community)
+- [Contributing](#contributing)
   - [Get Involved](#get-involved)
   - [Ideas and Roadmap](#ideas-and-roadmap)
-  - [Contributing Guidelines](#contributing-guidelines)
+  - [Guidelines](#guidelines)
   - [Contributors](#contributors)
 - [References](#references)
 

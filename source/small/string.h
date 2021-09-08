@@ -1137,7 +1137,7 @@ namespace small {
             // Fill the buffer with new elements
             if constexpr (!is_same_utf_encoding_v<value_type, Char>) {
                 if (codeunits_per_codepoint == 1) {
-                    std::fill(begin() + pos_idx, new_pos, ch);
+                    std::fill(begin() + pos_idx, new_pos, static_cast<value_type>(ch));
                 } else {
                     to_utf(&ch, 1, buffer_.data() + pos_idx, codeunits_per_codepoint);
                     size_type n_to_copy = count_code_points;

@@ -28,11 +28,7 @@ namespace small {
 
     /// \brief Construct and throw an exception but terminate otherwise
     template <typename Ex, typename... Args> [[noreturn]] void throw_exception(Args &&...args) {
-        if constexpr (std::is_constructible_v<Ex, Args...>) {
-            throw_exception(Ex(args...));
-        } else {
-            throw_exception(Ex());
-        }
+        throw_exception(Ex(std::forward<Args>(args)...));
     }
 
     /// \brief Throw an exception but terminate if we can't throw

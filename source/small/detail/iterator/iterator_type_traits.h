@@ -33,13 +33,8 @@ namespace small {
       private:
         /// An arbitrary type of size == 2
         struct two {
-#if has_cpp_attribute_maybe_unused
-            [[maybe_unused]] char lx;
-            [[maybe_unused]] char lxx;
-#else
             char lx;
             char lxx;
-#endif
         };
 
         /// Return type of size == 2 when UP doesn't has iterator category

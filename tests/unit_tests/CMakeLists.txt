@@ -2,7 +2,7 @@
 ### Unit Tests                                      ###
 #######################################################
 # Include catch helper CMake scripts
-include(${catch2_DIR}/Catch.cmake)
+include(${Catch2_DIR}/Catch.cmake)
 
 # Create a common catch main for all tests
 add_library(catch_main catch_main.cpp)

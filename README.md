@@ -52,7 +52,7 @@
 - [Quickstart](#quickstart)
 - [Vectors](#vectors)
 - [Strings](#strings)
-- [Associative containers](#associative-containers)
+- [Sets and Maps](#sets-and-maps)
 - [Community](#community)
   - [Get Involved](#get-involved)
   - [Ideas and Roadmap](#ideas-and-roadmap)

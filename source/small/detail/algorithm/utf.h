@@ -579,7 +579,7 @@ namespace small {
         } else {
             using output_value_type = typename std::iterator_traits<OutputIt>::value_type;
             std::transform(source, source + min_value(source_count, dest_count), dest,
-                           [](auto in) { static_cast<output_value_type>(in); });
+                           [](auto in) { return static_cast<output_value_type>(in); });
             return static_cast<uint8_t>(min_value(source_count, dest_count));
         }
     }

@@ -499,7 +499,7 @@ namespace small {
         /// \brief Construct element at a given position
         template <typename... Args> void construct_at(size_type pos, Args &&...args) {
             if (pos >= N) {
-                throw_exception<std::bad_alloc>("construct_at: cannot construct element after vector::size()");
+                throw_exception<std::bad_alloc>();
             }
             new (&data_[pos]) T(std::forward<Args>(args)...);
         }
@@ -507,7 +507,7 @@ namespace small {
         /// \brief Destroy element at a given position
         void destroy_at(size_type pos) {
             if (pos >= N) {
-                throw_exception<std::bad_alloc>("construct_at: cannot construct element after vector::size()");
+                throw_exception<std::bad_alloc>();
             }
             reinterpret_cast<T *>(&data_[pos])->~T();
         }

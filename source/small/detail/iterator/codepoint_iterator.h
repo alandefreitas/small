@@ -641,11 +641,12 @@ namespace small {
         };
     } // namespace detail
 
-    template <class String> using codepoint_iterator = detail::codepoint_iterator_impl<false, String>;
-    template <class String> using const_codepoint_iterator = detail::codepoint_iterator_impl<true, String>;
-    template <class String> using reverse_codepoint_iterator = std::reverse_iterator<codepoint_iterator<String>>;
+    template <class String> using external_codepoint_iterator = detail::codepoint_iterator_impl<false, String>;
+    template <class String> using const_external_codepoint_iterator = detail::codepoint_iterator_impl<true, String>;
     template <class String>
-    using const_reverse_codepoint_iterator = std::reverse_iterator<const_codepoint_iterator<String>>;
+    using reverse_external_codepoint_iterator = std::reverse_iterator<external_codepoint_iterator<String>>;
+    template <class String>
+    using const_reverse_external_codepoint_iterator = std::reverse_iterator<const_external_codepoint_iterator<String>>;
 
 } // namespace small
 

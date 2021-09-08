@@ -120,10 +120,10 @@ namespace small {
         /// \section Types for iterating codepoints
         using codepoint_reference = external_codepoint_reference<self_type>;
         using const_codepoint_reference = const_external_codepoint_reference<self_type>;
-        using codepoint_iterator = codepoint_iterator<self_type>;
-        using const_codepoint_iterator = const_codepoint_iterator<self_type>;
-        using reverse_codepoint_iterator = reverse_codepoint_iterator<self_type>;
-        using const_reverse_codepoint_iterator = const_reverse_codepoint_iterator<self_type>;
+        using codepoint_iterator = external_codepoint_iterator<self_type>;
+        using const_codepoint_iterator = const_external_codepoint_iterator<self_type>;
+        using reverse_codepoint_iterator = reverse_external_codepoint_iterator<self_type>;
+        using const_reverse_codepoint_iterator = const_reverse_external_codepoint_iterator<self_type>;
 
         /// \brief A strong integer type for representing code point indexes
         /// Although it's a strong type, it still includes most operations to work with size_type

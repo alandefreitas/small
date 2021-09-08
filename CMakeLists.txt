@@ -149,7 +149,7 @@ if (SMALL_BUILD_INSTALLER)
     )
 
     # Install the file smallConfig.cmake
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/smallConfig.cmake
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/small-config.cmake
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/small)
 
     # Install cmake to find filesystem as a dependency

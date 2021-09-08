@@ -559,8 +559,8 @@ namespace small {
     }
 
     /// \brief Convert a sequence of utf16 code units into an utf8 array of bytes
-    template <class InputIt, class OutputIt, class Size1 = uint8_t, class Size2 = uint8_t>
-    Size2 from_utf16_to_utf8(InputIt src, Size1 utf16_size, OutputIt dest, Size2 utf8_size) noexcept {
+    template <class InputIt, class OutputIt, class InputSize = uint8_t, class OutputSize = uint8_t>
+    OutputSize from_utf16_to_utf8(InputIt src, InputSize utf16_size, OutputIt dest, OutputSize utf8_size) noexcept {
         auto utf32_cp = from_utf16_to_utf32(src, utf16_size);
         return from_utf32_to_utf8(utf32_cp, dest, utf8_size);
     }
@@ -573,12 +573,12 @@ namespace small {
     uint8_t to_utf8(InputIt source, InputSize source_count, OutputIt dest, OutputSize dest_count) noexcept {
         using input_value_type = typename std::iterator_traits<InputIt>::value_type;
         if constexpr (is_utf32_v<input_value_type>) {
-            return from_utf32_to_utf8(*source, dest, dest_count);
+            return static_cast<uint8_t>(from_utf32_to_utf8(*source, dest, dest_count));
         } else if constexpr (is_utf16_v<input_value_type>) {
-            return from_utf16_to_utf8(source, source_count, dest, dest_count);
+            return static_cast<uint8_t>(from_utf16_to_utf8(source, source_count, dest, dest_count));
         } else {
             std::copy(source, source + min_value(source_count, dest_count), dest);
-            return min_value(source_count, dest_count);
+            return static_cast<uint8_t>(min_value(source_count, dest_count));
         }
     }
 
@@ -590,10 +590,10 @@ namespace small {
     uint8_t to_utf16(InputIt source, InputSize source_count, OutputIt dest, OutputSize dest_count) noexcept {
         using input_value_type = typename std::iterator_traits<InputIt>::value_type;
         if constexpr (is_utf32_v<input_value_type>) {
-            return from_utf32_to_utf16(*source, dest, dest_count);
+            return static_cast<uint8_t>(from_utf32_to_utf16(*source, dest, dest_count));
         } else if constexpr (is_utf16_v<input_value_type>) {
             std::copy(source, source + std::min(source_count, dest_count), dest);
-            return std::min(source_count, dest_count);
+            return static_cast<uint8_t>(std::min(source_count, dest_count));
         } else {
             return from_utf8_to_utf16(source, source_count, dest, dest_count);
         }

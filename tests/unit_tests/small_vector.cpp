@@ -771,7 +771,8 @@ TEST_CASE("Vector") {
 
         SECTION("Modifiers") {
             vector<std::string, 5> a = {"one", "two", "three"};
-            a.push_back("four");
+            std::string tmp = "four";
+            a.push_back(tmp);
             REQUIRE(a.back() == "four");
             REQUIRE(a.size() == 4);
             REQUIRE(a.max_size() > 5);
@@ -780,7 +781,7 @@ TEST_CASE("Vector") {
             REQUIRE(equal_il(a, {"one", "two", "three", "four"}));
 
             // NOLINTNEXTLINE(performance-move-const-arg)
-            a.push_back(std::move("five"));
+            a.push_back(std::move(std::string("five")));
             REQUIRE(a.back() == "five");
             REQUIRE(a.size() == 5);
             REQUIRE(a.max_size() > 5);
@@ -1175,20 +1176,14 @@ TEST_CASE("Vector") {
         }
 
         SECTION("Capacity") {
+            /*
+             * The inline capacity depends on the platform, but these values don't vary a lot
+             */
             vector<custom_type, 5> a = {"one", "two", "three"};
             REQUIRE(a.size() == 3);
             REQUIRE(a.max_size() > 5);
             REQUIRE_FALSE(a.empty());
             REQUIRE(a.is_inline());
-            REQUIRE(sizeof(custom_type) == 160);
-            REQUIRE(sizeof(custom_type *) == 8);
-            REQUIRE(sizeof(custom_type) / sizeof(custom_type *) == 20);
-            REQUIRE(sizeof(custom_type) > sizeof(custom_type *));
-            REQUIRE(vector<custom_type, 5>::requested_inline_size == 5);
-            REQUIRE(vector<custom_type, 5>::value_size == 160);
-            REQUIRE(vector<custom_type, 5>::pointer_size == 8);
-            REQUIRE(vector<custom_type, 5>::min_inline_elements == 2);
-            REQUIRE(vector<custom_type, 5>::num_inline_elements == 5);
             REQUIRE(a.capacity() == 5);
 
             a.reserve(10);

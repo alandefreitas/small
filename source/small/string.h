@@ -205,7 +205,7 @@ namespace small {
             buffer_.resize(buffer_.capacity());
 
             // Fill the buffer
-            if constexpr (not is_same_utf_encoding_v<InputChar, value_type>) {
+            if constexpr (!is_same_utf_encoding_v<InputChar, value_type>) {
                 if (codeunits_per_codepoint == 1) {
                     std::fill(buffer_.begin(), buffer_.begin() + count, cp);
                 } else {
@@ -448,7 +448,7 @@ namespace small {
         }
 
         /// \brief Replaces the contents with character ch as if by assign(std::addressof(ch), 1)
-        template <typename Char, std::enable_if_t<not is_api_string_view_v<Char>, int> = 0>
+        template <typename Char, std::enable_if_t<!is_api_string_view_v<Char>, int> = 0>
         constexpr basic_string &operator=(Char ch) {
             assign(1, ch);
             return *this;
@@ -468,7 +468,7 @@ namespace small {
                   std::enable_if_t<std::is_convertible_v<
                                        const T &, std::basic_string_view<typename T::value_type,
                                                                          std::char_traits<typename T::value_type>>> &&
-                                       not std::is_convertible_v<const T &, const value_type *>,
+                                       !std::is_convertible_v<const T &, const value_type *>,
                                    int> = 0>
         constexpr basic_string &operator=(const T &t) {
             assign(std::basic_string_view<typename T::value_type, std::char_traits<typename T::value_type>>(t));
@@ -1135,7 +1135,7 @@ namespace small {
             }
 
             // Fill the buffer with new elements
-            if constexpr (not is_same_utf_encoding_v<value_type, Char>) {
+            if constexpr (!is_same_utf_encoding_v<value_type, Char>) {
                 if (codeunits_per_codepoint == 1) {
                     std::fill(begin() + pos_idx, new_pos, ch);
                 } else {
@@ -1228,7 +1228,7 @@ namespace small {
             }
 
             // Fill the buffer with new elements
-            if constexpr (not is_same_utf_encoding_v<value_type, input_value_type>) {
+            if constexpr (!is_same_utf_encoding_v<value_type, input_value_type>) {
                 auto from_it = first;
                 auto to_it = begin() + pos_idx;
                 while (from_it != last) {
@@ -1519,7 +1519,7 @@ namespace small {
         constexpr basic_string &operator+=(const basic_string &str) { return append(str); }
 
         /// \brief Appends character ch
-        template <typename Char, std::enable_if_t<not is_api_string_view_v<Char>, int> = 0>
+        template <typename Char, std::enable_if_t<!is_api_string_view_v<Char>, int> = 0>
         constexpr basic_string &operator+=(Char ch) {
             return append(1, ch);
         }
@@ -1549,7 +1549,7 @@ namespace small {
             if (sv.empty()) {
                 return true;
             }
-            if constexpr (not is_same_utf_encoding_v<value_type, RhsChar>) {
+            if constexpr (!is_same_utf_encoding_v<value_type, RhsChar>) {
                 auto this_first = begin();
                 auto this_last = end();
                 auto other_first = sv.begin();
@@ -1562,13 +1562,13 @@ namespace small {
                     if (this_code_units_left < buf_size) {
                         return false;
                     }
-                    if (not std::equal(this_first, this_first + buf_size, buf, buf + buf_size)) {
+                    if (!std::equal(this_first, this_first + buf_size, buf, buf + buf_size)) {
                         return false;
                     }
                     other_first += utf_size(*other_first, other_last - other_first);
                     this_first += buf_size;
                 }
-                return not *other_first;
+                return !*other_first;
             } else {
                 if (size() < sv.size()) {
                     return false;
@@ -1584,7 +1584,7 @@ namespace small {
             if (empty()) {
                 return false;
             }
-            if constexpr (not is_same_utf_encoding_v<Char, value_type>) {
+            if constexpr (!is_same_utf_encoding_v<Char, value_type>) {
                 const uint8_t s = utf_size_as<value_type>(&c, 1);
                 value_type buf[8];
                 to_utf(&c, 1, buf, s);
@@ -1599,12 +1599,12 @@ namespace small {
         /// it might require conversions from code points to code units
         template <typename Char> constexpr bool starts_with(const Char *s) const {
             if (empty()) {
-                return not *s;
+                return !*s;
             }
-            if (not *s) {
+            if (!*s) {
                 return true;
             }
-            if constexpr (not is_same_utf_encoding_v<value_type, Char>) {
+            if constexpr (!is_same_utf_encoding_v<value_type, Char>) {
                 auto this_first = begin();
                 auto this_last = end();
                 auto other_first = s;
@@ -1618,13 +1618,13 @@ namespace small {
                     if (this_bytes_left < buf_size) {
                         return false;
                     }
-                    if (not std::equal(this_first, this_first + buf_size, buf, buf + buf_size)) {
+                    if (!std::equal(this_first, this_first + buf_size, buf, buf + buf_size)) {
                         return false;
                     }
                     other_first += utf_size(*other_first, other_values_left);
                     this_first += buf_size;
                 }
-                return not *other_first;
+                return !*other_first;
             } else {
                 const size_type other_size = std::char_traits<Char>::length(s);
                 if (size() < other_size) {
@@ -1645,7 +1645,7 @@ namespace small {
             if (sv.empty()) {
                 return true;
             }
-            if constexpr (not is_same_utf_encoding_v<value_type, RhsChar>) {
+            if constexpr (!is_same_utf_encoding_v<value_type, RhsChar>) {
                 // Count code points in other
                 auto it_other = sv.begin();
                 size_type other_code_points = 0;
@@ -1696,7 +1696,7 @@ namespace small {
             if (empty()) {
                 return false;
             }
-            if constexpr (not is_same_utf_encoding_v<Char, value_type>) {
+            if constexpr (!is_same_utf_encoding_v<Char, value_type>) {
                 return *rbegin_codepoint() == c;
             } else {
                 return back() == c;
@@ -1821,7 +1821,7 @@ namespace small {
                 std::is_same_v<typename std::iterator_traits<InputIt>::iterator_category, std::input_iterator_tag>;
             using input_value_type = typename std::iterator_traits<InputIt>::iterator_category;
             constexpr bool input_is_same_size = sizeof(value_type) == sizeof(input_value_type);
-            if constexpr (is_input_iterator || not input_is_same_size) {
+            if constexpr (is_input_iterator || !input_is_same_size) {
                 iterator new_first = erase(first, last);
                 insert(new_first, first2, last2);
                 return *this;
@@ -1862,7 +1862,7 @@ namespace small {
         }
 
         /// \brief Replaces the part of the string with the range [cstr, cstr+count2)
-        template <typename Char, std::enable_if_t<not is_api_string_view_v<Char>, int> = 0>
+        template <typename Char, std::enable_if_t<!is_api_string_view_v<Char>, int> = 0>
         constexpr basic_string &replace(size_type pos, size_type count, const Char *cstr, size_type count2) {
             if (pos > size()) {
                 throw_exception<std::out_of_range>("string::replace: pos > size()");
@@ -1943,7 +1943,7 @@ namespace small {
             return replace(begin() + pos, begin() + pos + std::min(count, size() - pos), count2, ch);
         }
 
-        template <typename Char, std::enable_if_t<not is_api_string_view_v<Char>, int> = 0>
+        template <typename Char, std::enable_if_t<!is_api_string_view_v<Char>, int> = 0>
         constexpr basic_string &replace(codepoint_index pos, codepoint_index count, size_type count2, Char ch) {
             if (pos > size_codepoints()) {
                 throw_exception<std::out_of_range>("string::replace: pos > size_codepoints()");
@@ -1957,14 +1957,14 @@ namespace small {
         }
 
         /// \brief Replaces the part of the string with count2 copies of ch
-        template <typename Char, std::enable_if_t<not is_api_string_view_v<Char>, int> = 0>
+        template <typename Char, std::enable_if_t<!is_api_string_view_v<Char>, int> = 0>
         constexpr basic_string &replace(const_iterator first, const_iterator last, size_type count2, Char ch) {
             iterator new_first = erase(first, last);
             insert(new_first, count2, ch);
             return *this;
         }
 
-        template <typename Char, std::enable_if_t<not is_api_string_view_v<Char>, int> = 0>
+        template <typename Char, std::enable_if_t<!is_api_string_view_v<Char>, int> = 0>
         constexpr basic_string &replace(const_codepoint_iterator first, const_codepoint_iterator last, size_type count2,
                                         Char ch) {
             iterator first_code_unit = begin() + first.byte_index();
@@ -2253,7 +2253,7 @@ namespace small {
         /// - an empty substring is found at pos if and only if pos <= size()
         /// - for a non-empty substring, if pos >= size(), the function always returns npos
         /// \return Position of the first character of the found substring or npos if no such substring is found
-        template <typename Char, std::enable_if_t<not is_api_string_view_v<Char>, int> = 0>
+        template <typename Char, std::enable_if_t<!is_api_string_view_v<Char>, int> = 0>
         constexpr size_type find(Char ch, size_type pos = 0) const noexcept {
             return find(&ch, pos, 1);
         }
@@ -2357,7 +2357,7 @@ namespace small {
         ///         - Note that this is an offset from the start of the string, not the end
         ///         - If searching for an empty string, returns pos unless pos > size(), in which case returns size()
         ///         - if size() is zero, npos is always returned.
-        template <typename Char, std::enable_if_t<not is_api_string_view_v<Char>, int> = 0>
+        template <typename Char, std::enable_if_t<!is_api_string_view_v<Char>, int> = 0>
         constexpr size_type rfind(Char ch, size_type pos = npos) const noexcept {
             return rfind(&ch, pos, 1);
         }
@@ -2404,7 +2404,7 @@ namespace small {
         /// The search considers only the interval [pos, size()).
         /// If the character is not present in the interval, npos will be returned
         /// \return Position of the found character or npos if no such character is found
-        template <typename Char, std::enable_if_t<not is_api_string_view_v<Char>, int> = 0>
+        template <typename Char, std::enable_if_t<!is_api_string_view_v<Char>, int> = 0>
         constexpr size_type find_first_of(Char ch, size_type pos = 0) const noexcept {
             return find_first_of(&ch, pos, 1);
         }
@@ -2448,7 +2448,7 @@ namespace small {
         /// The search considers only the interval [pos, size()).
         /// If the character is not present in the interval, npos will be returned.
         /// \return Position of the found character or npos if no such character is found
-        template <typename Char, std::enable_if_t<not is_api_string_view_v<Char>, int> = 0>
+        template <typename Char, std::enable_if_t<!is_api_string_view_v<Char>, int> = 0>
         constexpr size_type find_first_not_of(Char ch, size_type pos = 0) const noexcept {
             return find_first_not_of(&ch, pos, 1);
         }
@@ -2491,7 +2491,7 @@ namespace small {
         /// The search considers only the interval [0, pos]
         /// If the character is not present in the interval, npos will be returned
         /// \return Position of the found character or npos if no such character is found.
-        template <typename Char, std::enable_if_t<not is_api_string_view_v<Char>, int> = 0>
+        template <typename Char, std::enable_if_t<!is_api_string_view_v<Char>, int> = 0>
         constexpr size_type find_last_of(Char ch, size_type pos = npos) const noexcept {
             return find_last_of(&ch, pos, 1);
         }
@@ -2536,7 +2536,7 @@ namespace small {
         /// The search considers only the interval [0, pos]
         /// If the character is not present in the interval, npos will be returned
         /// \return Position of the found character or npos if no such character is found.
-        template <typename Char, std::enable_if_t<not is_api_string_view_v<Char>, int> = 0>
+        template <typename Char, std::enable_if_t<!is_api_string_view_v<Char>, int> = 0>
         constexpr size_type find_last_not_of(Char ch, size_type pos = npos) const noexcept {
             return find_last_not_of(&ch, pos, 1);
         }
@@ -2958,7 +2958,7 @@ namespace small {
             // Fill the buffer
             value_type *fill_begin = (buffer_.begin() + size()).base();
             value_type *fill_end = fill_begin + code_unit_increment;
-            if constexpr (not is_same_utf_encoding_v<value_type, Char>) {
+            if constexpr (!is_same_utf_encoding_v<value_type, Char>) {
                 if (code_units_per_char == 1) {
                     std::fill(fill_begin, fill_end, ch);
                 } else {
@@ -3023,7 +3023,7 @@ namespace small {
                 const size_type mb_first_idx = multibyte_first_it.codepoint_index();
 
                 const bool range_contains_multibyte_code_units = multibyte_first_it.byte_index() < last_idx;
-                if (not range_contains_multibyte_code_units) {
+                if (!range_contains_multibyte_code_units) {
                     // If there are no multibytes, we just have one code point per code unit
                     return last_idx - first_idx;
                 } else {
@@ -3497,7 +3497,7 @@ namespace small {
     [[nodiscard]] constexpr bool is_malformed(
         const small::basic_string<CharT, N, Traits, WCharT, Allocator, CP_HINT_STEP, SizeType> &string) noexcept {
         using string_type = small::basic_string<CharT, N, Traits, WCharT, Allocator, CP_HINT_STEP, SizeType>;
-        if constexpr (not is_utf32_v<typename string_type::value_type>) {
+        if constexpr (!is_utf32_v<typename string_type::value_type>) {
             auto first = string.begin();
             auto last = string.end();
             while (first != last) {
@@ -3507,7 +3507,7 @@ namespace small {
                     uint8_t codepoint_size = utf_size(*first, 8);
                     ++first;
                     for (uint8_t i = 1; i < codepoint_size; ++i) {
-                        if (not is_utf_continuation(*first)) {
+                        if (!is_utf_continuation(*first)) {
                             return true;
                         }
                         ++first;

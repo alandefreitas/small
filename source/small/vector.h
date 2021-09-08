@@ -135,14 +135,14 @@ namespace small {
 
         /// \brief Final inline storage type
         /// This is the inline storage data type or (very rarely) just a pointer
-        typedef typename std::conditional<not inline_storage_empty, inline_storage_data_type, pointer>::type
+        typedef typename std::conditional<!inline_storage_empty, inline_storage_data_type, pointer>::type
             inline_storage_type;
 
         /// \brief An assumption about the size of a cache line
         /// \note Clang unfortunately defines __cpp_lib_hardware_interference_size without defining
         /// hardware_constructive_interference_size.
         static constexpr std::size_t cache_line_size =
-#if defined(__cpp_lib_hardware_interference_size) && not defined(__clang__)
+#if defined(__cpp_lib_hardware_interference_size) && !defined(__clang__)
             std::hardware_constructive_interference_size;
 #else
             2 * sizeof(std::max_align_t);
@@ -173,7 +173,7 @@ namespace small {
         /// \brief Destructor
         /// Deallocate memory if it's not inline
         ~vector() {
-            if constexpr (not std::is_trivially_destructible_v<T>) {
+            if constexpr (!std::is_trivially_destructible_v<T>) {
                 for (auto &t : *this) {
                     (&t)->~value_type();
                 }
@@ -214,7 +214,7 @@ namespace small {
 
         /// \brief Move constructor
         vector(vector &&rhs) noexcept(std::is_nothrow_move_constructible<value_type>::value) {
-            if constexpr (not std::is_empty_v<allocator_type>) {
+            if constexpr (!std::is_empty_v<allocator_type>) {
                 enable_allocator_type::set_allocator(std::move(rhs.alloc_));
             } else {
                 enable_allocator_type::set_allocator(enable_allocator_type::get_allocator());
@@ -463,7 +463,7 @@ namespace small {
                     // If it fails, destruct the old large values we haven't moved
                     auto rollback = make_guard([&] {
                         old_small.set_size(i);
-                        if constexpr (not std::is_trivially_destructible_v<T>) {
+                        if constexpr (!std::is_trivially_destructible_v<T>) {
                             for (; i < old_large.size(); ++i) {
                                 old_large[i].~value_type();
                             }
@@ -474,7 +474,7 @@ namespace small {
                     for (; i < old_large.size(); ++i) {
                         auto element_address = (old_small.begin() + i).base();
                         new (element_address) value_type(std::move(old_large[i]));
-                        if constexpr (not std::is_trivially_destructible_v<T>) {
+                        if constexpr (!std::is_trivially_destructible_v<T>) {
                             old_large[i].~value_type();
                         }
                     }
@@ -499,7 +499,7 @@ namespace small {
             {
                 // In case anything goes wrong
                 auto rollback = make_guard([&] {
-                    if constexpr (not std::is_trivially_destructible_v<T>) {
+                    if constexpr (!std::is_trivially_destructible_v<T>) {
                         // Destroy elements from old external
                         for (size_type kill = 0; kill < i; ++kill) {
                             old_external_buffer[kill].~value_type();
@@ -517,7 +517,7 @@ namespace small {
                 // Move elements from old internal to old external buffer
                 for (; i < old_internal.size(); ++i) {
                     new (&old_external_buffer[i]) value_type(std::move(old_internal[i]));
-                    if constexpr (not std::is_trivially_destructible_v<T>) {
+                    if constexpr (!std::is_trivially_destructible_v<T>) {
                         old_internal[i].~value_type();
                     }
                 }
@@ -589,7 +589,7 @@ namespace small {
 
         /// \brief Get small array max size
         [[nodiscard]] constexpr size_type max_size() const noexcept {
-            if constexpr (not should_use_heap) {
+            if constexpr (!should_use_heap) {
                 return static_cast<size_type>(num_inline_elements);
             } else {
                 constexpr size_type max_with_mask = size_type(clear_size_mask);
@@ -601,7 +601,7 @@ namespace small {
 
         /// \brief Get small array capacity (same as max_size())
         [[nodiscard]] constexpr size_type capacity() const noexcept {
-            if constexpr (not should_use_heap) {
+            if constexpr (!should_use_heap) {
                 return num_inline_elements;
             } else {
                 if (is_external()) {
@@ -834,7 +834,7 @@ namespace small {
                 return unconst(first);
             }
             if constexpr (is_relocatable_v<value_type> && using_std_allocator) {
-                if constexpr (not std::is_trivially_destructible_v<T>) {
+                if constexpr (!std::is_trivially_destructible_v<T>) {
                     for (auto it = first; it != last; ++it) {
                         it->~value_type();
                     }
@@ -997,7 +997,7 @@ namespace small {
             if (new_size > max_size()) {
                 throw_exception<std::length_error>("make_size: max_size exceeded in small_vector");
             }
-            if constexpr (not should_use_heap) {
+            if constexpr (!should_use_heap) {
                 return;
             }
 
@@ -1024,7 +1024,7 @@ namespace small {
             }
 
             // Destruct values we already copied
-            if constexpr (not std::is_trivially_destructible_v<T>) {
+            if constexpr (!std::is_trivially_destructible_v<T>) {
                 for (auto &val : *this) {
                     val.~value_type();
                 }
@@ -1195,7 +1195,7 @@ namespace small {
             std::move_backward(first, last, new_last);
 
             // Create elements backward
-            constexpr auto n_create = new_last - last;
+            const auto n_create = new_last - last;
             if (n_create > 0) {
                 T *const end = first - 1;
                 T *create_out = first + n_create - 1;
@@ -1233,7 +1233,7 @@ namespace small {
         void downsize(std::size_t n) {
             assert(n <= size());
             // Destroy extra elements
-            if constexpr (not std::is_trivially_destructible_v<T>) {
+            if constexpr (!std::is_trivially_destructible_v<T>) {
                 for (auto it = (begin() + n); it != end(); ++it) {
                     it->~value_type();
                 }

@@ -8,6 +8,11 @@
 #include <exception>
 #include <type_traits>
 #include <utility>
+#include "../traits/cpp_version.h"
+
+#ifndef cpp_exceptions
+#define SMALL_DISABLE_EXCEPTIONS
+#endif
 
 namespace small {
 

@@ -29,7 +29,7 @@ namespace small {
 #if !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32__)
         _BitScanReverse64(&value_log2, value);
 #else
-        _BitScanReverse(&value_log2, value);
+        _BitScanReverse(&value_log2, static_cast<unsigned long>(value));
 #endif
         return sizeof(T) * 8 - value_log2 - 1;
     }

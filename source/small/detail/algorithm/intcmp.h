@@ -6,6 +6,9 @@
 #define SMALL_INTCMP_H
 
 #include <type_traits>
+#include <cstddef>
+
+#include "../traits/cpp_version.h"
 
 /// \headerfile Compare numbers of different types
 
@@ -66,12 +69,12 @@ namespace small {
         template <size_t N, bool IsSigned> using custom_int_t = typename custom_int<N, IsSigned>::type;
 
         template <class T, class U> struct promoted_size {
-            static constexpr bool first_size = sizeof(T);
-            static constexpr bool second_size = sizeof(U);
+            static constexpr std::size_t first_size = sizeof(T);
+            static constexpr std::size_t second_size = sizeof(U);
             static constexpr bool first_is_signed = std::is_signed_v<T>;
             static constexpr bool second_is_signed = std::is_signed_v<U>;
-            static constexpr bool largest_size = std::max(first_size, second_size);
-            static constexpr bool smallest_size = std::min(first_size, second_size);
+            static constexpr std::size_t largest_size = std::max(first_size, second_size);
+            static constexpr std::size_t smallest_size = std::min(first_size, second_size);
             static constexpr bool largest_is_signed = first_size < second_size ? second_is_signed : first_is_signed;
             static constexpr bool smallest_is_signed = first_size < second_size ? first_is_signed : second_is_signed;
             static constexpr bool largest_needs_double =
@@ -79,7 +82,7 @@ namespace small {
             static constexpr size_t value = largest_size * (largest_needs_double ? 2 : 1);
         };
 
-        template <class T, class U> constexpr size_t promoted_size_v = promoted_size<T, U>::value;
+        template <class T, class U> constexpr std::size_t promoted_size_v = promoted_size<T, U>::value;
 
         /// \struct Promote an integer to the proper type capable of representing both integers
         template <class T, class U>

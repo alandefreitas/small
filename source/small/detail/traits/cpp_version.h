@@ -17,6 +17,9 @@
 #if __has_include(<version>)
 #include <version>
 #endif
+#if __has_include(<ciso646>)
+#include <ciso646>
+#endif
 #endif
 
 /*

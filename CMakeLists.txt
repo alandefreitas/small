@@ -36,6 +36,7 @@ set_compiler_booleans() # detect compiler
 option(SMALL_DEV_BUILD "Development build" ${MASTER_PROJECT})
 option(SMALL_BUILD_EXAMPLES "Build examples" ${SMALL_DEV_BUILD})
 option(SMALL_BUILD_TESTS "Build tests" ${SMALL_DEV_BUILD})
+option(SMALL_BUILD_TESTS_WITH_PCH "Build tests with precompiled headers" ${SMALL_DEV_BUILD})
 option(SMALL_BUILD_INSTALLER "Build installer target" ${SMALL_DEV_BUILD})
 option(SMALL_BUILD_PACKAGE "Build package" ${SMALL_DEV_BUILD})
 

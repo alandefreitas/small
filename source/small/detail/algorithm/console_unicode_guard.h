@@ -12,6 +12,8 @@
 /// - the terminal doesn't currently support unicode
 /// It might also need to temporarily change the console font if the input string includes large code points
 
+#include <iostream>
+
 #if defined(_WIN32) &&  __has_include(<Windows.h>)
 #include <Windows.h>
 #undef small

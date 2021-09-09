@@ -9,6 +9,7 @@
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
+#include <limits>
 #include <new>
 #include <ratio>
 
@@ -730,7 +731,6 @@ namespace small {
                     return *(data_.heap() + old_size);
                 }
             }
-
         }
 
         /// \brief Remove element from end of small array
@@ -750,9 +750,7 @@ namespace small {
         }
 
         /// \brief Copy element to a position in small array
-        constexpr iterator insert(const_iterator position, const value_type &x) {
-            return insert(position, 1, x);
-        }
+        constexpr iterator insert(const_iterator position, const value_type &x) { return insert(position, 1, x); }
 
         /// \brief Move element to a position in small array
         constexpr iterator insert(const_iterator position, value_type &&x) {
@@ -824,9 +822,7 @@ namespace small {
         }
 
         /// \brief Erase element at a position in small array
-        constexpr iterator erase(const_iterator position) {
-            return erase(position, std::next(position));
-        }
+        constexpr iterator erase(const_iterator position) { return erase(position, std::next(position)); }
 
         /// \brief Erase range of elements in the small array
         constexpr iterator erase(const_iterator first, const_iterator last) {
@@ -1019,7 +1015,8 @@ namespace small {
                                                                               new_capacity);
                         });
                         if constexpr (InsertVersion::value) {
-                            // move the begin()/end() range to the new_heap_ptr/new_emplaced_size range and insert the new element
+                            // move the begin()/end() range to the new_heap_ptr/new_emplaced_size range and insert the
+                            // new element
                             this->move_to_uninitialized_emplace(begin().base(), end().base(), new_heap_ptr,
                                                                 new_emplaced_size,
                                                                 std::forward<EmplaceFunc>(emplace_func));
@@ -1046,7 +1043,6 @@ namespace small {
                     this->set_capacity(new_capacity);
                 }
             }
-
         }
 
         /// \brief Move from begin/end range to uninitialized range out/pos and call the emplace function at pos
@@ -1124,7 +1120,10 @@ namespace small {
                 return capacity() * 2;
             }
             // Apply usual growth factor
-            return std::min((static_cast<size_type>(GrowthFactor::num) * capacity()) / static_cast<size_type>(GrowthFactor::den) + 1, max_size());
+            return std::min((static_cast<size_type>(GrowthFactor::num) * capacity()) /
+                                    static_cast<size_type>(GrowthFactor::den) +
+                                1,
+                            max_size());
         }
 
         /// \brief Copy some elements as initialized and some as uninitialized
@@ -1142,16 +1141,17 @@ namespace small {
             }
         }
 
-#if defined(__GNUC__) && !defined(__clang__)
-// Relocatable types is such a delicate trick that some compilers even have warnings against that
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wclass-memaccess"
-#endif
+        /// \brief A std::memcpy implementation that ensures the values are moved byte by byte
+        /// This is what std::memcpy usually does, but some compilers implement it differently
+        static void byte_copy(void *destination, void *source, size_t n) {
+            char *char_source = (char *)source;
+            char *char_destination = (char *)destination;
+            std::copy(char_source, char_source + n, char_destination);
+        }
 
         /// \brief Move elements to the right a construct at the new location
         template <class Construct, class T2 = value_type, std::enable_if_t<!std::is_trivially_copyable_v<T2>, int> = 0>
-        void shift_right_and_construct(T *const first, T *const last, T *const new_last,
-                                       Construct &&create) {
+        void shift_right_and_construct(T *const first, T *const last, T *const new_last, Construct &&create) {
             // Input is same as output
             if (last == new_last) {
                 return;
@@ -1176,9 +1176,10 @@ namespace small {
                 while (in != first && out > last) {
                     // Out must be decremented before an exception can be thrown so that
                     // the rollback guard knows where to start.
-                    --out; --in;
+                    --out;
+                    --in;
                     if constexpr (is_relocatable_v<value_type> && using_std_allocator) {
-                        std::memcpy(out, in, sizeof(value_type));
+                        byte_copy(out, in, sizeof(value_type));
                     } else {
                         new (out) T(std::move(*in));
                     }
@@ -1186,9 +1187,10 @@ namespace small {
 
                 // Move elements from "in" to initialized "out"
                 while (in != first) {
-                    --out; --in;
+                    --out;
+                    --in;
                     if constexpr (is_relocatable_v<value_type> && using_std_allocator) {
-                        std::memcpy(out, in, sizeof(value_type));
+                        byte_copy(out, in, sizeof(value_type));
                     } else {
                         *out = std::move(*in);
                     }
@@ -1213,10 +1215,6 @@ namespace small {
                 rollback.dismiss();
             }
         }
-
-#if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic pop
-#endif
 
         /// \brief Shirt the range [first, last] to [new_first, new_last] and fill the range
         /// [first, new_first] with the `create` function

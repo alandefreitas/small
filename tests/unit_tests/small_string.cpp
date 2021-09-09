@@ -1019,11 +1019,11 @@ TEST_CASE("String") {
                 REQUIRE_FALSE(d.empty());
                 REQUIRE(d.size_codepoints() == 6);
                 REQUIRE(d.size() == 15);
-                REQUIRE(d == "1😀2😀3😀");
+                REQUIRE(d == u8"1😀2😀3😀");
                 REQUIRE(d == U"1😀2😀3😀");
                 REQUIRE(dv.size_codepoints() == 6);
                 REQUIRE(dv.size() == 15);
-                REQUIRE(dv == "1😀2😀3😀");
+                REQUIRE(dv == u8"1😀2😀3😀");
                 REQUIRE(dv == U"1😀2😀3😀");
                 REQUIRE(d == dv);
             }
@@ -2510,7 +2510,7 @@ TEST_CASE("String") {
 
             if constexpr (not is_windows()) {
                 SECTION("UTF32 rhs") {
-                    string a = "😐🙂😀🙂😀😐";
+                    string a = u8"😐🙂😀🙂😀😐";
                     SECTION("Starts not-empty") {
                         std::u32string_view b = U"😐🙂😀";
                         REQUIRE(a.starts_with(b));

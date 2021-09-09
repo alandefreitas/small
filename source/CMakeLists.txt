@@ -35,7 +35,7 @@ add_library(small
         small/set.h
         small/string.h
         small/vector.h
-        )
+        small/detail/algorithm/console_unicode_guard.h)
 
 # Target aliases
 # This emulates find_package when add_subdirectory has been used

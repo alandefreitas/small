@@ -38,6 +38,11 @@ macro(add_small_test TEST_NAME)
         # Link with catch-main
         target_link_libraries(ut_${TEST_NAME} PUBLIC ${LINK_LIBS} catch_main)
 
+        # Definitions for PHC
+        if (SMALL_BUILD_TESTS_WITH_PCH)
+            target_compile_definitions(ut_${TEST_NAME} PRIVATE SMALL_BUILD_TESTS_WITH_PCH)
+        endif ()
+
         # Enable UTF-8 on windows
         target_msvc_compile_options(ut_${TEST_NAME} INTERFACE "/utf-8")
 
@@ -50,7 +55,114 @@ macro(add_small_test TEST_NAME)
 endmacro()
 
 # Main tests
-add_small_test(small_vector small::small)
-add_small_test(small_string small::small)
+add_small_test(ptr_wrapper small::small)
+add_small_test(pod_small_vector small::small)
+add_small_test(string_small_vector small::small)
+add_small_test(custom_small_vector small::small)
+
+add_small_test(unicode_functions small::small)
+add_small_test(small_string_make small::small)
+add_small_test(small_string_access small::small)
+add_small_test(small_string_modify small::small)
+add_small_test(small_string_modify_algorithms small::small)
+add_small_test(small_string_const_algorithms small::small)
+add_small_test(small_string_non_member small::small)
+
 add_small_test(small_map small::small)
 add_small_test(small_set small::small)
+
+if (SMALL_BUILD_TESTS_WITH_PCH)
+    foreach (vector_target ut_ptr_wrapper ut_pod_small_vector ut_string_small_vector ut_custom_small_vector)
+        target_precompile_headers(${vector_target}
+                PRIVATE
+                # C++
+                <algorithm>
+                <array>
+                <set>
+                <string>
+                <string_view>
+                <optional>
+
+                # C++ headers for vector
+                <cassert>
+                <cstddef>
+                <cstdlib>
+                <cstring>
+                <limits>
+                <new>
+                <ratio>
+
+                # External
+                <catch2/catch.hpp>
+
+                # Small vector
+                <small/detail/exception/scope_guard.h>
+                <small/detail/exception/throw.h>
+                <small/detail/iterator/iterator_type_traits.h>
+                <small/detail/iterator/pointer_wrapper.h>
+                <small/detail/traits/default_inline_storage.h>
+                <small/detail/traits/enable_allocator_from_this.h>
+                <small/detail/traits/is_range.h>
+                <small/detail/traits/is_relocatable.h>
+                <small/vector.h>
+                )
+    endforeach ()
+
+    # Use small::string in custom element so that it becomes relocatable
+    target_precompile_headers(ut_custom_small_vector
+            PRIVATE
+            <small/string.h>
+            )
+
+    foreach (string_target
+            ut_unicode_functions
+            ut_small_string_make
+            ut_small_string_access
+            ut_small_string_modify
+            ut_small_string_modify_algorithms
+            ut_small_string_const_algorithms
+            ut_small_string_non_member)
+        target_precompile_headers(${string_target}
+            PRIVATE
+            <algorithm>
+            <numeric>
+            <set>
+            <sstream>
+            <string>
+            <string_view>
+            <unordered_set>
+
+            <catch2/catch.hpp>
+
+            <small/string.h>
+            <small/vector.h>
+            )
+    endforeach()
+
+    target_precompile_headers(ut_small_set
+            PRIVATE
+            <algorithm>
+            <array>
+            <set>
+            <string>
+            <string_view>
+
+            <catch2/catch.hpp>
+
+            <small/set.h>
+            )
+
+    target_precompile_headers(ut_small_map
+            PRIVATE
+            <algorithm>
+            <array>
+            <set>
+            <string>
+            <string_view>
+
+            <catch2/catch.hpp>
+
+            <small/map.h>
+            )
+
+endif ()

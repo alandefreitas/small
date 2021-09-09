@@ -1,3 +1,4 @@
+#ifndef SMALL_BUILD_TESTS_WITH_PCH
 #include <algorithm>
 #include <array>
 #include <set>
@@ -7,8 +8,7 @@
 #include <catch2/catch.hpp>
 
 #include <small/map.h>
-#include <small/string.h>
-#include <small/vector.h>
+#endif
 
 TEST_CASE("Small Map") {
     using namespace small;

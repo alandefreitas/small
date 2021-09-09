@@ -1,3 +1,4 @@
+// C++
 #include <algorithm>
 #include <array>
 #include <set>
@@ -5,20 +6,24 @@
 #include <string_view>
 #include <optional>
 
+// External
 #include <catch2/catch.hpp>
 
+// Small
 #include <small/map.h>
-#include <small/string.h>
+#include <small/string.h> // NOLINT(modernize-deprecated-headers)
 #include <small/vector.h>
 
 // A relocatable custom type
 struct custom_type {
     enum class custom_enum { even, odd };
-    custom_type() {} // NOLINT(modernize-use-equals-default)
+    custom_type() {} // NOLINT(modernize-use-equals-default,cppcoreguidelines-pro-type-member-init)
     custom_type(const std::string &v) // NOLINT(google-explicit-constructor)
         : type_(v.size() & 1 ? custom_enum::even : custom_enum::odd), name_(v), url_("https://" + v),
-          version_(v.size() < 4 ? std::optional<int>(std::nullopt) : std::optional<int>(v.size())), tag_(v.substr(2)),
-          system_(v.substr(0, 2)), raw_(v) {}
+          version_(v.size() < 4 ? std::optional<int>(std::nullopt) : std::optional<int>(static_cast<int>(v.size()))),
+          tag_(v.substr(2)),
+          system_(v.substr(0, 2)),
+          raw_(v) {}
     custom_type(const char *v) : custom_type(std::string(v)) {} // NOLINT(google-explicit-constructor)
     custom_enum type_;
     std::string name_;

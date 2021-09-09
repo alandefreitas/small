@@ -787,7 +787,8 @@ TEST_CASE("Vector") {
             REQUIRE(equal_il(a, {"one", "two", "three", "four"}));
 
             // NOLINTNEXTLINE(performance-move-const-arg)
-            a.push_back(std::move(std::string("five")));
+            std::string tmp2 = "five";
+            a.push_back(std::move(tmp2));
             REQUIRE(a.back() == "five");
             REQUIRE(a.size() == 5);
             REQUIRE(a.max_size() > 5);

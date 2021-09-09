@@ -324,7 +324,7 @@ namespace small {
             enable_allocator_type::set_allocator(alloc);
             make_size(n);
             assert(size() == 0);
-            this->increment_size(n);
+            this->increment_internal_size(n);
             {
                 auto rollback = make_guard([&] { free_heap(); });
                 populate_mem_forward(data(), n, std::forward<InitFunc>(func));
@@ -373,14 +373,14 @@ namespace small {
             // Handle inline vector
             size_type distance = std::distance(first, last);
             if (distance <= num_inline_elements) {
-                this->increment_size(distance);
+                this->increment_internal_size(distance);
                 populate_mem_forward(data_.buffer(), distance, [&](void *p) { new (p) value_type(*first++); });
                 return;
             }
 
             // Handle external vector
             make_size(distance);
-            this->increment_size(distance);
+            this->increment_internal_size(distance);
             {
                 auto rollback = make_guard([&] { free_heap(); });
                 populate_mem_forward(data_.heap(), distance, [&](void *p) { new (p) value_type(*first++); });
@@ -708,7 +708,7 @@ namespace small {
             // Handle inline vector
             if (size_ < num_inline_elements) {
                 new (data_.buffer() + size_) value_type(std::forward<Args>(args)...);
-                this->increment_size(1);
+                this->increment_internal_size(1);
                 return *(data_.buffer() + size_);
             } else {
                 if constexpr (!should_use_heap) {
@@ -726,7 +726,7 @@ namespace small {
                         // External vector
                         new (data_.heap() + old_size) value_type(std::forward<Args>(args)...);
                     }
-                    this->increment_size(1);
+                    this->increment_internal_size(1);
                     return *(data_.heap() + old_size);
                 }
             }
@@ -769,11 +769,11 @@ namespace small {
             if (must_grow) {
                 make_size(
                     old_size + 1, [&x](void *ptr) { new (ptr) value_type(std::move(x)); }, offset);
-                this->increment_size(1);
+                this->increment_internal_size(1);
             } else {
                 shift_right_and_construct(data() + offset, data() + old_size, data() + old_size + 1,
                                           [&]() mutable -> value_type && { return std::move(x); });
-                this->increment_size(1);
+                this->increment_internal_size(1);
             }
             return begin() + offset;
         }
@@ -785,7 +785,7 @@ namespace small {
             make_size(old_size + n);
             shift_right_and_construct(data() + offset, data() + old_size, data() + old_size + n,
                                       [&]() mutable -> value_type const & { return x; });
-            this->increment_size(n);
+            this->increment_internal_size(n);
             return begin() + offset;
         }
 
@@ -814,7 +814,7 @@ namespace small {
             make_size(old_size + distance);
             shift_right_and_construct(data() + offset, data() + old_size, data() + old_size + distance,
                                       [&, in = last]() mutable -> it_ref { return *--in; });
-            this->increment_size(distance);
+            this->increment_internal_size(distance);
             return begin() + offset;
         }
 
@@ -872,7 +872,7 @@ namespace small {
             auto extra = n - size();
             make_size(n);
             populate_mem_forward((begin() + size()).base(), extra, [&](void *p) { new (p) value_type(); });
-            this->increment_size(extra);
+            this->increment_internal_size(extra);
         }
 
         /// \brief Resize and fill the small array
@@ -884,7 +884,7 @@ namespace small {
             auto extra = n - size();
             make_size(n);
             populate_mem_forward((begin() + size()).base(), extra, [&](void *p) { new (p) value_type(v); });
-            this->increment_size(extra);
+            this->increment_internal_size(extra);
         }
 
       private:
@@ -1171,13 +1171,21 @@ namespace small {
                     // Out must be decremented before an exception can be thrown so that
                     // the rollback guard knows where to start.
                     --out; --in;
-                    new (out) T(std::move(*in));
+                    if constexpr (is_relocatable_v<value_type> && using_std_allocator) {
+                        std::memcpy(out, in, sizeof(value_type));
+                    } else {
+                        new (out) T(std::move(*in));
+                    }
                 }
 
                 // Move elements from "in" to initialized "out"
                 while (in != first) {
                     --out; --in;
-                    *out = std::move(*in);
+                    if constexpr (is_relocatable_v<value_type> && using_std_allocator) {
+                        std::memcpy(out, in, sizeof(value_type));
+                    } else {
+                        *out = std::move(*in);
+                    }
                 }
 
                 // Construct elements in uninitialized "out"
@@ -1189,7 +1197,11 @@ namespace small {
                 // Construct elements in initialized "out"
                 while (out != first) {
                     --out;
-                    *out = create();
+                    if constexpr (is_relocatable_v<value_type> && using_std_allocator) {
+                        new (out) T(create());
+                    } else {
+                        *out = create();
+                    }
                 }
 
                 rollback.dismiss();
@@ -1232,7 +1244,7 @@ namespace small {
         }
 
         /// \brief Increment the internal size
-        void increment_size(std::size_t n) {
+        void increment_internal_size(std::size_t n) {
             assert(get_unmasked_size() + n <= max_size());
             size_ += size_type(n);
         }

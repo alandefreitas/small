@@ -3,6 +3,7 @@
 #include <set>
 #include <string>
 #include <string_view>
+#include <optional>
 
 #include <catch2/catch.hpp>
 
@@ -13,19 +14,19 @@
 // A relocatable custom type
 struct custom_type {
     enum class custom_enum { even, odd };
-    custom_type() {}
-    custom_type(const std::string &v)
+    custom_type() {} // NOLINT(modernize-use-equals-default)
+    custom_type(const std::string &v) // NOLINT(google-explicit-constructor)
         : type_(v.size() & 1 ? custom_enum::even : custom_enum::odd), name_(v), url_("https://" + v),
           version_(v.size() < 4 ? std::optional<int>(std::nullopt) : std::optional<int>(v.size())), tag_(v.substr(2)),
           system_(v.substr(0, 2)), raw_(v) {}
-    custom_type(const char *v) : custom_type(std::string(v)) {}
+    custom_type(const char *v) : custom_type(std::string(v)) {} // NOLINT(google-explicit-constructor)
     custom_enum type_;
     std::string name_;
     std::string url_;
-    std::optional<int> version_;
-    std::optional<std::string> tag_;
-    std::optional<std::string> system_;
-    std::optional<std::string> raw_;
+    std::optional<int> version_{std::nullopt};
+    std::optional<std::string> tag_{std::nullopt};
+    std::optional<std::string> system_{std::nullopt};
+    std::optional<std::string> raw_{std::nullopt};
 };
 
 // Allow comparing with std::string to make tests easier

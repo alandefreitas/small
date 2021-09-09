@@ -2757,7 +2757,9 @@ namespace small {
             // 2) Then stores each character from the resulting sequence (the contents of str plus padding) to the
             // output stream os as if by calling os.rdbuf()->sputn(seq, n), where n=std::max(os.width(), str.size()) 3)
             // Finally, calls os.width(0) to cancel the effects of std::setw, if any
-            return os << str.c_str();
+            console_unicode_guard g(os, str.size(), str.size_codepoints(), (str.size() - str.size_codepoints()) > 2);
+            os << str.c_str();
+            return os;
         }
 
         /// \brief Input stream operation

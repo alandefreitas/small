@@ -8,6 +8,7 @@
 #include <ostream>
 #include <string_view>
 
+#include "../algorithm/console_unicode_guard.h"
 #include "../algorithm/utf.h"
 #include "../container/lookup_table_view.h"
 #include "../exception/throw.h"
@@ -94,12 +95,8 @@ namespace small {
                     if (impl.size() == 1) {
                         os << impl.container_->operator[](impl.byte_index_);
                     } else {
-#ifdef WIN32
-                        // Get reference to element and convert from utf8 to wide type
-                        os << static_cast<wide_value_type>(impl);
-#else
+                        console_unicode_guard g(os, impl.size(), 1);
                         os << std::string_view(impl.container_->data() + impl.byte_index_, impl.size());
-#endif
                     }
                 } else {
                     // If the underlying container is utf32, just cast the code unit at that position

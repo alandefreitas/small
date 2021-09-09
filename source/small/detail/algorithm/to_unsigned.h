@@ -6,6 +6,7 @@
 #define SMALL_TO_UNSIGNED_H
 
 #include <cassert>
+#include <limits>
 #include "../traits/is_range.h"
 
 namespace small {

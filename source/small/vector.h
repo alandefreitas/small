@@ -1142,6 +1142,12 @@ namespace small {
             }
         }
 
+#ifdef __GNUC__
+// Relocatable types is such a delicate trick that some compilers even have warnings against that
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wclass-memaccess"
+#endif
+
         /// \brief Move elements to the right a construct at the new location
         template <class Construct, class T2 = value_type, std::enable_if_t<!std::is_trivially_copyable_v<T2>, int> = 0>
         void shift_right_and_construct(T *const first, T *const last, T *const new_last,
@@ -1207,6 +1213,10 @@ namespace small {
                 rollback.dismiss();
             }
         }
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 
         /// \brief Shirt the range [first, last] to [new_first, new_last] and fill the range
         /// [first, new_first] with the `create` function

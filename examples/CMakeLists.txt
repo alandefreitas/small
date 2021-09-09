@@ -9,3 +9,14 @@ target_link_libraries(unicode_strings-example small)
 
 add_executable(associative-example associative.cpp)
 target_link_libraries(associative-example small)
+
+if (SMALL_BUILD_TESTS)
+    add_test(NAME quickstart-example-as-test
+            COMMAND quickstart-example)
+    add_test(NAME default_inline_storage-example-as-test
+            COMMAND default_inline_storage-example)
+    add_test(NAME unicode_strings-example-as-test
+            COMMAND unicode_strings-example)
+    add_test(NAME associative-example-as-test
+            COMMAND associative-example)
+endif()

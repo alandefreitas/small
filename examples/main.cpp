@@ -35,11 +35,9 @@ int main() {
     print(s2); // H e l l o   w o r l d !
 
     // UTF8 String from larger UTF-32 string
-    small::string s3 = U"This works too! 😀";
-    std::cout << "ugly: ";
-    print(s3); // ugly: T h i s   w o r k s   t o o !   � � � �
-    std::cout << "beautiful: ";
-    print_codepoints(s3); // beautiful: T h i s   w o r k s   t o o !   😀
+    small::string s3 = U"This works too! 😀  é!";
+    std::cout << s3 << '\n'; // T h i s   w o r k s   t o o !   😀
+    print_codepoints(s3); // T|h|i|s| |w|o|r|k|s| |t|o|o|!| |😀| | |é|!|
 
     // Associative containers
     small::set<int> a1 = {2,1,5,4,3};
@@ -98,7 +96,7 @@ void print(R&& v) {
 
 void print_codepoints(const small::string& v) {
     for (auto it = v.begin_codepoint(); it != v.end_codepoint(); ++it) {
-        std::cout << *it << ' ';
+        std::cout << *it << '|';
     }
     std::cout << "\n";
 }

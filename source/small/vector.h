@@ -1142,7 +1142,7 @@ namespace small {
             }
         }
 
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__clang__)
 // Relocatable types is such a delicate trick that some compilers even have warnings against that
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wclass-memaccess"
@@ -1214,7 +1214,7 @@ namespace small {
             }
         }
 
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic pop
 #endif
 

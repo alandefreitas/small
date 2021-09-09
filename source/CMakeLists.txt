@@ -84,6 +84,6 @@ if (SMALL_BUILD_INSTALLER)
     install(EXPORT small-targets
             FILE small-targets.cmake
             NAMESPACE small::
-            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Small
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/small
             )
 endif()

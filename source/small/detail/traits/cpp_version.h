@@ -7,12 +7,13 @@
 
 /// \headerfile Feature testing support for C++17, C++14, C++11, ...
 /// Whenever the C++20 feature testing macros are unavailable, we recur to inferences
-/// according to the compiler version and the current C++ version.
+/// according to the compiler version, the current C++ version, and the stdlib version.
 /// \see https://en.cppreference.com/w/cpp/feature_test
 
 /*
  * General
  */
+/// \section Identify compiler version and exception support
 #ifndef __cplusplus
 #error "__cplusplus macro undefined"
 #else
@@ -183,32 +184,14 @@
 #ifdef __cpp_constexpr
 #define cpp_constexpr __cpp_constexpr
 #endif
-#elif cplusplus >= 200704L
-#define cpp_constexpr 200704L
-#endif
-
-#ifdef cpp_feature_testing
-#ifdef __cpp_constexpr
-#define cpp_constexpr __cpp_constexpr
-#endif
-#elif cplusplus >= 201304L
-#define cpp_constexpr 201304L
-#endif
-
-#ifdef cpp_feature_testing
-#ifdef __cpp_constexpr
-#define cpp_constexpr __cpp_constexpr
-#endif
-#elif cplusplus >= 201603L
-#define cpp_constexpr 201603L
-#endif
-
-#ifdef cpp_feature_testing
-#ifdef __cpp_constexpr
-#define cpp_constexpr __cpp_constexpr
-#endif
 #elif cplusplus >= 201907L
 #define cpp_constexpr 201907L
+#elif cplusplus >= 201603L
+#define cpp_constexpr 201603L
+#elif cplusplus >= 201304L
+#define cpp_constexpr 201304L
+#elif cplusplus >= 200704L
+#define cpp_constexpr 200704L
 #endif
 
 #ifdef cpp_feature_testing
@@ -455,16 +438,10 @@
 #ifdef __cpp_nontype_template_args
 #define cpp_nontype_template_args __cpp_nontype_template_args
 #endif
-#elif cplusplus >= 201411L
-#define cpp_nontype_template_args 201411L
-#endif
-
-#ifdef cpp_feature_testing
-#ifdef __cpp_nontype_template_args
-#define cpp_nontype_template_args __cpp_nontype_template_args
-#endif
 #elif cplusplus >= 201911L
 #define cpp_nontype_template_args 201911L
+#elif cplusplus >= 201411L
+#define cpp_nontype_template_args 201411L
 #endif
 
 #ifdef cpp_feature_testing
@@ -551,16 +528,10 @@
 #ifdef __cpp_static_assert
 #define cpp_static_assert __cpp_static_assert
 #endif
-#elif cplusplus >= 200410L
-#define cpp_static_assert 200410L
-#endif
-
-#ifdef cpp_feature_testing
-#ifdef __cpp_static_assert
-#define cpp_static_assert __cpp_static_assert
-#endif
 #elif cplusplus >= 201411L
 #define cpp_static_assert 201411L
+#elif cplusplus >= 200410L
+#define cpp_static_assert 200410L
 #endif
 
 #ifdef cpp_feature_testing

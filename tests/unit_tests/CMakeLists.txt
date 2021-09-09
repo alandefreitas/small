@@ -38,9 +38,11 @@ macro(add_small_test TEST_NAME)
         # Link with catch-main
         target_link_libraries(ut_${TEST_NAME} PUBLIC ${LINK_LIBS} catch_main)
 
+        # Enable UTF-8 on windows
+        target_msvc_compile_options(ut_${TEST_NAME} INTERFACE "/utf-8")
+
         # Register with ctest
         catch_discover_tests(ut_${TEST_NAME})
-
     else ()
         # Library not found. Throw.
         message(FATAL_ERROR "${LINK_LIBS} does not exist")

@@ -213,7 +213,7 @@ Most applications have many small lists and sets of elements. These containers a
 that contain just a few elements. Small containers usually try to use the stack before dynamically allocating memory and try
 to represent associative containers with stack arrays, unless these sets are very large.
 
-Although many compilers support small string optimization (SSO) already, this library will ensure all strings support SOO, custom inline sizes, and unicode.    
+Although many compilers support small string optimization (SSO) already, this library will ensure all strings support SOO, custom inline sizes, relocation, and unicode.    
 
 ## Vectors
 

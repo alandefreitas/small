@@ -26,7 +26,7 @@ namespace small {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
-        console_unicode_guard(std::ostream &os, size_t size, size_t codepoints, bool above_10000 = true) {
+        inline console_unicode_guard(std::ostream &os, size_t size, size_t codepoints, bool above_10000 = true) {
 #if defined(_WIN32) &&  __has_include(<Windows.h>)
             const bool is_console = &os == reinterpret_cast<std::ostream*>(&std::cout) || &os == reinterpret_cast<std::ostream*>(&std::wcout);
             const bool requires_unicode = size != codepoints;
@@ -68,8 +68,7 @@ namespace small {
 #pragma GCC diagnostic pop
 #endif
 
-
-        ~console_unicode_guard() {
+        inline ~console_unicode_guard() {
 #if defined(_WIN32) &&  __has_include(<Windows.h>)
             if (requires_another_console_cp) {
                 SetConsoleOutputCP(prev_console_output_cp);

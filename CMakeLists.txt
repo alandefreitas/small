@@ -133,23 +133,23 @@ if (SMALL_BUILD_INSTALLER)
     message(STATUS "${CMAKE_PROJECT_NAME} install directory: ${CMAKE_INSTALL_PREFIX}")
     message(STATUS "${CMAKE_PROJECT_NAME} library install directory: ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 
-    # Create smallConfigVersion.cmake and install it
+    # Create small-config-version.cmake and install it
     if (CMAKE_PROJECT_VERSION VERSION_LESS 1.0.0)
         set(compatibility_mode SameMajorVersion)
     else()
         set(compatibility_mode SameMinorVersion)
     endif()
     write_basic_package_version_file(
-            smallConfigVersion.cmake
+            small-config-version.cmake
             VERSION ${PACKAGE_VERSION}
             COMPATIBILITY ${compatibility_mode}
     )
 
-    # Install the file smallConfigVersion.cmake
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/smallConfigVersion.cmake
+    # Install the file small-config-version.cmake
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/small-config-version.cmake
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/small)
 
-    # Create smallConfig.cmake from smallConfig.cmake.in
+    # Create small-config.cmake from small-config.cmake.in
     configure_package_config_file(
             ${CMAKE_CURRENT_SOURCE_DIR}/small-config.cmake.in # input file
             ${CMAKE_CURRENT_BINARY_DIR}/small-config.cmake    # output file

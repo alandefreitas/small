@@ -225,6 +225,31 @@ Most applications have many small lists and sets of elements. These containers a
 that contain just a few elements. Small containers usually try to use the stack before dynamically allocating memory and try
 to represent associative containers with stack arrays, unless these sets are very large.
 
+The following containers are available:
+
+- `small::vector`
+- `small::max_size_vector`
+- `small::string`
+- `small::set`
+- `small::max_size_set`
+- `small::multiset`
+- `small::max_size_multiset`
+- `small::unordered_set`
+- `small::max_size_unordered_set`
+- `small::unordered_multiset`
+- `small::max_size_unordered_multiset`
+- `small::map`
+- `small::max_size_map`
+- `small::multimap`
+- `small::max_size_multimap`
+- `small::unordered_map`
+- `small::max_size_unordered_map`
+- `small::unordered_multimap`
+- `small::max_size_unordered_multimap`
+- `small::stack`
+- `small::queue`
+- `small::priority_queue`
+
 Although many compilers support small string optimization (SSO) already, this library will ensure all strings support SOO, custom inline sizes, relocation, and unicode.    
 
 ## Vectors

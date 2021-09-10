@@ -288,7 +288,7 @@ However, when strings are representing text, if there's one thing that makes the
 --8<-- "examples/unicode_strings.cpp"
 ```
 
-The problem of supporting UTF8 is easier to explain than it is to solve. Programming languages tend to solve this problem by (1) forbidding byte or substring access, and/or (2) allowing only access to code points with `O(n)` cost, where `n` is the number of code points. Because anything that forbids byte access would be incompatible with a C++ string, we allow direct byte access, and strings are allowed to be in malformed, which we can check with `small::is_malformed`. 
+The problem of supporting UTF8 is easier to explain than it is to solve. Programming languages tend to solve this problem by (1) forbidding byte or substring access, and/or (2) allowing only access to code points with `O(n)` cost, where `n` is the number of code points. Because anything that forbids byte access would be incompatible with a C++ string, we allow direct byte access, and strings are allowed to be malformed unicode, which we can check with `small::is_malformed`. 
 
 All capacity and access functions contain extra overloads that accept codepoint indexes, defined as a strong type, rather than byte indexes. By using these functions, one can ensure the string is never malformed. It's up to the user to decide whether these access functions are useful and worth it in a particular application.  
 

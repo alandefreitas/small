@@ -6,10 +6,9 @@
 
 <br/>
 
-- Container implementations often include a number of optimizations for the case when they are small. 
-- This is useful since most applications contain a number of auxiliary small containers for each heavy container.
+- Applications usually contain many auxiliary small data structures for each large collection of values. Container implementations often include several optimizations for the case when they are small.
 - These optimizations cannot usually make it to the STL because of ABI compatibility issues. Users might need to reimplement these containers or rely on frameworks that include these implementations.
-- Depending on large library collections for simple containers might impose a cost on the user that's higher than necessary and hinder the evolution of these containers.
+- Depending on large library collections for simple containers might impose a cost on the user that's higher than necessary and hinder collaboration on the evolution of these containers.
 - This library includes independent implementations of the main STL containers optimized for the case when they are small.
 
 <br/>
@@ -242,7 +241,7 @@ This small vector implementation includes:
 - Consider the cache line size in allocations
 - Heap allocations can be disabled with `small::max_size_vector`
 
-When there are fewer elements than a given threshold, the elements are kept in a stack buffer for small vectors. Otherwise, the vector works as usual. However, if you are 100% sure you will never need more than `N` elements, you can use a `max_size_vector`, where elements  are always inline. 
+When there are fewer elements than a given threshold, the elements are kept in a stack buffer for small vectors. Otherwise, the vector works as usual. However, if you are 100% sure you will never need more than `N` elements, you can use a `max_size_vector`, where elements are always inline. 
 
 The default number of elements in a small vector is usually the number of elements we can already fit inline in a vector. For larger data types, the `default_inline_storage` trait can be used as an extension point where one can define how many elements a small vector of that type should contain by default. 
 
@@ -264,7 +263,7 @@ However, when strings are representing text, if there's one thing that makes the
 --8<-- "examples/unicode_strings.cpp"
 ```
 
-The problem of supporting UTF8 is easier to explain than it is to solve. Programming languages tend to solve this problem by (1) forbidding byte or substring access, and/or (2) allowing only access to code points with `O(n)` cost, where `n` is the number of code points. Because anything that forbids byte access would be incompatible with a C++ string, we allow direct byte access and strings are allowed to be in a malformed state, which we can check with `small::is_malformed`. 
+The problem of supporting UTF8 is easier to explain than it is to solve. Programming languages tend to solve this problem by (1) forbidding byte or substring access, and/or (2) allowing only access to code points with `O(n)` cost, where `n` is the number of code points. Because anything that forbids byte access would be incompatible with a C++ string, we allow direct byte access, and strings are allowed to be in malformed, which we can check with `small::is_malformed`. 
 
 All capacity and access functions contain extra overloads that accept codepoint indexes, defined as a strong type, rather than byte indexes. By using these functions, one can ensure the string is never malformed. It's up to the user to decide whether these access functions are useful and worth it in a particular application.  
 
@@ -280,7 +279,7 @@ The `small::default_inline_storage` and `small::is_relocatable` trait can also b
 --8<-- "examples/associative.cpp"
 ```
 
-Unlike a `small::vector` or `small::string`, the asymptotic time complexities of flat sets/maps is very different from their `std::` counterparts and should only be used when they are small. Because they are internally implemented as arrays, manipulating these containers cost `O(n)`.
+Unlike a `small::vector` or `small::string`, the asymptotic time complexities of flat sets/maps are very different from their `std::` counterparts and should only be used when they are small. Because they are internally implemented as arrays, manipulating these containers costs `O(n)`.
 
 For large containers, you can use `std` containers with custom allocators. Or for efficient large containers, you can use the abseil containers, implemented as B+-trees.
 
@@ -294,7 +293,7 @@ For large containers, you can use `std` containers with custom allocators. Or fo
 
 ### Ideas and Roadmap
 
-Feel free to contribute with new features to this library. For complex features and changes, consider [getting feedback](https://github.com/alandefreitas/small/discussions/new) from the community first. Contributing to an existing code base with its own conventions might seem intricate at first but please don't let that discourage you from sharing your ideas.
+Feel free to contribute new features to this library. For complex features and changes, consider [getting feedback](https://github.com/alandefreitas/small/discussions/new) from the community first. Contributing to an existing code base with its conventions might seem obscure at first but please don't let that discourage you from sharing your ideas.
 
 There are many ways in which you can contribute to this library:
 

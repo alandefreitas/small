@@ -120,11 +120,21 @@ Integration:
 
 === "Install"
 
-    Get the binary package from the [release section](https://github.com/alandefreitas/small/releases). These binaries refer to the latest release version of small.
+    !!! note
+
+        Get the binary package from the [release section](https://github.com/alandefreitas/small/releases). 
+
+        These binaries refer to the latest release version of small.
+
+    !!! hint
+        
+        If you need a more recent version of `small`, you can download the binary packages from the CI artifacts or build the library from the source files.
 
 === "Build from source"
 
-    Ensure your C++ compiler and CMake are up-to-date and then:
+    !!! note
+
+        Ensure your C++ compiler and CMake are up-to-date and then:
 
     === "Ubuntu + GCC"
 
@@ -175,7 +185,8 @@ Integration:
         ```
     
     !!! hint "Parallel Build"
-    Replace `--parallel 2` with `--parallel <number of cores in your machine>`
+        
+        Replace `--parallel 2` with `--parallel <number of cores in your machine>`
 
     !!! note "Setting C++ Compiler"
 
@@ -187,12 +198,16 @@ Integration:
 
 === "File amalgamation"
 
-    Because containers are header-only, you can directly copy the contents from the `source` directory into your project.
+    !!! note
 
-    In that case, you are responsible for setting the appropriate target include directories and any compile definitions you might require.
+        Because containers are header-only, you can directly copy the contents from the `source` directory into your project.
+
+    !!! hint
+
+        In that case, you are responsible for setting the appropriate target include directories and any compile definitions you might require.
 
 
-Once the library is properly integrated, you can create containers from the namespace `small` like any other STL containers:
+Once the library is properly integrated, you can create containers from the namespace `small` like any other STL container:
 
 ```cpp
 --8<-- "examples/main.cpp"
@@ -205,9 +220,7 @@ All containers are optimized for the case when they're small but also efficient 
 - Identification of relocatable types
 - Custom growth factors with better defaults
 - Communication with system memory allocators
-- Explicit consideration of CPU cache sizes 
-- Explicit identification and consideration of L1 cache sizes 
-- Explicit identification and consideration of branch prediction 
+- Explicit consideration of CPU cache sizes and branch prediction 
 
 Most applications have many small lists and sets of elements. These containers avoid spending a lot of time with large containers
 that contain just a few elements. Small containers usually try to use the stack before dynamically allocating memory and try

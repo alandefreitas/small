@@ -48,15 +48,6 @@ jobs:
             cores: 2,
           }
           - {
-            name: "Windows-MinGW/2019/Static/X64/Release",
-            os: windows-2019,
-            config: Release,
-            cmake_extra_args: "-G \"MinGW Makefiles\" -DCMAKE_C_COMPILER=C:/msys64/mingw64/bin/gcc.exe -DCMAKE_CXX_COMPILER=C:/msys64/mingw64/bin/g++.exe",
-            sudocmd: "",
-            artifact_name: "Windows x64",
-            cores: 2,
-          }
-          - {
             name: "Ubuntu/20.04/Static/X64/Release",
             os: ubuntu-20.04,
             config: Release,

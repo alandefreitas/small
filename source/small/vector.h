@@ -249,11 +249,22 @@ namespace small {
             if (this == &rhs) {
                 return *this;
             }
-            if (should_copy_inline && this->is_inline() && rhs.is_inline()) {
-                // cheap copy the inline buffer
-                copy_inline_trivial(rhs);
-                return *this;
-            } else if (rhs.size() < capacity()) {
+
+            constexpr bool should_copy_alloc =
+                std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value;
+            if constexpr (should_copy_alloc) {
+                enable_allocator_type::set_allocator(rhs.alloc_);
+            }
+
+            if constexpr (should_copy_inline) {
+                if (this->is_inline() && rhs.is_inline()) {
+                    // cheap copy the inline buffer
+                    copy_inline_trivial(rhs);
+                    return *this;
+                }
+            }
+
+            if (rhs.size() < capacity()) {
                 // rhs fits in lhs capacity
                 const size_t n = rhs.size();
                 if constexpr (std::is_trivially_copy_assignable_v<value_type>) {
@@ -266,11 +277,7 @@ namespace small {
                 // rhs does not fit in lhs current capacity
                 assign(rhs.begin(), rhs.end());
             }
-            constexpr bool should_copy_alloc =
-                std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value;
-            if constexpr (should_copy_alloc) {
-                enable_allocator_type::set_allocator(rhs.alloc_);
-            }
+
             return *this;
         }
 

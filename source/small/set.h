@@ -6,7 +6,6 @@
 #define SMALL_SMALL_SET_H
 
 #include "detail/container/associative_vector.h"
-#include "detail/container/max_size_map.h"
 #include "vector.h"
 
 /// \file A set container for small sets

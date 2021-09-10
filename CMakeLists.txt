@@ -24,21 +24,26 @@ include(FetchContent)
 include(cmake/functions.cmake)
 
 #######################################################
-### Declare options                                 ###
+### Options                                         ###
 #######################################################
 # Set variables with project properties
 set_master_project_booleans() # detect if master project / dev mode
+option(SMALL_DEV_BUILD "Development build" ${MASTER_PROJECT})
 set_debug_booleans() # detect if debug
 set_optimization_flags() # detect and set default optimization flags
 set_compiler_booleans() # detect compiler
 
 # What to build
-option(SMALL_DEV_BUILD "Development build" ${MASTER_PROJECT})
+option(SMALL_BUILD_INSTALLER "Build installer target" ON)
+option(SMALL_BUILD_PACKAGE "Build package" ON)
+
+#######################################################
+### Dev Options                                     ###
+#######################################################
+# What to build
 option(SMALL_BUILD_EXAMPLES "Build examples" ${SMALL_DEV_BUILD})
 option(SMALL_BUILD_TESTS "Build tests" ${SMALL_DEV_BUILD})
 option(SMALL_BUILD_TESTS_WITH_PCH "Build tests with precompiled headers" ${SMALL_DEV_BUILD})
-option(SMALL_BUILD_INSTALLER "Build installer target" ${SMALL_DEV_BUILD})
-option(SMALL_BUILD_PACKAGE "Build package" ${SMALL_DEV_BUILD})
 
 # How to build
 option(SMALL_BUILD_WITH_PEDANTIC_WARNINGS "Use pedantic warnings. This is useful for developers because many of these warnings will be in continuous integration anyway." ${DEBUG_MODE})

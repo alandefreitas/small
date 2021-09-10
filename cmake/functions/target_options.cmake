@@ -30,7 +30,7 @@ endmacro()
 
 # @brief Maybe set pedantic compiler options for all targets
 macro(maybe_add_pedantic_warnings)
-    if (BUILD_WITH_PEDANTIC_WARNINGS)
+    if (SMALL_BUILD_WITH_PEDANTIC_WARNINGS)
         add_pedantic_warnings()
     endif ()
 endmacro()

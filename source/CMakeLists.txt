@@ -74,7 +74,7 @@ if (SMALL_BUILD_INSTALLER)
             )
 
     # Install headers
-    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/small
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
             FILES_MATCHING PATTERN "*.h"
             )

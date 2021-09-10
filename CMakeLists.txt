@@ -28,7 +28,6 @@ include(cmake/functions.cmake)
 #######################################################
 # Set variables with project properties
 set_master_project_booleans() # detect if master project / dev mode
-option(SMALL_DEV_BUILD "Development build" ${MASTER_PROJECT})
 set_debug_booleans() # detect if debug
 set_optimization_flags() # detect and set default optimization flags
 set_compiler_booleans() # detect compiler
@@ -36,6 +35,9 @@ set_compiler_booleans() # detect compiler
 # What to build
 option(SMALL_BUILD_INSTALLER "Build installer target" ${MASTER_PROJECT})
 option(SMALL_BUILD_PACKAGE "Build package" ${MASTER_PROJECT})
+
+# How to build
+option(SMALL_DEV_BUILD "Development build" ${MASTER_PROJECT})
 
 #######################################################
 ### Dev Options                                     ###
@@ -46,7 +48,7 @@ option(SMALL_BUILD_TESTS "Build tests" ${SMALL_DEV_BUILD})
 option(SMALL_BUILD_TESTS_WITH_PCH "Build tests with precompiled headers" ${SMALL_DEV_BUILD})
 
 # How to build
-option(SMALL_BUILD_WITH_PEDANTIC_WARNINGS "Use pedantic warnings. This is useful for developers because many of these warnings will be in continuous integration anyway." ${DEBUG_MODE})
+option(SMALL_BUILD_WITH_PEDANTIC_WARNINGS "Use pedantic warnings. This is useful for developers because many of these warnings will be in continuous integration anyway." ${SMALL_DEV_BUILD})
 option(SMALL_BUILD_SHARED_LIBS "Build shared libraries" OFF)
 option(SMALL_BUILD_WITH_SANITIZERS "Use pedantic warnings." ${DEBUG_MODE})
 
@@ -128,8 +130,8 @@ if (SMALL_BUILD_INSTALLER)
     # https://cliutils.gitlab.io/modern-cmake/chapters/install/installing.html
     # Set variable where the cmake config is
     set(CONFIG_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/small)
-    message("CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}")
-    message("CMAKE_INSTALL_LIBDIR=${CMAKE_INSTALL_LIBDIR}")
+    message(STATUS "${CMAKE_PROJECT_NAME} install directory: ${CMAKE_INSTALL_PREFIX}")
+    message(STATUS "${CMAKE_PROJECT_NAME} library install directory: ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 
     # Create smallConfigVersion.cmake and install it
     if (CMAKE_PROJECT_VERSION VERSION_LESS 1.0.0)

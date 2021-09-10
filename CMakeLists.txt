@@ -3,7 +3,7 @@
 #######################################################
 # Project information
 cmake_minimum_required(VERSION 3.15)
-project(small VERSION 0.1.0)
+project(small VERSION 0.1.1)
 set(SMALL_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(SMALL_VERSION ${CMAKE_PROJECT_VERSION})
 

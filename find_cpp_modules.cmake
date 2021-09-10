@@ -18,28 +18,28 @@ endif ()
 ### Catch2                                          ###
 #######################################################
 set(catch2_VERSION_LOCK 2.13.6)
-set(catch2_VERSION_REQUIREMENT ^2.13.6)
+set(catch2_VERSION_REQUIREMENT ^2.0.0)
 set_local_module_hints(catch2 ${catch2_VERSION_LOCK} ${catch2_VERSION_REQUIREMENT})
 
 # Look for lock version
-if (NOT catch2_FOUND)
+if (NOT Catch2_FOUND)
     semver_split(${catch2_VERSION_LOCK} catch2_VERSION_LOCK)
     find_package(Catch2 ${catch2_VERSION_LOCK_CORE} QUIET CONFIG)
 endif ()
 
 # Look for any version that matches our requirements
-if (NOT catch2_FOUND)
+if (NOT Catch2_FOUND)
     find_package(Catch2 QUIET CONFIG)
-    if (catch2_FOUND AND catch2_VERSION AND NOT DEFINED ENV{catch2_ROOT})
+    if (Catch2_FOUND AND catch2_VERSION AND NOT DEFINED ENV{catch2_ROOT})
         semver_requirements_compatible(${catch2_VERSION} ${catch2_VERSION_REQUIREMENT} ok)
         if (NOT ok)
-            set(catch2_FOUND FALSE)
+            set(Catch2_FOUND FALSE)
         endif ()
     endif ()
 endif ()
 
 # Fetch catch2 if we couldn't find a valid version
-if (NOT catch2_FOUND)
+if (NOT Catch2_FOUND)
     # Fallback to FetchContent and then find_package again
     message("Downloading catch2...")
     FetchContent_Declare(catch2
@@ -97,5 +97,9 @@ if (NOT catch2_FOUND)
         find_package(Catch2 REQUIRED CONFIG)
     endif ()
 endif ()
-version_requirement_message(catch2 VERSION_FOUND ${catch2_VERSION} VERSION_LOCK ${catch2_VERSION_LOCK} VERSION_REQUIREMENTS ${catch2_VERSION_REQUIREMENT} PREFIX_HINT ${catch2_PREFIX_HINT})
+version_requirement_message(catch2
+        VERSION_FOUND ${catch2_VERSION}
+        VERSION_LOCK ${catch2_VERSION_LOCK}
+        VERSION_REQUIREMENTS ${catch2_VERSION_REQUIREMENT}
+        PREFIX_HINT ${catch2_PREFIX_HINT})
 

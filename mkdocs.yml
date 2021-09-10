@@ -21,7 +21,7 @@ plugins:
   - awesome-pages
 
 google_analytics:
-  - UA-109858331-2
+  - UA-109858331-6
   - auto
 
 copyright: Copyright &copy; Alan Freitas

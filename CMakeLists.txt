@@ -34,8 +34,8 @@ set_optimization_flags() # detect and set default optimization flags
 set_compiler_booleans() # detect compiler
 
 # What to build
-option(SMALL_BUILD_INSTALLER "Build installer target" ON)
-option(SMALL_BUILD_PACKAGE "Build package" ON)
+option(SMALL_BUILD_INSTALLER "Build installer target" ${MASTER_PROJECT})
+option(SMALL_BUILD_PACKAGE "Build package" ${MASTER_PROJECT})
 
 #######################################################
 ### Dev Options                                     ###

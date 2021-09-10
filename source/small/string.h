@@ -3307,7 +3307,7 @@ namespace small {
     /// \throws std::invalid_argument if no conversion could be performed
     /// \throws std::out_of_range if the converted value would fall out of the range of the result type or if the
     /// underlying function (std::strtol or std::strtoll) sets errno to ERANGE.
-    int stoi(const small::string &str, std::size_t *pos = nullptr, int base = 10) {
+    inline int stoi(const small::string &str, std::size_t *pos = nullptr, int base = 10) {
         errno = 0;
         char *p_end;
         const long i = std::strtol(str.c_str(), &p_end, base);
@@ -3330,7 +3330,7 @@ namespace small {
     /// \throws std::invalid_argument if no conversion could be performed
     /// \throws std::out_of_range if the converted value would fall out of the range of the result type or if the
     /// underlying function (std::strtol or std::strtoll) sets errno to ERANGE.
-    long stol(const small::string &str, std::size_t *pos = nullptr, int base = 10) {
+    inline long stol(const small::string &str, std::size_t *pos = nullptr, int base = 10) {
         errno = 0;
         char *p_end;
         const long i = std::strtol(str.c_str(), &p_end, base);
@@ -3352,7 +3352,7 @@ namespace small {
     /// \throws std::invalid_argument if no conversion could be performed
     /// \throws std::out_of_range if the converted value would fall out of the range of the result type or if the
     /// underlying function (std::strtol or std::strtoll) sets errno to ERANGE.
-    long long stoll(const small::string &str, std::size_t *pos = nullptr, int base = 10) {
+    inline long long stoll(const small::string &str, std::size_t *pos = nullptr, int base = 10) {
         errno = 0;
         char *p_end;
         const long long i = std::strtoll(str.c_str(), &p_end, base);
@@ -3374,7 +3374,7 @@ namespace small {
     /// \throws std::invalid_argument if no conversion could be performed
     /// \throws std::out_of_range if the converted value would fall out of the range of the result type or if the
     /// underlying function (std::strtoul or std::strtoull) sets errno to ERANGE.
-    unsigned long stoul(const small::string &str, std::size_t *pos = nullptr, int base = 10) {
+    inline unsigned long stoul(const small::string &str, std::size_t *pos = nullptr, int base = 10) {
         errno = 0;
         char *p_end;
         const unsigned long i = std::strtoul(str.c_str(), &p_end, base);
@@ -3396,7 +3396,7 @@ namespace small {
     /// \throws std::invalid_argument if no conversion could be performed
     /// \throws std::out_of_range if the converted value would fall out of the range of the result type or if the
     /// underlying function (std::strtoul or std::strtoull) sets errno to ERANGE.
-    unsigned long long stoull(const small::string &str, std::size_t *pos = nullptr, int base = 10) {
+    inline unsigned long long stoull(const small::string &str, std::size_t *pos = nullptr, int base = 10) {
         errno = 0;
         char *p_end;
         const unsigned long long i = std::strtoull(str.c_str(), &p_end, base);
@@ -3418,7 +3418,7 @@ namespace small {
     /// \throws std::invalid_argument if no conversion could be performed
     /// \throws std::out_of_range if the converted value would fall out of the range of the result type or if the
     /// underlying function (std::strtoul or std::strtoull) sets errno to ERANGE.
-    float stof(const small::string &str, std::size_t *pos = nullptr) {
+    inline float stof(const small::string &str, std::size_t *pos = nullptr) {
         errno = 0;
         char *p_end;
         const float i = std::strtof(str.c_str(), &p_end);
@@ -3440,7 +3440,7 @@ namespace small {
     /// \throws std::invalid_argument if no conversion could be performed
     /// \throws std::out_of_range if the converted value would fall out of the range of the result type or if the
     /// underlying function (std::strtoul or std::strtoull) sets errno to ERANGE.
-    double stod(const small::string &str, std::size_t *pos = nullptr) {
+    inline double stod(const small::string &str, std::size_t *pos = nullptr) {
         errno = 0;
         char *p_end;
         const double i = std::strtod(str.c_str(), &p_end);
@@ -3462,7 +3462,7 @@ namespace small {
     /// \throws std::invalid_argument if no conversion could be performed
     /// \throws std::out_of_range if the converted value would fall out of the range of the result type or if the
     /// underlying function (std::strtoul or std::strtoull) sets errno to ERANGE.
-    long double stold(const small::string &str, std::size_t *pos = nullptr) {
+    inline long double stold(const small::string &str, std::size_t *pos = nullptr) {
         errno = 0;
         char *p_end;
         const long double i = std::strtold(str.c_str(), &p_end);

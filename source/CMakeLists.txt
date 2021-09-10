@@ -12,7 +12,6 @@ add_library(small
         small/detail/container/aligned_storage_vector.h
         small/detail/container/associative_vector.h
         small/detail/container/lookup_table_view.h
-        small/detail/container/max_size_map.h
         small/detail/container/span-lite.h
         small/detail/container/variant_vector.h
         small/detail/exception/scope_guard.h
@@ -84,6 +83,6 @@ if (SMALL_BUILD_INSTALLER)
     install(EXPORT small-targets
             FILE small-targets.cmake
             NAMESPACE small::
-            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Small
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/small
             )
 endif()

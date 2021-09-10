@@ -108,7 +108,7 @@ namespace small {
         }
     }
 
-    long long int div_ceil(long long int numerator, long long int denominator) {
+    inline long long int div_ceil(long long int numerator, long long int denominator) {
         lldiv_t res = std::div(numerator, denominator);
         return res.rem ? (res.quot + 1) : res.quot;
     }

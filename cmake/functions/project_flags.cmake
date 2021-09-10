@@ -72,7 +72,7 @@ macro(set_optimization_flags)
                 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
             else()
                 # https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
-                set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Og")
+                set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
             endif()
         else()
             if (MSVC)

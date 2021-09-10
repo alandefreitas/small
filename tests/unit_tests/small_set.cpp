@@ -1,3 +1,4 @@
+#ifndef SMALL_BUILD_TESTS_WITH_PCH
 #include <algorithm>
 #include <array>
 #include <set>
@@ -7,6 +8,7 @@
 #include <catch2/catch.hpp>
 
 #include <small/set.h>
+#endif
 
 TEST_CASE("Small Set") {
     using namespace small;

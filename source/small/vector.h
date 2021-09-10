@@ -151,7 +151,7 @@ namespace small {
 
         /// \brief True if we should just copy the inline storage
         static constexpr bool should_copy_inline =
-            std::is_trivially_destructible_v<value_type> && sizeof(inline_storage_type) <= cache_line_size / 2;
+            std::is_trivially_copyable_v<value_type> && sizeof(inline_storage_type) <= cache_line_size / 2;
 
         /// \brief True if we are using the std::allocator
         static constexpr bool using_std_allocator = std::is_same<allocator_type, std::allocator<value_type>>::value;
@@ -246,29 +246,38 @@ namespace small {
 
         /// \brief Copy assignment
         vector &operator=(const vector &rhs) {
-            if (this != &rhs) {
-                if constexpr (should_copy_inline) {
-                    if (this->is_inline() && rhs.is_inline()) {
-                        copy_inline_trivial(rhs);
-                        return *this;
-                    }
-                } else if (rhs.size() < capacity()) {
-                    const size_t n = rhs.size();
-                    if constexpr (std::is_trivially_copy_assignable_v<value_type>) {
-                        std::memcpy((void *)begin().base(), (void *)rhs.begin().base(), n * sizeof(T));
-                    } else {
-                        partially_uninitialized_copy(rhs.begin(), n, begin(), size());
-                    }
-                    this->set_internal_size(n);
-                } else {
-                    assign(rhs.begin(), rhs.end());
-                }
+            if (this == &rhs) {
+                return *this;
             }
+
             constexpr bool should_copy_alloc =
                 std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value;
             if constexpr (should_copy_alloc) {
                 enable_allocator_type::set_allocator(rhs.alloc_);
             }
+
+            if constexpr (should_copy_inline) {
+                if (this->is_inline() && rhs.is_inline()) {
+                    // cheap copy the inline buffer
+                    copy_inline_trivial(rhs);
+                    return *this;
+                }
+            }
+
+            if (rhs.size() < capacity()) {
+                // rhs fits in lhs capacity
+                const size_t n = rhs.size();
+                if constexpr (std::is_trivially_copy_assignable_v<value_type>) {
+                    std::memcpy((void *)begin().base(), (void *)rhs.begin().base(), n * sizeof(T));
+                } else {
+                    partially_uninitialized_copy(rhs.begin(), n, begin(), size());
+                }
+                this->set_internal_size(n);
+            } else {
+                // rhs does not fit in lhs current capacity
+                assign(rhs.begin(), rhs.end());
+            }
+
             return *this;
         }
 

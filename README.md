@@ -67,144 +67,143 @@
 
 Integration:
 
-=== "CMake"
+### CMake
 
-    === "Add subdirectory"
+- Add subdirectory
 
-        ```bash
-        git clone https://github.com/alandefreitas/small/
-        ```
+```bash
+git clone https://github.com/alandefreitas/small/
+```
 
-        ```cmake
-        add_subdirectory(small)
-        # ...
-        add_executable(your_target main.cpp)
-        target_link_libraries(your_target PUBLIC small::small)
-        ```
+```cmake
+add_subdirectory(small)
+# ...
+add_executable(your_target main.cpp)
+target_link_libraries(your_target PUBLIC small::small)
+```
 
-    === "Fetch content"
+- Fetch content
 
-        ```cmake
-        include(FetchContent)
-        
-        FetchContent_Declare(small
-            GIT_REPOSITORY https://github.com/alandefreitas/small
-            GIT_TAG origin/master # or whatever tag you want
-        )
+```cmake
+include(FetchContent)
 
-        FetchContent_GetProperties(small)
-        if(NOT small_POPULATED)
-            FetchContent_Populate(small)
-            add_subdirectory(${small_SOURCE_DIR} ${small_BINARY_DIR} EXCLUDE_FROM_ALL)
-        endif()
+FetchContent_Declare(small
+    GIT_REPOSITORY https://github.com/alandefreitas/small
+    GIT_TAG origin/master # or whatever tag you want
+)
 
-        # ...
-        add_executable(your_target main.cpp)
-        target_link_libraries(your_target PUBLIC small::small)
-        ```
+FetchContent_GetProperties(small)
+if(NOT small_POPULATED)
+    FetchContent_Populate(small)
+    add_subdirectory(${small_SOURCE_DIR} ${small_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
 
-    === "External package"
+# ...
+add_executable(your_target main.cpp)
+target_link_libraries(your_target PUBLIC small::small)
+```
 
-        ```cmake
-        # Follow installation instructions and then... 
-        find_package(small REQUIRED)
-        if(NOT small_FOUND)
-            # Throw or put your FetchContent script here
-        endif()
+- External package
 
-        # ...
-        add_executable(your_target main.cpp)
-        target_link_libraries(your_target PUBLIC small::small)
-        ```
+```cmake
+# Follow installation instructions and then... 
+find_package(small REQUIRED)
+if(NOT small_FOUND)
+    # Throw or put your FetchContent script here
+endif()
 
-=== "Install"
+# ...
+add_executable(your_target main.cpp)
+target_link_libraries(your_target PUBLIC small::small)
+```
 
-    !!! note
+### Install
 
-        Get the binary package from the [release section](https://github.com/alandefreitas/small/releases). 
+**note**
 
-        These binaries refer to the latest release version of small.
+Get the binary package from the [release section](https://github.com/alandefreitas/small/releases). 
+These binaries refer to the latest release version of small.
 
-    !!! hint
-        
-        If you need a more recent version of `small`, you can download the binary packages from the CI artifacts or build the library from the source files.
+**hint**
 
-=== "Build from source"
+If you need a more recent version of `small`, you can download the binary packages from the CI artifacts or build the library from the source files.
 
-    !!! note
+### Build from source
 
-        Ensure your C++ compiler and CMake are up-to-date and then:
+**note**
 
-    === "Ubuntu + GCC"
+Ensure your C++ compiler and CMake are up-to-date and then:
 
-        ```bash
-        # Create a new directory
-        mkdir build
-        cd build
-        # Configure
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O2"
-        # Build
-        sudo cmake --build . --parallel 2 --config Release
-        # Install 
-        sudo cmake --install .
-        # Create packages
-        sudo cpack .
-        ```
+#### Ubuntu + GCC
 
-    === "Mac Os + Clang"
-    
-        ```bash
-        # Create a new directory
-        mkdir build
-        cd build
-        # Configure
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O2"
-        # Build
-        cmake --build . --parallel 2 --config Release
-        # Install 
-        cmake --install .
-        # Create packages
-        cpack .
-        ```
-    
-    === "Windows + MSVC"
-    
-        ```bash
-        # Create a new directory
-        mkdir build
-        cd build
-        # Configure
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="/O2"
-        # Build
-        cmake --build . --parallel 2 --config Release
-        # Install 
-        cmake --install .
-        # Create packages
-        cpack .
-        ```
-    
-    !!! hint "Parallel Build"
-        
-        Replace `--parallel 2` with `--parallel <number of cores in your machine>`
+```bash
+# Create a new directory
+mkdir build
+cd build
+# Configure
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O2"
+# Build
+sudo cmake --build . --parallel 2 --config Release
+# Install 
+sudo cmake --install .
+# Create packages
+sudo cpack .
+```
 
-    !!! note "Setting C++ Compiler"
+#### Mac Os + Clang
 
-        If your C++ compiler that supports C++17 is not your default compiler, make sure you provide CMake with the compiler location with the DCMAKE_C_COMPILER and DCMAKE_CXX_COMPILER options. For instance:
-    
-        ```bash
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O2" -DCMAKE_C_COMPILER=/usr/bin/gcc-8 -DCMAKE_CXX_COMPILER=/usr/bin/g++-8
-        ```
+```bash
+# Create a new directory
+mkdir build
+cd build
+# Configure
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O2"
+# Build
+cmake --build . --parallel 2 --config Release
+# Install 
+cmake --install .
+# Create packages
+cpack .
+```
 
-=== "File amalgamation"
+#### Windows + MSVC
 
-    !!! note
+```bash
+# Create a new directory
+mkdir build
+cd build
+# Configure
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="/O2"
+# Build
+cmake --build . --parallel 2 --config Release
+# Install 
+cmake --install .
+# Create packages
+cpack .
+```
 
-        Because containers are header-only, you can directly copy the contents from the `source` directory into your project.
+#### General Hints
 
-    !!! hint
+- Parallel Build
+    - Replace `--parallel 2` with `--parallel <number of cores in your machine>`
+- Setting C++ Compiler"
+    - If your C++ compiler that supports C++17 is not your default compiler, make sure you 
+    provide CMake with the compiler location with the DCMAKE_C_COMPILER and 
+    DCMAKE_CXX_COMPILER options. For instance:
 
-        In that case, you are responsible for setting the appropriate target include directories and any compile definitions you might require.
+```bash
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O2" -DCMAKE_C_COMPILER=/usr/bin/gcc-8 -DCMAKE_CXX_COMPILER=/usr/bin/g++-8
+```
 
+#### File amalgamation
+
+**note**
+
+Because containers are header-only, you can directly copy the contents from the `source` directory into your project.
+
+**hint**
+
+In that case, you are responsible for setting the appropriate target include directories and any compile definitions you might require.
 
 Once the library is properly integrated, you can create containers from the namespace `small` like any other STL container:
 

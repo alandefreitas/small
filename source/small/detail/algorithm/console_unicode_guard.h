@@ -22,10 +22,6 @@
 namespace small {
     class console_unicode_guard {
       public:
-#ifdef __GNUC__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
         inline console_unicode_guard(std::ostream &os, size_t size, size_t codepoints, bool above_10000 = true) {
 #if defined(_WIN32) &&  __has_include(<Windows.h>)
             const bool is_console = &os == reinterpret_cast<std::ostream*>(&std::cout) || &os == reinterpret_cast<std::ostream*>(&std::wcout);
@@ -61,12 +57,15 @@ namespace small {
                     }
                 }
             }
+#else
+            // Discard values
+            (void) os;
+            (void) size;
+            (void) codepoints;
+            (void) above_10000;
 #endif
         }
 
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif
 
         inline ~console_unicode_guard() {
 #if defined(_WIN32) &&  __has_include(<Windows.h>)

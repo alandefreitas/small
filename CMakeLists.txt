@@ -3,9 +3,10 @@
 #######################################################
 # Project information
 cmake_minimum_required(VERSION 3.15)
-project(small VERSION 0.1.1)
+project(small VERSION 0.1.2)
 set(SMALL_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(SMALL_VERSION ${CMAKE_PROJECT_VERSION})
+message(STATUS "${CMAKE_PROJECT_NAME} v${CMAKE_PROJECT_VERSION}: ${CMAKE_PROJECT_HOMEPAGE_URL}")
 
 #######################################################
 ### CMake Functions                                 ###

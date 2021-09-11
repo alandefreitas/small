@@ -22,10 +22,13 @@ add_library(small
         small/detail/iterator/ordered_concat_iterator.h
         small/detail/iterator/pointer_wrapper.h
         small/detail/traits/add_key_const.h
+        small/detail/traits/cpp_version.h
         small/detail/traits/default_inline_storage.h
         small/detail/traits/enable_allocator_from_this.h
         small/detail/traits/extract_value_type.h
         small/detail/traits/has_allocator.h
+        small/detail/traits/hedley.h
+        small/detail/traits/is_pair.h
         small/detail/traits/is_range.h
         small/detail/traits/is_relocatable.h
         small/detail/traits/little_endian.h

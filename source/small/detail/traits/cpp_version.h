@@ -74,6 +74,8 @@
 #endif
 #endif
 
+#include "hedley.h"
+
 // Feature test to check if we can rely on C++20 feature-testing
 // This is a C++ feature but most compilers implement it in C++17
 // We can check this with the oldest feature there is, which is __cpp_static_assert
@@ -192,6 +194,13 @@
 #define cpp_constexpr 201304L
 #elif cplusplus >= 200704L
 #define cpp_constexpr 200704L
+#endif
+
+#if defined(do_constexpr)
+#  undef do_constexpr
+#endif
+#ifdef HEDLEY_CONSTEXPR
+#define do_constexpr HEDLEY_CONSTEXPR
 #endif
 
 #ifdef cpp_feature_testing
@@ -675,12 +684,81 @@
 #endif
 
 /*
+ * Macros to use C++ attributes even if there are not formally available yet
+ */
+#if defined(warn_nodiscard)
+#  undef warn_nodiscard
+#endif
+#ifdef HEDLEY_WARN_UNUSED_RESULT
+#define warn_nodiscard HEDLEY_WARN_UNUSED_RESULT
+#endif
+
+#if defined(warn_noreturn)
+#  undef warn_noreturn
+#endif
+#ifdef HEDLEY_NO_RETURN
+#define warn_noreturn HEDLEY_NO_RETURN
+#endif
+
+#if defined(do_fallthrough)
+#  undef do_fallthrough
+#endif
+#ifdef HEDLEY_FALL_THROUGH
+#define do_fallthrough HEDLEY_FALL_THROUGH
+#endif
+
+#if defined(do_likely)
+#  undef do_likely
+#endif
+#ifdef HEDLEY_LIKELY
+#define do_likely(expr) HEDLEY_LIKELY(expr)
+#endif
+
+#if defined(do_unlikely)
+#  undef do_unlikely
+#endif
+#ifdef HEDLEY_UNLIKELY
+#define do_unlikely(expr) HEDLEY_UNLIKELY(expr)
+#endif
+
+/*
  * Compiler attributes
  */
 #if defined(cplusplus) && defined(__has_attribute)
 #define has_attribute(x) __has_attribute(x) || has_cpp_attribute(x)
 #else
 #define has_attribute(x) 0
+#endif
+
+/*
+ * Macros to use compiler attributes if they are available
+ */
+#if defined(warn_return_non_null)
+#  undef warn_return_non_null
+#endif
+#ifdef HEDLEY_RETURNS_NON_NULL
+#define warn_return_non_null HEDLEY_RETURNS_NON_NULL
+#endif
+
+#if defined(warn_non_null)
+#  undef warn_non_null
+#endif
+#ifdef HEDLEY_RETURNS_NON_NULL
+#define warn_non_null(...) HEDLEY_NON_NULL(__VA_ARGS__)
+#endif
+
+#if defined(warn_bit_flags)
+#  undef warn_bit_flags
+#endif
+#ifdef HEDLEY_RETURNS_NON_NULL
+#define warn_bit_flags HEDLEY_FLAGS
+#endif
+
+#if defined(do_predict)
+#  undef do_predict
+#endif
+#ifdef HEDLEY_PREDICT
+#define do_predict(expr, expected, probability) HEDLEY_PREDICT(expr, expected, probability)
 #endif
 
 /*

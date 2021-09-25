@@ -678,6 +678,7 @@ namespace small {
         /// \brief Returns a pointer to a null-terminated character array with data equivalent to those
         /// stored in the string
         constexpr pointer c_str() noexcept { return data(); }
+
         [[nodiscard]] constexpr const_pointer c_str() const noexcept { return data(); }
 
         /// \brief Returns a standard C++ string with data equivalent to this basic string
@@ -837,7 +838,8 @@ namespace small {
             if constexpr (has_lookup_table) {
                 const_lookup_table_type t = const_lookup_table();
                 const size_type look_size_in_bytes = lookup_table_type::size_for(buffer_.capacity(), t.size());
-                return buffer_.capacity() - null_char_size - static_cast<size_type>(div_ceil(look_size_in_bytes, sizeof(value_type)));
+                return buffer_.capacity() - null_char_size -
+                       static_cast<size_type>(div_ceil(look_size_in_bytes, sizeof(value_type)));
             } else {
                 return buffer_.capacity() - null_char_size;
             }
@@ -940,14 +942,14 @@ namespace small {
             buffer_.clear();
             buffer_.resize(2);
             buffer_.resize(buffer_.capacity());
+            size_.codeunit_size() = 0;
+            if constexpr (store_codepoint_size) {
+                size_.codepoint_size() = 0;
+            }
             buffer_[0] = '\0';
             if constexpr (has_lookup_table) {
                 lookup_table_type t = lookup_table();
                 t.clear();
-            }
-            size_.codeunit_size() = 0;
-            if constexpr (store_codepoint_size) {
-                size_.codepoint_size() = 0;
             }
         }
 
@@ -1834,7 +1836,8 @@ namespace small {
                 if (d1 == d2) {
                     const size_type prev_codepoint = size_codepoints(first, last);
                     size_type first_offset = first - begin();
-                    std::transform(first2, last2, begin() + first_offset, [](auto ch) { return static_cast<value_type>(ch); });
+                    std::transform(first2, last2, begin() + first_offset,
+                                   [](auto ch) { return static_cast<value_type>(ch); });
                     const size_type new_codepoint = size_codepoints(first, last);
                     if constexpr (has_lookup_table) {
                         const bool prev_had_multibyte = cmp_not_equal(prev_codepoint, d1);
@@ -2597,13 +2600,123 @@ namespace small {
         /// \brief Compare this string with a null terminated char array
         template <typename Char> constexpr int compare(const Char *s) const { return compare(s, s + strlen(s)); }
 
+        /// \brief Compare this string with a null terminated std::string
+        template <typename RhsCharT, typename RhsTraits, typename RhsAllocator>
+        constexpr int compare(std::basic_string<RhsCharT, RhsTraits, RhsAllocator> &&r) noexcept {
+            using rhs_string_view_type = std::basic_string_view<RhsCharT, RhsTraits>;
+            return compare(rhs_string_view_type(r.c_str(), r.size()));
+        }
+
         /// \section Relational operators: delegate everything to the spaceship operator
-        template <typename T> constexpr bool operator==(T &&rhs) const noexcept { return compare(rhs) == 0; }
-        template <typename T> constexpr bool operator!=(T &&rhs) const noexcept { return compare(rhs) != 0; }
-        template <typename T> constexpr bool operator>(T &&rhs) const noexcept { return compare(rhs) > 0; }
-        template <typename T> constexpr bool operator>=(T &&rhs) const noexcept { return compare(rhs) >= 0; }
-        template <typename T> constexpr bool operator<(T &&rhs) const noexcept { return compare(rhs) < 0; }
-        template <typename T> constexpr bool operator<=(T &&rhs) const noexcept { return compare(rhs) <= 0; }
+        constexpr friend bool operator==(const basic_string &lhs, const basic_string &rhs) noexcept {
+            return lhs.compare(rhs) == 0;
+        }
+
+        constexpr friend bool operator!=(const basic_string &lhs, const basic_string &rhs) noexcept {
+            return lhs.compare(rhs) != 0;
+        }
+
+        constexpr friend bool operator>(const basic_string &lhs, const basic_string &rhs) noexcept {
+            return lhs.compare(rhs) > 0;
+        }
+
+        constexpr friend bool operator>=(const basic_string &lhs, const basic_string &rhs) noexcept {
+            return lhs.compare(rhs) >= 0;
+        }
+
+        constexpr friend bool operator<(const basic_string &lhs, const basic_string &rhs) noexcept {
+            return lhs.compare(rhs) < 0;
+        }
+
+        constexpr friend bool operator<=(const basic_string &lhs, const basic_string &rhs) noexcept {
+            return lhs.compare(rhs) <= 0;
+        }
+
+      private:
+        template <typename> struct is_small_basic_string : std::false_type {};
+        template <typename... Args> struct is_small_basic_string<basic_string<Args...>> : std::true_type {};
+
+        template <typename> struct is_std_basic_string : std::false_type {};
+        template <typename RhsCharT, typename RhsTraits, typename RhsAllocator>
+        struct is_std_basic_string<std::basic_string<RhsCharT, RhsTraits, RhsAllocator>> : std::true_type {};
+
+        /// \brief Types to which we can compare this basic_string
+        template <typename T>
+        using is_valid_comparison_rhs = std::conjunction<
+            // not the same small::basic_string
+            std::negation<std::is_same<T, basic_string>>,
+            std::disjunction<
+                // other small basic string type
+                is_small_basic_string<T>,
+                // range of chars
+                is_range<T>,
+                // std::string
+                is_std_basic_string<T>,
+                // CharT*
+                std::conjunction<std::is_pointer<T>, std::is_trivial<std::remove_pointer_t<T>>>>>;
+
+        template <typename T> static constexpr bool is_valid_comparison_rhs_v = is_valid_comparison_rhs<T>::value;
+
+      public:
+        template <typename T, std::enable_if_t<is_valid_comparison_rhs_v<std::decay_t<T>>, int> = 0>
+        constexpr friend bool operator==(const basic_string &lhs, T &&rhs) noexcept {
+            return lhs.compare(rhs) == 0;
+        }
+
+        template <typename T, std::enable_if_t<is_valid_comparison_rhs_v<std::decay_t<T>>, int> = 0>
+        constexpr friend bool operator!=(const basic_string &lhs, T &&rhs) noexcept {
+            return lhs.compare(rhs) != 0;
+        }
+
+        template <typename T, std::enable_if_t<is_valid_comparison_rhs_v<std::decay_t<T>>, int> = 0>
+        constexpr friend bool operator>(const basic_string &lhs, T &&rhs) noexcept {
+            return lhs.compare(rhs) > 0;
+        }
+
+        template <typename T, std::enable_if_t<is_valid_comparison_rhs_v<std::decay_t<T>>, int> = 0>
+        constexpr friend bool operator>=(const basic_string &lhs, T &&rhs) noexcept {
+            return lhs.compare(rhs) >= 0;
+        }
+
+        template <typename T, std::enable_if_t<is_valid_comparison_rhs_v<std::decay_t<T>>, int> = 0>
+        constexpr friend bool operator<(const basic_string &lhs, T &&rhs) noexcept {
+            return lhs.compare(rhs) < 0;
+        }
+
+        template <typename T, std::enable_if_t<is_valid_comparison_rhs_v<std::decay_t<T>>, int> = 0>
+        constexpr friend bool operator<=(const basic_string &lhs, T &&rhs) noexcept {
+            return lhs.compare(rhs) <= 0;
+        }
+
+        template <typename T, std::enable_if_t<is_valid_comparison_rhs_v<std::decay_t<T>>, int> = 0>
+        constexpr friend bool operator==(T &&lhs, const basic_string &rhs) noexcept {
+            return rhs.compare(lhs) == 0;
+        }
+
+        template <typename T, std::enable_if_t<is_valid_comparison_rhs_v<std::decay_t<T>>, int> = 0>
+        constexpr friend bool operator!=(T &&lhs, const basic_string &rhs) noexcept {
+            return rhs.compare(lhs) != 0;
+        }
+
+        template <typename T, std::enable_if_t<is_valid_comparison_rhs_v<std::decay_t<T>>, int> = 0>
+        constexpr friend bool operator>(T &&lhs, const basic_string &rhs) noexcept {
+            return rhs.compare(lhs) < 0;
+        }
+
+        template <typename T, std::enable_if_t<is_valid_comparison_rhs_v<std::decay_t<T>>, int> = 0>
+        constexpr friend bool operator>=(T &&lhs, const basic_string &rhs) noexcept {
+            return rhs.compare(lhs) <= 0;
+        }
+
+        template <typename T, std::enable_if_t<is_valid_comparison_rhs_v<std::decay_t<T>>, int> = 0>
+        constexpr friend bool operator<(T &&lhs, const basic_string &rhs) noexcept {
+            return rhs.compare(lhs) > 0;
+        }
+
+        template <typename T, std::enable_if_t<is_valid_comparison_rhs_v<std::decay_t<T>>, int> = 0>
+        constexpr friend bool operator<=(T &&lhs, const basic_string &rhs) noexcept {
+            return rhs.compare(lhs) >= 0;
+        }
 
         /// \brief Returns a string containing characters from lhs followed by the characters from rhs
         /// The allocator used for the result is
@@ -3250,12 +3363,41 @@ namespace small {
         char_vector_type buffer_;
 
         /// \brief Size representation for utf8 strings
-        struct internal_size_without_codepoint {
+        struct internal_size_multibyte {
           public:
+            internal_size_multibyte() : codeunit_size_(0), codepoint_size_(0) {}
+
+            internal_size_multibyte(const internal_size_multibyte &other)
+                : codeunit_size_(other.codeunit_size_), codepoint_size_(other.codepoint_size_) {}
+
+            internal_size_multibyte(internal_size_multibyte &&other)
+                : codeunit_size_(other.codeunit_size_), codepoint_size_(other.codepoint_size_) {
+                other.codeunit_size_ = 0;
+                other.codepoint_size_ = 0;
+            }
+
+            internal_size_multibyte &operator=(const internal_size_multibyte &other) {
+                codeunit_size_ = other.codeunit_size_;
+                codepoint_size_ = other.codepoint_size_;
+                return *this;
+            }
+
+            internal_size_multibyte &operator=(internal_size_multibyte &&other) {
+                codeunit_size_ = other.codeunit_size_;
+                codepoint_size_ = other.codepoint_size_;
+                other.codeunit_size_ = 0;
+                other.codepoint_size_ = 0;
+                return *this;
+            }
+
             size_type &codeunit_size() { return codeunit_size_; }
+
             size_type &codepoint_size() { return codepoint_size_; }
+
             [[nodiscard]] const size_type &codeunit_size() const { return codeunit_size_; }
+
             [[nodiscard]] const size_type &codepoint_size() const { return codepoint_size_; }
+
             [[nodiscard]] size_type byte_size() const { return codeunit_size() * sizeof(value_type); }
 
           private:
@@ -3270,12 +3412,35 @@ namespace small {
         };
 
         /// \brief Size representation for other strings (assuming one codepoint per char)
-        struct internal_size_with_codepoint {
+        struct internal_size_codeunits {
           public:
+            internal_size_codeunits() : codeunit_size_(0) {}
+
+            internal_size_codeunits(const internal_size_codeunits &other) : codeunit_size_(other.codeunit_size_) {}
+
+            internal_size_codeunits(internal_size_codeunits &&other) : codeunit_size_(other.codeunit_size_) {
+                other.codeunit_size_ = 0;
+            }
+
+            internal_size_codeunits &operator=(const internal_size_codeunits &other) {
+                codeunit_size_ = other.codeunit_size_;
+                return *this;
+            }
+
+            internal_size_codeunits &operator=(internal_size_codeunits &&other) {
+                codeunit_size_ = other.codeunit_size_;
+                other.codeunit_size_ = 0;
+                return *this;
+            }
+
             size_type &codeunit_size() { return codeunit_size_; }
+
             size_type &codepoint_size() { return codeunit_size_; }
+
             const size_type &codeunit_size() const { return codeunit_size_; }
+
             const size_type &codepoint_size() const { return codeunit_size_; }
+
             size_type byte_size() const { return codeunit_size() * sizeof(value_type); }
 
           private:
@@ -3285,8 +3450,7 @@ namespace small {
             size_type codeunit_size_{0};
         };
 
-        using internal_size_type =
-            std::conditional_t<is_utf8_string, internal_size_without_codepoint, internal_size_with_codepoint>;
+        using internal_size_type = std::conditional_t<is_utf8_string, internal_size_multibyte, internal_size_codeunits>;
 
         /// \brief Size variable, abstracting the difference between utf8/utf16/utf32 strings
         internal_size_type size_;

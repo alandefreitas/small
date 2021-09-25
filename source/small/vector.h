@@ -223,9 +223,11 @@ namespace small {
 
             if (rhs.is_external()) {
                 this->data_.heap_storage_.pointer_ = rhs.data_.heap_storage_.pointer_;
+                rhs.data_.heap_storage_.pointer_ = nullptr;
                 size_ = rhs.size_;
                 rhs.size_ = 0;
                 this->data_.set_capacity(rhs.data_.get_capacity());
+                rhs.data_.set_capacity(0);
             } else {
                 if (should_copy_inline) {
                     copy_inline_trivial(rhs);
@@ -315,10 +317,12 @@ namespace small {
                     } else {
                         // rhs is external
                         this->data_.heap_storage_.pointer_ = rhs.data_.heap_storage_.pointer_;
+                        rhs.data_.heap_storage_.pointer_ = nullptr;
                         // this was already reset above, so it's empty and internal.
                         size_ = rhs.size_;
                         rhs.size_ = 0;
                         this->data_.set_capacity(rhs.data_.get_capacity());
+                        rhs.data_.set_capacity(0);
                     }
                 }
             } else {

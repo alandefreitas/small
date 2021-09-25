@@ -46,7 +46,12 @@ option(SMALL_DEV_BUILD "Development build" ${MASTER_PROJECT})
 # What to build
 option(SMALL_BUILD_EXAMPLES "Build examples" ${SMALL_DEV_BUILD})
 option(SMALL_BUILD_TESTS "Build tests" ${SMALL_DEV_BUILD})
-option(SMALL_BUILD_TESTS_WITH_PCH "Build tests with precompiled headers" ${SMALL_DEV_BUILD})
+if (APPLE OR CLANG)
+    set(DEFAULT_SMALL_BUILD_TESTS_WITH_PCH OFF)
+else()
+    set(DEFAULT_SMALL_BUILD_TESTS_WITH_PCH ${SMALL_DEV_BUILD})
+endif()
+option(SMALL_BUILD_TESTS_WITH_PCH "Build tests with precompiled headers" ${DEFAULT_SMALL_BUILD_TESTS_WITH_PCH})
 
 # How to build
 option(SMALL_BUILD_WITH_PEDANTIC_WARNINGS "Use pedantic warnings. This is useful for developers because many of these warnings will be in continuous integration anyway." ${SMALL_DEV_BUILD})

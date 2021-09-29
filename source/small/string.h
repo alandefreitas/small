@@ -856,7 +856,10 @@ namespace small {
         /// \param new_cap Number of multibyte codepoints we plan to have in the string
         constexpr void reserve(size_type new_cap) {
             const_lookup_table_type t = const_lookup_table();
-            const size_type expected_new_multibyte_size = (new_cap * t.size()) / size();
+            const size_type cur_n_codepoint = size();
+            const size_type cur_n_multibyte = t.size();
+            const size_type expected_new_multibyte_size =
+                cur_n_codepoint != 0 ? (new_cap * cur_n_multibyte) / cur_n_codepoint : 0;
             reserve(new_cap, expected_new_multibyte_size);
         }
 

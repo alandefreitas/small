@@ -11,7 +11,7 @@
 # avoid relying on regex and do attempt to validate the input.
 # The calling functions are also designed to avoid checking the most
 # expensive requirements unless it really has to.
-include(cmake/functions/semver.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/semver.cmake)
 
 #######################################################
 ### Configuration descriptor                        ###

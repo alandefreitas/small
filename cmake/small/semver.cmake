@@ -36,12 +36,12 @@ function(semver_split version_string output_prefix)
 
     # Split the core version
     # Major
-    string(FIND ${${output_prefix}_CORE} "." major_end)
+    string(FIND ${${output_prefix}_CORE} "../functions" major_end)
     string(SUBSTRING ${${output_prefix}_CORE} 0 ${major_end} ${output_prefix}_MAJOR)
     # Minor
     math(EXPR minor_begin "${major_end} + 1")
     string(SUBSTRING ${${output_prefix}_CORE} ${minor_begin} -1 ${output_prefix}_MINOR_AND_PATCH)
-    string(FIND ${${output_prefix}_MINOR_AND_PATCH} "." minor_end)
+    string(FIND ${${output_prefix}_MINOR_AND_PATCH} "../functions" minor_end)
     string(SUBSTRING ${${output_prefix}_MINOR_AND_PATCH} 0 ${minor_end} ${output_prefix}_MINOR)
     # Patch
     math(EXPR patch_begin "${minor_end} + 1")

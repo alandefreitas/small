@@ -58,34 +58,9 @@ target_bigobj_options(small)
 target_utf8_options(small)
 target_nominmax_definition(small)
 
-if (BUILD_WITH_EXCEPTIONS)
+if (SMALL_BUILD_WITH_EXCEPTIONS)
     target_exception_options(small)
 endif ()
 
 # Always enable warnings in development mode
 maybe_target_pedantic_warnings(small)
-
-#######################################################
-### Installer                                       ###
-#######################################################
-if (SMALL_BUILD_INSTALLER)
-    # Install targets
-    install(TARGETS small
-            EXPORT small-targets
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            )
-
-    # Install headers
-    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/small
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-            FILES_MATCHING PATTERN "*.h"
-            )
-
-    # Install cmake script
-    install(EXPORT small-targets
-            FILE small-targets.cmake
-            NAMESPACE small::
-            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/small
-            )
-endif()

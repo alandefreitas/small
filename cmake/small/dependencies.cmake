@@ -5,14 +5,7 @@
 # set the hint paths properly (i.e.: no toolchain / no manager / no env variables),
 # we need some helper functions to identify the default configuration and
 # identify these extra hint paths.
-include(cmake/functions/cpp_modules.cmake)
-
-#######################################################
-### Dev Dependencies                                ###
-#######################################################
-if (NOT SMALL_DEV_BUILD)
-    return()
-endif ()
+include(${CMAKE_CURRENT_LIST_DIR}/cpp_modules.cmake)
 
 #######################################################
 ### Catch2                                          ###
@@ -83,12 +76,12 @@ if (NOT Catch2_FOUND)
                 )
 
         # Run build step
-        execute_process(COMMAND "${CMAKE_COMMAND}" --build .
+        execute_process(COMMAND "${CMAKE_COMMAND}" --build ../..
                 WORKING_DIRECTORY "${catch2_BINARY_DIR}"
                 )
 
         # Run install step
-        execute_process(COMMAND "${CMAKE_COMMAND}" --install .
+        execute_process(COMMAND "${CMAKE_COMMAND}" --install ../..
                 WORKING_DIRECTORY "${catch2_BINARY_DIR}"
                 )
 

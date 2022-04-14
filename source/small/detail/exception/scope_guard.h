@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 8/2/21.
 //
 
-#ifndef SMALL_SCOPE_GUARD_H
-#define SMALL_SCOPE_GUARD_H
+#ifndef SMALL_DETAIL_EXCEPTION_SCOPE_GUARD_H
+#define SMALL_DETAIL_EXCEPTION_SCOPE_GUARD_H
 
 #include <utility>
 #include <functional>
@@ -133,4 +133,4 @@ namespace small {
     }
 } // namespace small
 
-#endif // SMALL_SCOPE_GUARD_H
+#endif // SMALL_DETAIL_EXCEPTION_SCOPE_GUARD_H

@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 6/1/21.
 //
 
-#ifndef SMALL_CONTAINER_TRAITS_DEFAULT_INLINE_STORAGE_H
-#define SMALL_CONTAINER_TRAITS_DEFAULT_INLINE_STORAGE_H
+#ifndef SMALL_DETAIL_TRAITS_DEFAULT_INLINE_STORAGE_H
+#define SMALL_DETAIL_TRAITS_DEFAULT_INLINE_STORAGE_H
 
 namespace small {
     /// The default number of inline elements for a type
@@ -27,4 +27,4 @@ namespace small {
 
 } // namespace small
 
-#endif // SMALL_CONTAINER_TRAITS_DEFAULT_INLINE_STORAGE_H
+#endif // SMALL_DETAIL_TRAITS_DEFAULT_INLINE_STORAGE_H

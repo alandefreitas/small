@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 8/13/21.
 //
 
-#ifndef SMALL_EXTRACT_VALUE_TYPE_H
-#define SMALL_EXTRACT_VALUE_TYPE_H
+#ifndef SMALL_DETAIL_TRAITS_EXTRACT_VALUE_TYPE_H
+#define SMALL_DETAIL_TRAITS_EXTRACT_VALUE_TYPE_H
 
 namespace small {
     /// \struct Get value type from T, if present
@@ -17,4 +17,4 @@ namespace small {
 
 } // namespace small
 
-#endif // SMALL_EXTRACT_VALUE_TYPE_H
+#endif // SMALL_DETAIL_TRAITS_EXTRACT_VALUE_TYPE_H

@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 8/5/21.
 //
 
-#ifndef SMALL_LOOKUP_TABLE_VIEW_H
-#define SMALL_LOOKUP_TABLE_VIEW_H
+#ifndef SMALL_DETAIL_CONTAINER_LOOKUP_TABLE_VIEW_H
+#define SMALL_DETAIL_CONTAINER_LOOKUP_TABLE_VIEW_H
 
 #include <optional>
 #include <cstring>
@@ -1316,4 +1316,4 @@ namespace small {
 
 } // namespace small
 
-#endif // SMALL_LOOKUP_TABLE_VIEW_H
+#endif // SMALL_DETAIL_CONTAINER_LOOKUP_TABLE_VIEW_H

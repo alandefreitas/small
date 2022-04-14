@@ -1,5 +1,5 @@
-#ifndef SHIFT_PROPOSAL_H
-#define SHIFT_PROPOSAL_H
+#ifndef SMALL_DETAIL_ALGORITHM_SHIFT_H
+#define SMALL_DETAIL_ALGORITHM_SHIFT_H
 
 /// \headerfile Adapted from https://github.com/danra/shift_proposal
 
@@ -104,4 +104,4 @@ namespace shift {
     }
 } // namespace shift
 
-#endif // !defined(SHIFT_PROPOSAL_H)
+#endif // !defined(SMALL_DETAIL_ALGORITHM_SHIFT_H)

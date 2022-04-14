@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 4/17/21.
 //
 
-#ifndef SMALL_POINTER_WRAPPER_H
-#define SMALL_POINTER_WRAPPER_H
+#ifndef SMALL_DETAIL_ITERATOR_POINTER_WRAPPER_H
+#define SMALL_DETAIL_ITERATOR_POINTER_WRAPPER_H
 
 #include <algorithm>
 #include <iterator>
@@ -238,4 +238,4 @@ namespace small {
 
 } // namespace small
 
-#endif // SMALL_POINTER_WRAPPER_H
+#endif // SMALL_DETAIL_ITERATOR_POINTER_WRAPPER_H

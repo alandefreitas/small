@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 8/9/21.
 //
 
-#ifndef SMALL_INTCMP_H
-#define SMALL_INTCMP_H
+#ifndef SMALL_DETAIL_ALGORITHM_INTCMP_H
+#define SMALL_DETAIL_ALGORITHM_INTCMP_H
 
 #include <type_traits>
 #include <cstddef>
@@ -115,4 +115,4 @@ namespace small {
 
 } // namespace small
 
-#endif // SMALL_INTCMP_H
+#endif // SMALL_DETAIL_ALGORITHM_INTCMP_H

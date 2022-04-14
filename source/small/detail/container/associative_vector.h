@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 4/22/21.
 //
 
-#ifndef SMALL_VECTOR_MAP_H
-#define SMALL_VECTOR_MAP_H
+#ifndef SMALL_DETAIL_CONTAINER_ASSOCIATIVE_VECTOR_H
+#define SMALL_DETAIL_CONTAINER_ASSOCIATIVE_VECTOR_H
 
 #include <map>
 #include <variant>
@@ -884,4 +884,4 @@ namespace small {
 
 } // namespace small
 
-#endif // SMALL_VECTOR_MAP_H
+#endif // SMALL_DETAIL_CONTAINER_ASSOCIATIVE_VECTOR_H

@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 9/7/21.
 //
 
-#ifndef SMALL_CPP_VERSION_H
-#define SMALL_CPP_VERSION_H
+#ifndef SMALL_DETAIL_TRAITS_CPP_VERSION_H
+#define SMALL_DETAIL_TRAITS_CPP_VERSION_H
 
 /// \headerfile Feature testing support for C++17, C++14, C++11, ...
 /// Whenever the C++20 feature testing macros are unavailable, we recur to inferences
@@ -1938,4 +1938,4 @@
 #endif
 
 
-#endif // SMALL_CPP_VERSION_H
+#endif // SMALL_DETAIL_TRAITS_CPP_VERSION_H

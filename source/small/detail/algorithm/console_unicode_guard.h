@@ -2,8 +2,8 @@
 // Created by alanfreitas on 9/8/2021.
 //
 
-#ifndef SMALL_CONSOLE_UNICODE_GUARD_H
-#define SMALL_CONSOLE_UNICODE_GUARD_H
+#ifndef SMALL_DETAIL_ALGORITHM_CONSOLE_UNICODE_GUARD_H
+#define SMALL_DETAIL_ALGORITHM_CONSOLE_UNICODE_GUARD_H
 
 /// \section This guard encapsulates the logic to temporarily set the Windows console to UTF8 if:
 /// - the platform is windows
@@ -90,4 +90,4 @@ namespace small {
 
 }
 
-#endif // SMALL_CONSOLE_UNICODE_GUARD_H
+#endif // SMALL_DETAIL_ALGORITHM_CONSOLE_UNICODE_GUARD_H

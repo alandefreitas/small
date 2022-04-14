@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 8/6/21.
 //
 
-#ifndef SMALL_TO_UNSIGNED_H
-#define SMALL_TO_UNSIGNED_H
+#ifndef SMALL_DETAIL_ALGORITHM_TO_UNSIGNED_H
+#define SMALL_DETAIL_ALGORITHM_TO_UNSIGNED_H
 
 #include <cassert>
 #include <limits>
@@ -62,4 +62,4 @@ namespace small {
 
 } // namespace small
 
-#endif // SMALL_TO_UNSIGNED_H
+#endif // SMALL_DETAIL_ALGORITHM_TO_UNSIGNED_H

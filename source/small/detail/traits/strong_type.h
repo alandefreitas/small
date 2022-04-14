@@ -11,8 +11,8 @@
  * Project home: https://github.com/rollbear/strong_type
  */
 
-#ifndef ROLLBEAR_STRONG_TYPE_HPP_INCLUDED
-#define ROLLBEAR_STRONG_TYPE_HPP_INCLUDED
+#ifndef SMALL_DETAIL_TRAITS_STRONG_TYPE_H
+#define SMALL_DETAIL_TRAITS_STRONG_TYPE_H
 
 #include <functional>
 #include <istream>
@@ -918,4 +918,4 @@ namespace std {
         : is_base_of<::strong::arithmetic::modifier<::strong::type<T, Tag, M...>>, ::strong::type<T, Tag, M...>> {};
 
 } // namespace std
-#endif // ROLLBEAR_STRONG_TYPE_HPP_INCLUDED
+#endif // SMALL_DETAIL_TRAITS_STRONG_TYPE_H

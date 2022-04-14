@@ -2,9 +2,9 @@
 # - This is important to avoid building tests and examples when project is not master
 macro(set_master_project_booleans)
     if (${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_SOURCE_DIR})
-        set(MASTER_PROJECT ON)
+        set(SMALL_MASTER_PROJECT ON)
     else ()
-        set(MASTER_PROJECT OFF)
+        set(SMALL_MASTER_PROJECT OFF)
     endif ()
 endmacro()
 

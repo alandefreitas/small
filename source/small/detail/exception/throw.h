@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 8/2/21.
 //
 
-#ifndef SMALL_THROW_H
-#define SMALL_THROW_H
+#ifndef SMALL_DETAIL_EXCEPTION_THROW_H
+#define SMALL_DETAIL_EXCEPTION_THROW_H
 
 #include <exception>
 #include <type_traits>
@@ -46,4 +46,4 @@ namespace small {
 
 } // namespace small
 
-#endif // SMALL_THROW_H
+#endif // SMALL_DETAIL_EXCEPTION_THROW_H

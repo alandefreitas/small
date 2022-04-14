@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 8/3/21.
 //
 
-#ifndef SMALL_STRLEN_H
-#define SMALL_STRLEN_H
+#ifndef SMALL_DETAIL_ALGORITHM_STRLEN_H
+#define SMALL_DETAIL_ALGORITHM_STRLEN_H
 
 #include <cstring>
 
@@ -30,4 +30,4 @@ namespace small {
     }
 } // namespace small
 
-#endif // SMALL_STRLEN_H
+#endif // SMALL_DETAIL_ALGORITHM_STRLEN_H

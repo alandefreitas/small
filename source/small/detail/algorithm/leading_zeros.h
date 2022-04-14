@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 8/3/21.
 //
 
-#ifndef SMALL_LEADING_ZEROS_H
-#define SMALL_LEADING_ZEROS_H
+#ifndef SMALL_DETAIL_ALGORITHM_LEADING_ZEROS_H
+#define SMALL_DETAIL_ALGORITHM_LEADING_ZEROS_H
 
 //! Implementation Detail
 namespace small {
@@ -53,4 +53,4 @@ namespace small {
 
 } // namespace small
 
-#endif // SMALL_LEADING_ZEROS_H
+#endif // SMALL_DETAIL_ALGORITHM_LEADING_ZEROS_H

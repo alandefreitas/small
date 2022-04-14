@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 6/1/21.
 //
 
-#ifndef SMALL_CONTAINER_TRAITS_IS_RELOCATABLE_H
-#define SMALL_CONTAINER_TRAITS_IS_RELOCATABLE_H
+#ifndef SMALL_DETAIL_TRAITS_IS_RELOCATABLE_H
+#define SMALL_DETAIL_TRAITS_IS_RELOCATABLE_H
 
 namespace small {
     /// \brief True type if a type is relocatable
@@ -20,4 +20,4 @@ namespace small {
 
 } // namespace small
 
-#endif // SMALL_CONTAINER_TRAITS_IS_RELOCATABLE_H
+#endif // SMALL_DETAIL_TRAITS_IS_RELOCATABLE_H

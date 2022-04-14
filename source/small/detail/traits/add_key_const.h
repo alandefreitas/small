@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 8/13/21.
 //
 
-#ifndef SMALL_ADD_KEY_CONST_H
-#define SMALL_ADD_KEY_CONST_H
+#ifndef SMALL_DETAIL_TRAITS_ADD_KEY_CONST_H
+#define SMALL_DETAIL_TRAITS_ADD_KEY_CONST_H
 
 #include <utility>
 
@@ -29,4 +29,4 @@ namespace small {
     template <class T> constexpr bool is_key_const_v = is_key_const<T>::value;
 } // namespace small
 
-#endif // SMALL_ADD_KEY_CONST_H
+#endif // SMALL_DETAIL_TRAITS_ADD_KEY_CONST_H

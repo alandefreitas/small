@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 4/22/21.
 //
 
-#ifndef SMALL_ITERATOR_TYPE_TRAITS_H
-#define SMALL_ITERATOR_TYPE_TRAITS_H
+#ifndef SMALL_DETAIL_ITERATOR_ITERATOR_TYPE_TRAITS_H
+#define SMALL_DETAIL_ITERATOR_ITERATOR_TYPE_TRAITS_H
 
 #include <iterator>
 
@@ -112,4 +112,4 @@ namespace small {
 
 } // namespace small
 
-#endif // SMALL_ITERATOR_TYPE_TRAITS_H
+#endif // SMALL_DETAIL_ITERATOR_ITERATOR_TYPE_TRAITS_H

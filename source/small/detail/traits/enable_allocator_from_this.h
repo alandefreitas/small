@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 8/6/21.
 //
 
-#ifndef SMALL_ENABLE_ALLOCATOR_FROM_THIS_H
-#define SMALL_ENABLE_ALLOCATOR_FROM_THIS_H
+#ifndef SMALL_DETAIL_TRAITS_ENABLE_ALLOCATOR_FROM_THIS_H
+#define SMALL_DETAIL_TRAITS_ENABLE_ALLOCATOR_FROM_THIS_H
 
 namespace small {
     /// \brief A class to enable empty base optimization for allocators
@@ -40,4 +40,4 @@ namespace small {
 
 } // namespace small
 
-#endif // SMALL_ENABLE_ALLOCATOR_FROM_THIS_H
+#endif // SMALL_DETAIL_TRAITS_ENABLE_ALLOCATOR_FROM_THIS_H

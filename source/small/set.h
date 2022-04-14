@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 5/31/21.
 //
 
-#ifndef SMALL_SMALL_SET_H
-#define SMALL_SMALL_SET_H
+#ifndef SMALL_SET_H
+#define SMALL_SET_H
 
 #include "detail/container/associative_vector.h"
 #include "vector.h"
@@ -41,4 +41,4 @@ namespace small {
 
 } // namespace small
 
-#endif // SMALL_SMALL_SET_H
+#endif // SMALL_SET_H

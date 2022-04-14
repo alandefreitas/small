@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 4/17/21.
 //
 
-#ifndef SMALL_VARIANT_VECTOR_H
-#define SMALL_VARIANT_VECTOR_H
+#ifndef SMALL_DETAIL_CONTAINER_VARIANT_VECTOR_H
+#define SMALL_DETAIL_CONTAINER_VARIANT_VECTOR_H
 
 #include <cstdlib>
 #include <variant>
@@ -669,4 +669,4 @@ namespace small {
 
 } // namespace small
 
-#endif // SMALL_VARIANT_VECTOR_H
+#endif // SMALL_DETAIL_CONTAINER_VARIANT_VECTOR_H

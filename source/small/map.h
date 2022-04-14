@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 5/31/21.
 //
 
-#ifndef SMALL_SMALL_MAP_H
-#define SMALL_SMALL_MAP_H
+#ifndef SMALL_MAP_H
+#define SMALL_MAP_H
 
 #include "detail/container/associative_vector.h"
 #include "vector.h"
@@ -43,4 +43,4 @@ namespace small {
 
 } // namespace small
 
-#endif // SMALL_SMALL_MAP_H
+#endif // SMALL_MAP_H

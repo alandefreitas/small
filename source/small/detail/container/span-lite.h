@@ -8,8 +8,8 @@
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef NONSTD_SPAN_HPP_INCLUDED
-#define NONSTD_SPAN_HPP_INCLUDED
+#ifndef SMALL_DETAIL_CONTAINER_SPAN_LITE_H
+#define SMALL_DETAIL_CONTAINER_SPAN_LITE_H
 
 #define span_lite_MAJOR 0
 #define span_lite_MINOR 10
@@ -1613,4 +1613,4 @@ namespace std {
 span_RESTORE_WARNINGS()
 #endif // span_USES_STD_SPAN
 
-#endif // NONSTD_SPAN_HPP_INCLUDED
+#endif // SMALL_DETAIL_CONTAINER_SPAN_LITE_H

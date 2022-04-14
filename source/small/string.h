@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 8/1/21.
 //
 
-#ifndef SMALL_UTF8_STRING_H
-#define SMALL_UTF8_STRING_H
+#ifndef SMALL_STRING_H
+#define SMALL_STRING_H
 
 #include <sstream>
 

@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 8/5/21.
 //
 
-#ifndef SMALL_UTF_H
-#define SMALL_UTF_H
+#ifndef SMALL_DETAIL_ALGORITHM_UTF_H
+#define SMALL_DETAIL_ALGORITHM_UTF_H
 
 #include "../traits/cpp_version.h"
 #include "intcmp.h"
@@ -647,4 +647,4 @@ namespace small {
 
 } // namespace small
 
-#endif // SMALL_UTF_H
+#endif // SMALL_DETAIL_ALGORITHM_UTF_H

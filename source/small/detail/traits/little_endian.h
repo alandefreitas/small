@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 8/3/21.
 //
 
-#ifndef SMALL_LITTLE_ENDIAN_H
-#define SMALL_LITTLE_ENDIAN_H
+#ifndef SMALL_DETAIL_TRAITS_LITTLE_ENDIAN_H
+#define SMALL_DETAIL_TRAITS_LITTLE_ENDIAN_H
 
 namespace small {
     /// \brief Helper to detect little endian
@@ -31,4 +31,4 @@ namespace small {
     };
 } // namespace small
 
-#endif // SMALL_LITTLE_ENDIAN_H
+#endif // SMALL_DETAIL_TRAITS_LITTLE_ENDIAN_H

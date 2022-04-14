@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 5/8/21.
 //
 
-#ifndef SMALL_CONST_KEY_ITERATOR_H
-#define SMALL_CONST_KEY_ITERATOR_H
+#ifndef SMALL_DETAIL_ITERATOR_CONST_KEY_ITERATOR_H
+#define SMALL_DETAIL_ITERATOR_CONST_KEY_ITERATOR_H
 
 #include <algorithm>
 #include <iterator>
@@ -251,4 +251,4 @@ namespace small {
     }
 } // namespace small
 
-#endif // SMALL_CONST_KEY_ITERATOR_H
+#endif // SMALL_DETAIL_ITERATOR_CONST_KEY_ITERATOR_H

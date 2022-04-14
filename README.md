@@ -349,6 +349,13 @@ If contributing to the documentation, please edit [`README.md`](README.md) direc
 <table>
 <tr>
     <td align="center">
+        <a href="https://github.com/marcosfpr">
+            <img src="https://avatars.githubusercontent.com/u/47637008?v=4" width="100;" alt="marcosfpr"/>
+            <br />
+            <sub><b>Marcos Pontes</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/alandefreitas">
             <img src="https://avatars.githubusercontent.com/u/5369819?v=4" width="100;" alt="alandefreitas"/>
             <br />

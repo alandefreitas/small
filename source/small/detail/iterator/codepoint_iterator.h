@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 8/5/21.
 //
 
-#ifndef SMALL_CODEPOINT_ITERATOR_H
-#define SMALL_CODEPOINT_ITERATOR_H
+#ifndef SMALL_DETAIL_ITERATOR_CODEPOINT_ITERATOR_H
+#define SMALL_DETAIL_ITERATOR_CODEPOINT_ITERATOR_H
 
 #include <ostream>
 #include <string_view>
@@ -647,4 +647,4 @@ namespace small {
 
 } // namespace small
 
-#endif // SMALL_CODEPOINT_ITERATOR_H
+#endif // SMALL_DETAIL_ITERATOR_CODEPOINT_ITERATOR_H

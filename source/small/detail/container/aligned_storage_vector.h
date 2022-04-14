@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 4/17/21.
 //
 
-#ifndef SMALL_MAX_SIZE_VECTOR_H
-#define SMALL_MAX_SIZE_VECTOR_H
+#ifndef SMALL_DETAIL_CONTAINER_ALIGNED_STORAGE_VECTOR_H
+#define SMALL_DETAIL_CONTAINER_ALIGNED_STORAGE_VECTOR_H
 
 #include <cstdlib>
 
@@ -687,4 +687,4 @@ namespace small {
 
 } // namespace small
 
-#endif // SMALL_MAX_SIZE_VECTOR_H
+#endif // SMALL_DETAIL_CONTAINER_ALIGNED_STORAGE_VECTOR_H

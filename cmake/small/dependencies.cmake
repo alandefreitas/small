@@ -8,13 +8,6 @@
 include(cmake/functions/cpp_modules.cmake)
 
 #######################################################
-### Dev Dependencies                                ###
-#######################################################
-if (NOT SMALL_DEV_BUILD)
-    return()
-endif ()
-
-#######################################################
 ### Catch2                                          ###
 #######################################################
 set(catch2_VERSION_LOCK 2.13.6)
@@ -91,10 +84,9 @@ if (NOT Catch2_FOUND)
         execute_process(COMMAND "${CMAKE_COMMAND}" --install .
                 WORKING_DIRECTORY "${catch2_BINARY_DIR}"
                 )
-
         # Find package again
         set(ENV{catch2_ROOT} ${catch2_INSTALL_HINT})
-        find_package(Catch2 REQUIRED CONFIG)
+        find_package(Catch2 CONFIG  REQUIRED)
     endif ()
 endif ()
 version_requirement_message(catch2

@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 4/17/21.
 //
 
-#ifndef SMALL_SMALL_VECTOR_H
-#define SMALL_SMALL_VECTOR_H
+#ifndef SMALL_VECTOR_H
+#define SMALL_VECTOR_H
 
 #include <cassert>
 #include <cstddef>
@@ -1412,4 +1412,4 @@ namespace small {
 
 } // namespace small
 
-#endif // SMALL_SMALL_VECTOR_H
+#endif // SMALL_VECTOR_H

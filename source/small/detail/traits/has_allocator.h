@@ -2,8 +2,8 @@
 // Created by Alan Freitas on 6/1/21.
 //
 
-#ifndef SMALL_CONTAINER_TRAITS_HAS_ALLOCATOR_H
-#define SMALL_CONTAINER_TRAITS_HAS_ALLOCATOR_H
+#ifndef SMALL_DETAIL_TRAITS_HAS_ALLOCATOR_H
+#define SMALL_DETAIL_TRAITS_HAS_ALLOCATOR_H
 
 namespace small {
     /// Check if type has an associated allocator type
@@ -17,4 +17,4 @@ namespace small {
 
 } // namespace small
 
-#endif // SMALL_CONTAINER_TRAITS_HAS_ALLOCATOR_H
+#endif // SMALL_DETAIL_TRAITS_HAS_ALLOCATOR_H

@@ -1,8 +1,8 @@
 ---
-name: Feature Request
-about: For formal improvement proposals. For discussing new ideas, please use the "Small Ideas 💡" link below.
+name: Documentation
+about: Something is missing from the docs
 title: ''
-labels: enhancement
+labels: documentation
 assignees: ''
 ---
 

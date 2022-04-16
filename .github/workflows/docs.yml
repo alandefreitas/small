@@ -15,6 +15,7 @@ jobs:
           MAX_HEADER_LEVEL: 3
           FOLDING: true
       - name: Update Contributors
+        if: github.ref == 'refs/heads/master'
         uses: akhilmhdh/contributors-readme-action@v2.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -5,7 +5,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(
         small
-        VERSION 0.1.2
+        VERSION 0.1.3
         DESCRIPTION "C++ small containers"
         HOMEPAGE_URL "https://alandefreitas.github.io/small"
 )

@@ -1,6 +1,10 @@
 //
-// Created by Alan Freitas on 4/17/21.
+// Copyright (c) 2021 alandefreitas (alandefreitas@gmail.com)
 //
+// Distributed under the Boost Software License, Version 1.0.
+// https://www.boost.org/LICENSE_1_0.txt
+//
+
 
 #ifndef SMALL_DETAIL_CONTAINER_ALIGNED_STORAGE_VECTOR_H
 #define SMALL_DETAIL_CONTAINER_ALIGNED_STORAGE_VECTOR_H

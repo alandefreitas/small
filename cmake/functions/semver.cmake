@@ -1,3 +1,10 @@
+#
+# Copyright (c) 2022 alandefreitas (alandefreitas@gmail.com)
+#
+# Distributed under the Boost Software License, Version 1.0.
+# https://www.boost.org/LICENSE_1_0.txt
+#
+
 # Parse a strict semver version string into its components
 # This function expects a valid semver string as input and
 # it will not make any expensive effort (use regex) to throw

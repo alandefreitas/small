@@ -1,3 +1,10 @@
+#
+# Copyright (c) 2022 alandefreitas (alandefreitas@gmail.com)
+#
+# Distributed under the Boost Software License, Version 1.0.
+# https://www.boost.org/LICENSE_1_0.txt
+#
+
 # @brief Add sanitizer flag for Clang and GCC to all targets
 # - You shouldn't use sanitizers in Release Mode
 # - It's usually best to do that per target

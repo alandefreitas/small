@@ -20,7 +20,7 @@ add_custom_target(
         lint_small
         COMMAND linter
         # Files
-        --include_paths "${SMALL_ROOT_DIR}/source"
+        --include_paths "${SMALL_ROOT_DIR}/include"
         # Linter options
         --show_progress
         # CMake command options

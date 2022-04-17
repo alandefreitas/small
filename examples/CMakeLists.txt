@@ -19,4 +19,4 @@ if (SMALL_BUILD_TESTS)
             COMMAND unicode_strings-example)
     add_test(NAME associative-example-as-test
             COMMAND associative-example)
-endif()
+endif ()

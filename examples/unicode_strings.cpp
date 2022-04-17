@@ -5,10 +5,11 @@
 // https://www.boost.org/LICENSE_1_0.txt
 //
 
+#include <small/string.hpp>
 #include <iostream>
-#include <small/string.h>
 
-int main() {
+int
+main() {
     // Input is UTF32, but string stores it as UTF8
     small::string str = U"Hello 🌎!";
 

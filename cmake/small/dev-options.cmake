@@ -28,13 +28,6 @@ endif()
 option(SMALL_BUILD_TESTS "Build tests" ON)
 option(SMALL_BUILD_EXAMPLES "Build examples" ON)
 
-if (APPLE OR CLANG)
-    set(DEFAULT_SMALL_BUILD_TESTS_WITH_PCH OFF)
-else()
-    set(DEFAULT_SMALL_BUILD_TESTS_WITH_PCH ${SMALL_DEV_BUILD})
-endif()
-option(SMALL_BUILD_TESTS_WITH_PCH "Build tests with precompiled headers" ${DEFAULT_SMALL_BUILD_TESTS_WITH_PCH})
-
 # Custom targets
 option(SMALL_BUILD_DOCS "Build documentation" OFF)
 option(SMALL_BUILD_COVERAGE_REPORT "Enable coverage support" OFF)

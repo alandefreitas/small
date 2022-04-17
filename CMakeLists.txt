@@ -12,7 +12,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(
         small
-        VERSION 0.1.3
+        VERSION 0.2.0
         DESCRIPTION "C++ small containers"
         HOMEPAGE_URL "https://alandefreitas.github.io/small"
 )
@@ -40,7 +40,7 @@ include(cmake/small/dev-options.cmake)
 #######################################################
 ### Libraries                                       ###
 #######################################################
-add_subdirectory(source)
+add_subdirectory(include)
 
 #######################################################
 ### Installer                                       ###
@@ -56,10 +56,10 @@ if (SMALL_BUILD_INSTALLER)
     # Install headers
     install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/small
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-            FILES_MATCHING PATTERN "*.h"
+            FILES_MATCHING PATTERN "*.hpp"
             )
 
-    # Install cmake script
+    # Install cmake targets script
     install(EXPORT small-targets
             FILE small-targets.cmake
             NAMESPACE small::
@@ -144,7 +144,7 @@ add_subdirectory(dev-tools)
 if (SMALL_BUILD_TESTS)
     include(CTest)
     enable_testing()
-    add_subdirectory(tests)
+    add_subdirectory(test)
 endif ()
 
 if (SMALL_BUILD_DOCS)

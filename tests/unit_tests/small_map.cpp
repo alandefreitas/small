@@ -35,7 +35,8 @@ TEST_CASE("Small Map") {
 
         SECTION("Allocator") {
             std::allocator<int> alloc;
-            associative_vector<true, false, true, vector<std::pair<int, int>, 5, std::allocator<std::pair<int, int>>>>
+            detail::associative_vector<true, false, true,
+                                       vector<std::pair<int, int>, 5, std::allocator<std::pair<int, int>>>>
                 a(alloc);
             REQUIRE(a.empty());
             REQUIRE(equal_il(a, {}));
@@ -353,7 +354,8 @@ TEST_CASE("Max Size Map") {
 
         SECTION("Allocator") {
             std::allocator<int> alloc;
-            associative_vector<true, false, true, vector<std::pair<int, int>, 5, std::allocator<std::pair<int, int>>>>
+            detail::associative_vector<true, false, true,
+                                       vector<std::pair<int, int>, 5, std::allocator<std::pair<int, int>>>>
                 a(alloc);
             REQUIRE(a.empty());
             REQUIRE(equal_il(a, {}));

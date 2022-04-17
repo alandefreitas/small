@@ -5,7 +5,6 @@
 // https://www.boost.org/LICENSE_1_0.txt
 //
 
-
 #ifndef SMALL_MAP_H
 #define SMALL_MAP_H
 
@@ -17,33 +16,37 @@
 namespace small {
     template <class K, class T, size_t N = default_inline_storage_v<std::pair<K, T>>, class Compare = std::less<>,
               class Allocator = std::allocator<std::pair<K, T>>>
-    using map = associative_vector<true, false, true, vector<std::pair<K, T>, N, Allocator>, Compare>;
+    using map = detail::associative_vector<true, false, true, vector<std::pair<K, T>, N, Allocator>, Compare>;
 
     template <class K, class T, size_t N = default_inline_storage_v<std::pair<K, T>>, class Compare = std::less<>>
-    using max_size_map = small::associative_vector<true, false, true, max_size_vector<std::pair<K, T>, N>, Compare>;
+    using max_size_map =
+        small::detail::associative_vector<true, false, true, max_size_vector<std::pair<K, T>, N>, Compare>;
 
     template <class K, class T, size_t N = default_inline_storage_v<std::pair<K, T>>, class Compare = std::less<>,
               class Allocator = std::allocator<std::pair<K, T>>>
-    using multimap = associative_vector<true, true, true, vector<std::pair<K, T>, N, Allocator>, Compare>;
+    using multimap = detail::associative_vector<true, true, true, vector<std::pair<K, T>, N, Allocator>, Compare>;
 
     template <class K, class T, size_t N = default_inline_storage_v<std::pair<K, T>>, class Compare = std::less<>>
-    using max_size_multimap = small::associative_vector<true, true, true, max_size_vector<std::pair<K, T>, N>, Compare>;
+    using max_size_multimap =
+        small::detail::associative_vector<true, true, true, max_size_vector<std::pair<K, T>, N>, Compare>;
 
     template <class K, class T, size_t N = default_inline_storage_v<std::pair<K, T>>, class Compare = std::less<>,
               class Allocator = std::allocator<std::pair<K, T>>>
-    using unordered_map = associative_vector<true, false, false, vector<std::pair<K, T>, N, Allocator>, Compare>;
+    using unordered_map =
+        detail::associative_vector<true, false, false, vector<std::pair<K, T>, N, Allocator>, Compare>;
 
     template <class K, class T, size_t N = default_inline_storage_v<std::pair<K, T>>, class Compare = std::less<>>
     using max_size_unordered_map =
-        small::associative_vector<true, false, false, max_size_vector<std::pair<K, T>, N>, Compare>;
+        small::detail::associative_vector<true, false, false, max_size_vector<std::pair<K, T>, N>, Compare>;
 
     template <class K, class T, size_t N = default_inline_storage_v<std::pair<K, T>>, class Compare = std::less<>,
               class Allocator = std::allocator<std::pair<K, T>>>
-    using unordered_multimap = associative_vector<true, true, false, vector<std::pair<K, T>, N, Allocator>, Compare>;
+    using unordered_multimap =
+        detail::associative_vector<true, true, false, vector<std::pair<K, T>, N, Allocator>, Compare>;
 
     template <class K, class T, size_t N = default_inline_storage_v<std::pair<K, T>>, class Compare = std::less<>>
     using max_size_unordered_multimap =
-        small::associative_vector<true, true, false, max_size_vector<std::pair<K, T>, N>, Compare>;
+        small::detail::associative_vector<true, true, false, max_size_vector<std::pair<K, T>, N>, Compare>;
 
 } // namespace small
 

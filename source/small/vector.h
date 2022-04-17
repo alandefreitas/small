@@ -5,7 +5,6 @@
 // https://www.boost.org/LICENSE_1_0.txt
 //
 
-
 #ifndef SMALL_VECTOR_H
 #define SMALL_VECTOR_H
 
@@ -70,9 +69,9 @@ namespace small {
     /// \tparam N Array maximum expected size
     template <class T, size_t N = default_inline_storage_v<T>, class Allocator = std::allocator<T>,
               class AllowHeap = std::true_type, class SizeType = size_t, class GrowthFactor = std::ratio<3, 2>>
-    class vector : public enable_allocator_from_this<std::is_empty_v<Allocator>, Allocator> {
+    class vector : public detail::enable_allocator_from_this<std::is_empty_v<Allocator>, Allocator> {
       private:
-        using enable_allocator_type = enable_allocator_from_this<std::is_empty_v<Allocator>, Allocator>;
+        using enable_allocator_type = detail::enable_allocator_from_this<std::is_empty_v<Allocator>, Allocator>;
 
       public:
         /// \section Common container types
@@ -84,8 +83,8 @@ namespace small {
         typedef ptrdiff_t difference_type;
         typedef value_type *pointer;
         typedef const value_type *const_pointer;
-        typedef pointer_wrapper<pointer> iterator;
-        typedef pointer_wrapper<const_pointer> const_iterator;
+        typedef detail::pointer_wrapper<pointer> iterator;
+        typedef detail::pointer_wrapper<const_pointer> const_iterator;
         typedef std::reverse_iterator<iterator> reverse_iterator;
         typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
@@ -351,7 +350,7 @@ namespace small {
             assert(invariants());
         }
 
-      public /* constructors */:
+        public /* constructors */:
         /// \section Initialization constructors
 
         /// \brief Construct empty small array
@@ -375,7 +374,7 @@ namespace small {
 
         /// \brief Construct small array from a pair of iterators
         template <class Iterator>
-        constexpr vector(Iterator first, enable_if_iterator_t<Iterator, value_type> last,
+        constexpr vector(Iterator first, detail::enable_if_iterator_t<Iterator, value_type> last,
                          const allocator_type &alloc = allocator_type()) {
             enable_allocator_type::set_allocator(alloc);
             // Handle input iterators
@@ -414,7 +413,7 @@ namespace small {
 
         /// \brief Construct small array from a range
         /// This range might also be a std::vector
-        template <class Range, std::enable_if_t<is_range_v<Range>, int> = 0>
+        template <class Range, std::enable_if_t<detail::is_range_v<Range>, int> = 0>
         constexpr explicit vector(Range &&r, const allocator_type &alloc = allocator_type())
             : vector(r.begin(), r.end(), alloc) {}
 
@@ -426,7 +425,7 @@ namespace small {
 
         /// \brief Assign small array from iterators
         template <class InputIterator>
-        constexpr void assign(InputIterator first, enable_if_iterator_t<InputIterator, value_type> last) {
+        constexpr void assign(InputIterator first, detail::enable_if_iterator_t<InputIterator, value_type> last) {
             clear();
             insert(end(), first, last);
         }
@@ -556,7 +555,7 @@ namespace small {
             assert(invariants());
         }
 
-      public /* iterators */:
+        public /* iterators */:
         /// \brief Get iterator to first element
         constexpr iterator begin() noexcept { return iterator(data()); }
 
@@ -601,7 +600,7 @@ namespace small {
             return std::reverse_iterator<const_iterator>(cbegin());
         }
 
-      public /* capacity */:
+        public /* capacity */:
         /// \brief Get small array size
         [[nodiscard]] constexpr size_type size() const noexcept { return get_unmasked_size(); }
 
@@ -655,7 +654,7 @@ namespace small {
             tmp.swap(*this);
         }
 
-      public /* element access */:
+        public /* element access */:
         /// \brief Get reference to n-th element in small array
         constexpr reference operator[](size_type n) {
             assert(n < size() && "vector::operator[] index out of bounds");
@@ -671,7 +670,7 @@ namespace small {
         /// \brief Check bounds and get reference to n-th element in small array
         constexpr reference at(size_type n) {
             if (n >= size()) {
-                throw_exception<std::out_of_range>("at: cannot access element after vector::size()");
+                detail::throw_exception<std::out_of_range>("at: cannot access element after vector::size()");
             }
             return (*this)[n];
         }
@@ -679,7 +678,7 @@ namespace small {
         /// \brief Check bounds and get constant reference to n-th element in small array
         constexpr const_reference at(size_type n) const {
             if (n >= size()) {
-                throw_exception<std::out_of_range>("at const: cannot access element after vector::size()");
+                detail::throw_exception<std::out_of_range>("at const: cannot access element after vector::size()");
             }
             return (*this)[n];
         }
@@ -714,7 +713,7 @@ namespace small {
         /// \brief Get constant reference to internal pointer to small array data
         constexpr const T *data() const noexcept { return this->is_external() ? data_.heap() : data_.buffer(); }
 
-      public /* modifiers */:
+        public /* modifiers */:
         /// \brief Copy element to end of small array
         constexpr void push_back(const value_type &v) { emplace_back(v); }
 
@@ -730,7 +729,7 @@ namespace small {
                 return *(data_.buffer() + size_);
             } else {
                 if constexpr (!should_use_heap) {
-                    throw_exception<std::length_error>("emplace_back: max_size exceeded in small_vector");
+                    detail::throw_exception<std::length_error>("emplace_back: max_size exceeded in small_vector");
                 } else {
                     // Handle external vectors
                     size_type old_size = size();
@@ -807,7 +806,7 @@ namespace small {
         /// \brief Copy element range stating at a position in small array
         template <class Iterator>
         constexpr iterator insert(const_iterator position, Iterator first,
-                                  enable_if_iterator_t<Iterator, value_type> last) {
+                                  detail::enable_if_iterator_t<Iterator, value_type> last) {
             // Handle input iterators
             using category = typename std::iterator_traits<Iterator>::iterator_category;
             using it_ref = typename std::iterator_traits<Iterator>::reference;
@@ -996,8 +995,8 @@ namespace small {
                 return;
             }
             make_size_internal<std::false_type>(
-                new_size, [](void *) { throw_exception<std::logic_error>("Should not emplace when changing size"); },
-                0);
+                new_size,
+                [](void *) { detail::throw_exception<std::logic_error>("Should not emplace when changing size"); }, 0);
         }
 
         /// \brief Change the size and emplace the elements as we go
@@ -1014,7 +1013,7 @@ namespace small {
         void make_size_internal(size_type new_size, EmplaceFunc &&emplace_func, size_type new_emplaced_size) {
             // Invariants
             if (new_size > max_size()) {
-                throw_exception<std::length_error>("make_size: max_size exceeded in small_vector");
+                detail::throw_exception<std::length_error>("make_size: max_size exceeded in small_vector");
             } else {
                 if constexpr (!should_use_heap) {
                     return;
@@ -1402,7 +1401,7 @@ namespace small {
     /// \brief Create a vector from a raw array
     /// This is similar to std::to_array
     template <class T, size_t N_INPUT, size_t N_OUTPUT = std::max(default_inline_storage_v<T>, N_INPUT)>
-    constexpr vector<std::remove_cv_t<T>, N_OUTPUT> to_vector(T(&&a)[N_INPUT]) {
+    constexpr vector<std::remove_cv_t<T>, N_OUTPUT> to_vector(T (&&a)[N_INPUT]) {
         return vector<std::remove_cv_t<T>, N_OUTPUT>(a, a + N_INPUT);
     }
 

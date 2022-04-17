@@ -368,7 +368,7 @@ TEST_CASE("Custom Vector") {
 
         auto it = a.emplace(a.begin() + 2, "ten");
         REQUIRE(it == a.begin() + 2);
-        auto& b = a.back();
+        auto &b = a.back();
         REQUIRE(b == "four");
         REQUIRE(a.size() == 5);
         REQUIRE(a.max_size() > 5);

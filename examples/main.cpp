@@ -91,7 +91,7 @@ int main() {
 template <class R>
 void print(R&& v) {
     for (const auto& x : v) {
-        constexpr bool x_is_pair = small::is_pair_v<std::decay_t<decltype(x)>>;
+        constexpr bool x_is_pair = small::detail::is_pair_v<std::decay_t<decltype(x)>>;
         if constexpr (not x_is_pair) {
             std::cout << x << ' ';
         } else {

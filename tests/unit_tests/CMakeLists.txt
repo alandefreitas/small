@@ -152,21 +152,21 @@ if (SMALL_BUILD_TESTS_WITH_PCH)
             ut_small_string_const_algorithms
             ut_small_string_non_member)
         target_precompile_headers(${string_target}
-            PRIVATE
-            <algorithm>
-            <numeric>
-            <set>
-            <sstream>
-            <string>
-            <string_view>
-            <unordered_set>
+                PRIVATE
+                <algorithm>
+                <numeric>
+                <set>
+                <sstream>
+                <string>
+                <string_view>
+                <unordered_set>
 
-            <catch2/catch.hpp>
+                <catch2/catch.hpp>
 
-            <small/string.h>
-            <small/vector.h>
-            )
-    endforeach()
+                <small/string.h>
+                <small/vector.h>
+                )
+    endforeach ()
 
     target_precompile_headers(ut_small_set
             PRIVATE

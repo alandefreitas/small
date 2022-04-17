@@ -97,14 +97,14 @@ TEST_CASE("String Const Algorithms") {
         SECTION("To UTF32") {
             SECTION("Copy count") {
                 string a("😐🙂😀🙂😀😐😐🙂😀🙂😀😐");
-                utf32_char_type b[7]{};
+                detail::utf32_char_type b[7]{};
                 a.copy(b, string::codepoint_index(7));
                 REQUIRE(std::u32string_view(b, 7) == U"😐🙂😀🙂😀😐😐");
             }
 
             SECTION("From pos") {
                 string a("😐🙂😀🙂😀😐😐🙂😀🙂😀😐");
-                utf32_char_type b[7]{};
+                detail::utf32_char_type b[7]{};
                 a.copy(b, string::codepoint_index(7), string::codepoint_index(3));
                 REQUIRE(std::u32string_view(b, 7) == U"🙂😀😐😐🙂😀🙂");
             }

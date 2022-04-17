@@ -5,7 +5,6 @@
 // https://www.boost.org/LICENSE_1_0.txt
 //
 
-
 #ifndef SMALL_QUEUE_H
 #define SMALL_QUEUE_H
 

@@ -23,6 +23,7 @@
 
 TEST_CASE("Pointer wrapper") {
     using namespace small;
+    using namespace small::detail;
 
     SECTION("Constructor") {
         SECTION("Empty") { [[maybe_unused]] pointer_wrapper<int *> p; }

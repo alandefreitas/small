@@ -5,7 +5,6 @@
 // https://www.boost.org/LICENSE_1_0.txt
 //
 
-
 #ifndef SMALL_SET_H
 #define SMALL_SET_H
 
@@ -17,31 +16,33 @@
 namespace small {
     template <class T, size_t N = default_inline_storage_v<T>, class Compare = std::less<>,
               class Allocator = std::allocator<T>>
-    using set = associative_vector<false, false, true, vector<T, N, Allocator>, Compare>;
+    using set = detail::associative_vector<false, false, true, vector<T, N, Allocator>, Compare>;
 
     template <class T, size_t N = default_inline_storage_v<T>, class Compare = std::less<>>
-    using max_size_set = small::associative_vector<false, false, true, max_size_vector<T, N>, Compare>;
+    using max_size_set = small::detail::associative_vector<false, false, true, max_size_vector<T, N>, Compare>;
 
     template <class T, size_t N = default_inline_storage_v<T>, class Compare = std::less<>,
               class Allocator = std::allocator<T>>
-    using multiset = associative_vector<false, true, true, vector<T, N, Allocator>, Compare>;
+    using multiset = detail::associative_vector<false, true, true, vector<T, N, Allocator>, Compare>;
 
     template <class T, size_t N = default_inline_storage_v<T>, class Compare = std::less<>>
-    using max_size_multiset = small::associative_vector<false, true, true, max_size_vector<T, N>, Compare>;
+    using max_size_multiset = small::detail::associative_vector<false, true, true, max_size_vector<T, N>, Compare>;
 
     template <class T, size_t N = default_inline_storage_v<T>, class Compare = std::less<>,
               class Allocator = std::allocator<T>>
-    using unordered_set = associative_vector<false, false, false, vector<T, N, Allocator>, Compare>;
+    using unordered_set = detail::associative_vector<false, false, false, vector<T, N, Allocator>, Compare>;
 
     template <class T, size_t N = default_inline_storage_v<T>, class Compare = std::less<>>
-    using max_size_unordered_set = small::associative_vector<false, false, false, max_size_vector<T, N>, Compare>;
+    using max_size_unordered_set =
+        small::detail::associative_vector<false, false, false, max_size_vector<T, N>, Compare>;
 
     template <class T, size_t N = default_inline_storage_v<T>, class Compare = std::less<>,
               class Allocator = std::allocator<T>>
-    using unordered_multiset = associative_vector<false, true, false, vector<T, N, Allocator>, Compare>;
+    using unordered_multiset = detail::associative_vector<false, true, false, vector<T, N, Allocator>, Compare>;
 
     template <class T, size_t N = default_inline_storage_v<T>, class Compare = std::less<>>
-    using max_size_unordered_multiset = small::associative_vector<false, true, false, max_size_vector<T, N>, Compare>;
+    using max_size_unordered_multiset =
+        small::detail::associative_vector<false, true, false, max_size_vector<T, N>, Compare>;
 
 } // namespace small
 

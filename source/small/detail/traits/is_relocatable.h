@@ -5,7 +5,6 @@
 // https://www.boost.org/LICENSE_1_0.txt
 //
 
-
 #ifndef SMALL_DETAIL_TRAITS_IS_RELOCATABLE_H
 #define SMALL_DETAIL_TRAITS_IS_RELOCATABLE_H
 
@@ -21,7 +20,6 @@ namespace small {
     };
 
     template <class T> constexpr bool is_relocatable_v = is_relocatable<T>::value;
-
 } // namespace small
 
 #endif // SMALL_DETAIL_TRAITS_IS_RELOCATABLE_H

@@ -5,7 +5,6 @@
 // https://www.boost.org/LICENSE_1_0.txt
 //
 
-
 #ifndef SMALL_DETAIL_TRAITS_CPP_VERSION_H
 #define SMALL_DETAIL_TRAITS_CPP_VERSION_H
 
@@ -88,7 +87,6 @@
 #if __cpp_static_assert
 #define cpp_feature_testing 201911L
 #endif
-
 
 #ifdef cpp_feature_testing
 #ifdef __cpp_aggregate_bases
@@ -201,7 +199,7 @@
 #endif
 
 #if defined(do_constexpr)
-#  undef do_constexpr
+#undef do_constexpr
 #endif
 #ifdef HEDLEY_CONSTEXPR
 #define do_constexpr HEDLEY_CONSTEXPR
@@ -627,7 +625,6 @@
 #define cpp_variadic_using 201611L
 #endif
 
-
 /*
  * C++ attributes
  */
@@ -691,35 +688,35 @@
  * Macros to use C++ attributes even if there are not formally available yet
  */
 #if defined(warn_nodiscard)
-#  undef warn_nodiscard
+#undef warn_nodiscard
 #endif
 #ifdef HEDLEY_WARN_UNUSED_RESULT
 #define warn_nodiscard HEDLEY_WARN_UNUSED_RESULT
 #endif
 
 #if defined(warn_noreturn)
-#  undef warn_noreturn
+#undef warn_noreturn
 #endif
 #ifdef HEDLEY_NO_RETURN
 #define warn_noreturn HEDLEY_NO_RETURN
 #endif
 
 #if defined(do_fallthrough)
-#  undef do_fallthrough
+#undef do_fallthrough
 #endif
 #ifdef HEDLEY_FALL_THROUGH
 #define do_fallthrough HEDLEY_FALL_THROUGH
 #endif
 
 #if defined(do_likely)
-#  undef do_likely
+#undef do_likely
 #endif
 #ifdef HEDLEY_LIKELY
 #define do_likely(expr) HEDLEY_LIKELY(expr)
 #endif
 
 #if defined(do_unlikely)
-#  undef do_unlikely
+#undef do_unlikely
 #endif
 #ifdef HEDLEY_UNLIKELY
 #define do_unlikely(expr) HEDLEY_UNLIKELY(expr)
@@ -738,28 +735,28 @@
  * Macros to use compiler attributes if they are available
  */
 #if defined(warn_return_non_null)
-#  undef warn_return_non_null
+#undef warn_return_non_null
 #endif
 #ifdef HEDLEY_RETURNS_NON_NULL
 #define warn_return_non_null HEDLEY_RETURNS_NON_NULL
 #endif
 
 #if defined(warn_non_null)
-#  undef warn_non_null
+#undef warn_non_null
 #endif
 #ifdef HEDLEY_RETURNS_NON_NULL
 #define warn_non_null(...) HEDLEY_NON_NULL(__VA_ARGS__)
 #endif
 
 #if defined(warn_bit_flags)
-#  undef warn_bit_flags
+#undef warn_bit_flags
 #endif
 #ifdef HEDLEY_RETURNS_NON_NULL
 #define warn_bit_flags HEDLEY_FLAGS
 #endif
 
 #if defined(do_predict)
-#  undef do_predict
+#undef do_predict
 #endif
 #ifdef HEDLEY_PREDICT
 #define do_predict(expr, expected, probability) HEDLEY_PREDICT(expr, expected, probability)
@@ -778,7 +775,6 @@
 #define cpp_lib_chrono_udls 201304L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_complex_udls
 #define cpp_lib_complex_udls __cpp_lib_complex_udls
@@ -786,7 +782,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_complex_udls 201309L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_exchange_function
@@ -804,7 +799,6 @@
 #define cpp_lib_generic_associative_lookup 201304L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_integer_sequence
 #define cpp_lib_integer_sequence __cpp_lib_integer_sequence
@@ -812,7 +806,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_integer_sequence 201304L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_integral_constant_callable
@@ -822,7 +815,6 @@
 #define cpp_lib_integral_constant_callable 201304L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_is_final
 #define cpp_lib_is_final __cpp_lib_is_final
@@ -830,7 +822,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_is_final 201402L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_is_null_pointer
@@ -840,7 +831,6 @@
 #define cpp_lib_is_null_pointer 201309L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_make_reverse_iterator
 #define cpp_lib_make_reverse_iterator __cpp_lib_make_reverse_iterator
@@ -848,7 +838,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_make_reverse_iterator 201402L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_make_unique
@@ -858,7 +847,6 @@
 #define cpp_lib_make_unique 201304L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_null_iterators
 #define cpp_lib_null_iterators __cpp_lib_null_iterators
@@ -866,7 +854,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_null_iterators 201304L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_quoted_string_io
@@ -876,7 +863,6 @@
 #define cpp_lib_quoted_string_io 201304L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_result_of_sfinae
 #define cpp_lib_result_of_sfinae __cpp_lib_result_of_sfinae
@@ -884,7 +870,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_result_of_sfinae 201210L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_robust_nonmodifying_seq_ops
@@ -894,7 +879,6 @@
 #define cpp_lib_robust_nonmodifying_seq_ops 201304L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_shared_timed_mutex
 #define cpp_lib_shared_timed_mutex __cpp_lib_shared_timed_mutex
@@ -902,7 +886,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_shared_timed_mutex 201402L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_string_udls
@@ -912,7 +895,6 @@
 #define cpp_lib_string_udls 201304L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_transformation_trait_aliases
 #define cpp_lib_transformation_trait_aliases __cpp_lib_transformation_trait_aliases
@@ -920,7 +902,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_transformation_trait_aliases 201304L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_transparent_operators
@@ -930,7 +911,6 @@
 #define cpp_lib_transparent_operators 201210L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_tuple_element_t
 #define cpp_lib_tuple_element_t __cpp_lib_tuple_element_t
@@ -938,7 +918,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_tuple_element_t 201402L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_tuples_by_type
@@ -948,8 +927,6 @@
 #define cpp_lib_tuples_by_type 201304L
 #endif
 
-
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_addressof_constexpr
 #define cpp_lib_addressof_constexpr __cpp_lib_addressof_constexpr
@@ -957,7 +934,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_addressof_constexpr 201603L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_allocator_traits_is_always_equal
@@ -967,7 +943,6 @@
 #define cpp_lib_allocator_traits_is_always_equal 201411L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_any
 #define cpp_lib_any __cpp_lib_any
@@ -975,7 +950,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_any 201606L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_apply
@@ -985,7 +959,6 @@
 #define cpp_lib_apply 201603L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_array_constexpr
 #define cpp_lib_array_constexpr __cpp_lib_array_constexpr
@@ -993,7 +966,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_array_constexpr 201603L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_as_const
@@ -1003,7 +975,6 @@
 #define cpp_lib_as_const 201510L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_atomic_is_always_lock_free
 #define cpp_lib_atomic_is_always_lock_free __cpp_lib_atomic_is_always_lock_free
@@ -1011,7 +982,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_atomic_is_always_lock_free 201603L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_bool_constant
@@ -1021,7 +991,6 @@
 #define cpp_lib_bool_constant 201505L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_boyer_moore_searcher
 #define cpp_lib_boyer_moore_searcher __cpp_lib_boyer_moore_searcher
@@ -1029,7 +998,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_boyer_moore_searcher 201603L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_byte
@@ -1039,7 +1007,6 @@
 #define cpp_lib_byte 201603L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_chrono
 #define cpp_lib_chrono __cpp_lib_chrono
@@ -1047,7 +1014,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_chrono 201611L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_clamp
@@ -1057,7 +1023,6 @@
 #define cpp_lib_clamp 201603L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_enable_shared_from_this
 #define cpp_lib_enable_shared_from_this __cpp_lib_enable_shared_from_this
@@ -1065,7 +1030,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_enable_shared_from_this 201603L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_execution
@@ -1075,7 +1039,6 @@
 #define cpp_lib_execution 201603L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_filesystem
 #define cpp_lib_filesystem __cpp_lib_filesystem
@@ -1083,7 +1046,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_filesystem 201703L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_gcd_lcm
@@ -1093,7 +1055,6 @@
 #define cpp_lib_gcd_lcm 201606L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_hardware_interference_size
 #define cpp_lib_hardware_interference_size __cpp_lib_hardware_interference_size
@@ -1101,7 +1062,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_hardware_interference_size 201703L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_has_unique_object_representations
@@ -1111,7 +1071,6 @@
 #define cpp_lib_has_unique_object_representations 201606L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_hypot
 #define cpp_lib_hypot __cpp_lib_hypot
@@ -1119,7 +1078,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_hypot 201603L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_incomplete_container_elements
@@ -1129,7 +1087,6 @@
 #define cpp_lib_incomplete_container_elements 201505L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_invoke
 #define cpp_lib_invoke __cpp_lib_invoke
@@ -1137,7 +1094,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_invoke 201411L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_is_aggregate
@@ -1147,7 +1103,6 @@
 #define cpp_lib_is_aggregate 201703L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_is_invocable
 #define cpp_lib_is_invocable __cpp_lib_is_invocable
@@ -1155,7 +1110,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_is_invocable 201703L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_is_swappable
@@ -1165,7 +1119,6 @@
 #define cpp_lib_is_swappable 201603L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_launder
 #define cpp_lib_launder __cpp_lib_launder
@@ -1173,7 +1126,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_launder 201606L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_logical_traits
@@ -1183,7 +1135,6 @@
 #define cpp_lib_logical_traits 201510L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_make_from_tuple
 #define cpp_lib_make_from_tuple __cpp_lib_make_from_tuple
@@ -1191,7 +1142,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_make_from_tuple 201606L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_map_try_emplace
@@ -1201,7 +1151,6 @@
 #define cpp_lib_map_try_emplace 201411L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_math_special_functions
 #define cpp_lib_math_special_functions __cpp_lib_math_special_functions
@@ -1209,7 +1158,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_math_special_functions 201603L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_memory_resource
@@ -1219,7 +1167,6 @@
 #define cpp_lib_memory_resource 201603L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_node_extract
 #define cpp_lib_node_extract __cpp_lib_node_extract
@@ -1227,7 +1174,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_node_extract 201606L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_nonmember_container_access
@@ -1237,7 +1183,6 @@
 #define cpp_lib_nonmember_container_access 201411L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_not_fn
 #define cpp_lib_not_fn __cpp_lib_not_fn
@@ -1245,7 +1190,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_not_fn 201603L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_optional
@@ -1255,7 +1199,6 @@
 #define cpp_lib_optional 201606L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_parallel_algorithm
 #define cpp_lib_parallel_algorithm __cpp_lib_parallel_algorithm
@@ -1263,7 +1206,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_parallel_algorithm 201603L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_raw_memory_algorithms
@@ -1273,7 +1215,6 @@
 #define cpp_lib_raw_memory_algorithms 201606L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_sample
 #define cpp_lib_sample __cpp_lib_sample
@@ -1281,7 +1222,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_sample 201603L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_scoped_lock
@@ -1291,7 +1231,6 @@
 #define cpp_lib_scoped_lock 201703L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_shared_mutex
 #define cpp_lib_shared_mutex __cpp_lib_shared_mutex
@@ -1299,7 +1238,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_shared_mutex 201505L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_shared_ptr_arrays
@@ -1309,7 +1247,6 @@
 #define cpp_lib_shared_ptr_arrays 201611L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_shared_ptr_weak_type
 #define cpp_lib_shared_ptr_weak_type __cpp_lib_shared_ptr_weak_type
@@ -1317,7 +1254,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_shared_ptr_weak_type 201606L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_string_view
@@ -1327,7 +1263,6 @@
 #define cpp_lib_string_view 201606L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_to_chars
 #define cpp_lib_to_chars __cpp_lib_to_chars
@@ -1335,7 +1270,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_to_chars 201611L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_type_trait_variable_templates
@@ -1345,7 +1279,6 @@
 #define cpp_lib_type_trait_variable_templates 201510L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_uncaught_exceptions
 #define cpp_lib_uncaught_exceptions __cpp_lib_uncaught_exceptions
@@ -1353,7 +1286,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_uncaught_exceptions 201411L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_unordered_map_try_emplace
@@ -1363,7 +1295,6 @@
 #define cpp_lib_unordered_map_try_emplace 201411L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_variant
 #define cpp_lib_variant __cpp_lib_variant
@@ -1371,7 +1302,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_variant 201606L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_void_t
@@ -1381,8 +1311,6 @@
 #define cpp_lib_void_t 201411L
 #endif
 
-
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_assume_aligned
 #define cpp_lib_assume_aligned __cpp_lib_assume_aligned
@@ -1390,7 +1318,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_assume_aligned 201811L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_atomic_flag_test
@@ -1400,7 +1327,6 @@
 #define cpp_lib_atomic_flag_test 201907L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_atomic_float
 #define cpp_lib_atomic_float __cpp_lib_atomic_float
@@ -1408,7 +1334,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_atomic_float 201711L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_atomic_lock_free_type_aliases
@@ -1418,7 +1343,6 @@
 #define cpp_lib_atomic_lock_free_type_aliases 201907L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_atomic_ref
 #define cpp_lib_atomic_ref __cpp_lib_atomic_ref
@@ -1426,7 +1350,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_atomic_ref 201806L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_atomic_shared_ptr
@@ -1436,7 +1359,6 @@
 #define cpp_lib_atomic_shared_ptr 201711L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_atomic_value_initialization
 #define cpp_lib_atomic_value_initialization __cpp_lib_atomic_value_initialization
@@ -1444,7 +1366,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_atomic_value_initialization 201911L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_atomic_wait
@@ -1454,7 +1375,6 @@
 #define cpp_lib_atomic_wait 201907L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_barrier
 #define cpp_lib_barrier __cpp_lib_barrier
@@ -1462,7 +1382,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_barrier 201907L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_bind_front
@@ -1472,7 +1391,6 @@
 #define cpp_lib_bind_front 201907L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_bit_cast
 #define cpp_lib_bit_cast __cpp_lib_bit_cast
@@ -1480,7 +1398,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_bit_cast 201806L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_bitops
@@ -1490,7 +1407,6 @@
 #define cpp_lib_bitops 201907L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_bounded_array_traits
 #define cpp_lib_bounded_array_traits __cpp_lib_bounded_array_traits
@@ -1498,7 +1414,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_bounded_array_traits 201902L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_char8_t
@@ -1508,7 +1423,6 @@
 #define cpp_lib_char8_t 201811L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_concepts
 #define cpp_lib_concepts __cpp_lib_concepts
@@ -1516,7 +1430,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_concepts 202002L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_constexpr_algorithms
@@ -1526,7 +1439,6 @@
 #define cpp_lib_constexpr_algorithms 201806L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_constexpr_complex
 #define cpp_lib_constexpr_complex __cpp_lib_constexpr_complex
@@ -1534,7 +1446,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_constexpr_complex 201711L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_constexpr_dynamic_alloc
@@ -1544,7 +1455,6 @@
 #define cpp_lib_constexpr_dynamic_alloc 201907L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_constexpr_functional
 #define cpp_lib_constexpr_functional __cpp_lib_constexpr_functional
@@ -1552,7 +1462,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_constexpr_functional 201907L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_constexpr_iterator
@@ -1562,7 +1471,6 @@
 #define cpp_lib_constexpr_iterator 201811L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_constexpr_memory
 #define cpp_lib_constexpr_memory __cpp_lib_constexpr_memory
@@ -1570,7 +1478,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_constexpr_memory 201811L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_constexpr_numeric
@@ -1580,7 +1487,6 @@
 #define cpp_lib_constexpr_numeric 201911L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_constexpr_string
 #define cpp_lib_constexpr_string __cpp_lib_constexpr_string
@@ -1588,7 +1494,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_constexpr_string 201907L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_constexpr_string_view
@@ -1598,7 +1503,6 @@
 #define cpp_lib_constexpr_string_view 201811L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_constexpr_tuple
 #define cpp_lib_constexpr_tuple __cpp_lib_constexpr_tuple
@@ -1606,7 +1510,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_constexpr_tuple 201811L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_constexpr_utility
@@ -1616,7 +1519,6 @@
 #define cpp_lib_constexpr_utility 201811L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_constexpr_vector
 #define cpp_lib_constexpr_vector __cpp_lib_constexpr_vector
@@ -1624,7 +1526,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_constexpr_vector 201907L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_coroutine
@@ -1634,7 +1535,6 @@
 #define cpp_lib_coroutine 201902L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_destroying_delete
 #define cpp_lib_destroying_delete __cpp_lib_destroying_delete
@@ -1642,7 +1542,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_destroying_delete 201806L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_endian
@@ -1652,7 +1551,6 @@
 #define cpp_lib_endian 201907L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_erase_if
 #define cpp_lib_erase_if __cpp_lib_erase_if
@@ -1660,7 +1558,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_erase_if 202002L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_generic_unordered_lookup
@@ -1670,7 +1567,6 @@
 #define cpp_lib_generic_unordered_lookup 201811L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_int_pow2
 #define cpp_lib_int_pow2 __cpp_lib_int_pow2
@@ -1678,7 +1574,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_int_pow2 202002L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_integer_comparison_functions
@@ -1688,7 +1583,6 @@
 #define cpp_lib_integer_comparison_functions 202002L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_interpolate
 #define cpp_lib_interpolate __cpp_lib_interpolate
@@ -1696,7 +1590,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_interpolate 201902L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_is_constant_evaluated
@@ -1706,7 +1599,6 @@
 #define cpp_lib_is_constant_evaluated 201811L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_is_layout_compatible
 #define cpp_lib_is_layout_compatible __cpp_lib_is_layout_compatible
@@ -1714,7 +1606,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_is_layout_compatible 201907L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_is_nothrow_convertible
@@ -1724,7 +1615,6 @@
 #define cpp_lib_is_nothrow_convertible 201806L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_is_pointer_interconvertible
 #define cpp_lib_is_pointer_interconvertible __cpp_lib_is_pointer_interconvertible
@@ -1732,7 +1622,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_is_pointer_interconvertible 201907L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_jthread
@@ -1742,7 +1631,6 @@
 #define cpp_lib_jthread 201911L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_latch
 #define cpp_lib_latch __cpp_lib_latch
@@ -1750,7 +1638,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_latch 201907L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_list_remove_return_type
@@ -1760,7 +1647,6 @@
 #define cpp_lib_list_remove_return_type 201806L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_math_constants
 #define cpp_lib_math_constants __cpp_lib_math_constants
@@ -1768,7 +1654,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_math_constants 201907L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_polymorphic_allocator
@@ -1778,7 +1663,6 @@
 #define cpp_lib_polymorphic_allocator 201902L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_ranges
 #define cpp_lib_ranges __cpp_lib_ranges
@@ -1786,7 +1670,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_ranges 201811L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_remove_cvref
@@ -1796,7 +1679,6 @@
 #define cpp_lib_remove_cvref 201711L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_semaphore
 #define cpp_lib_semaphore __cpp_lib_semaphore
@@ -1804,7 +1686,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_semaphore 201907L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_shift
@@ -1814,7 +1695,6 @@
 #define cpp_lib_shift 201806L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_smart_ptr_for_overwrite
 #define cpp_lib_smart_ptr_for_overwrite __cpp_lib_smart_ptr_for_overwrite
@@ -1822,7 +1702,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_smart_ptr_for_overwrite 202002L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_source_location
@@ -1832,7 +1711,6 @@
 #define cpp_lib_source_location 201907L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_span
 #define cpp_lib_span __cpp_lib_span
@@ -1840,7 +1718,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_span 202002L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_ssize
@@ -1850,7 +1727,6 @@
 #define cpp_lib_ssize 201902L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_starts_ends_with
 #define cpp_lib_starts_ends_with __cpp_lib_starts_ends_with
@@ -1858,7 +1734,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_starts_ends_with 201711L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_syncbuf
@@ -1868,7 +1743,6 @@
 #define cpp_lib_syncbuf 201803L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_three_way_comparison
 #define cpp_lib_three_way_comparison __cpp_lib_three_way_comparison
@@ -1876,7 +1750,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_three_way_comparison 201907L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_to_address
@@ -1886,7 +1759,6 @@
 #define cpp_lib_to_address 201711L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_to_array
 #define cpp_lib_to_array __cpp_lib_to_array
@@ -1894,7 +1766,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_to_array 201907L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_unwrap_ref
@@ -1904,8 +1775,6 @@
 #define cpp_lib_unwrap_ref 201811L
 #endif
 
-
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_is_scoped_enum
 #define cpp_lib_is_scoped_enum __cpp_lib_is_scoped_enum
@@ -1913,7 +1782,6 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_is_scoped_enum 202011L
 #endif
-
 
 #if __has_include(<version>)
 #ifdef __cpp_lib_stacktrace
@@ -1923,7 +1791,6 @@
 #define cpp_lib_stacktrace 202011L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_stdatomic_h
 #define cpp_lib_stdatomic_h __cpp_lib_stdatomic_h
@@ -1932,7 +1799,6 @@
 #define cpp_lib_stdatomic_h 202011L
 #endif
 
-
 #if __has_include(<version>)
 #ifdef __cpp_lib_string_contains
 #define cpp_lib_string_contains __cpp_lib_string_contains
@@ -1940,6 +1806,5 @@
 #elif cplusplus >= 201304L
 #define cpp_lib_string_contains 202011L
 #endif
-
 
 #endif // SMALL_DETAIL_TRAITS_CPP_VERSION_H

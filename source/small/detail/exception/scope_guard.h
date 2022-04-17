@@ -5,13 +5,12 @@
 // https://www.boost.org/LICENSE_1_0.txt
 //
 
-
 #ifndef SMALL_DETAIL_EXCEPTION_SCOPE_GUARD_H
 #define SMALL_DETAIL_EXCEPTION_SCOPE_GUARD_H
 
-#include <utility>
 #include <functional>
 #include <iostream>
+#include <utility>
 
 #include "throw.h"
 

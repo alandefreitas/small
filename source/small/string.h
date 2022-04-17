@@ -5,7 +5,6 @@
 // https://www.boost.org/LICENSE_1_0.txt
 //
 
-
 #ifndef SMALL_STRING_H
 #define SMALL_STRING_H
 
@@ -91,8 +90,8 @@ namespace small {
         typedef const value_type &const_reference;
         typedef typename std::allocator_traits<Allocator>::pointer pointer;
         typedef typename std::allocator_traits<Allocator>::const_pointer const_pointer;
-        typedef pointer_wrapper<pointer> iterator;
-        typedef pointer_wrapper<const_pointer> const_iterator;
+        typedef detail::pointer_wrapper<pointer> iterator;
+        typedef detail::pointer_wrapper<const_pointer> const_iterator;
         typedef std::reverse_iterator<iterator> reverse_iterator;
         typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
         enum : size_type { npos = (size_type)-1 };
@@ -111,9 +110,10 @@ namespace small {
         /// \section Type we use for the lookup table, if it exists
         /// The type of codepoint map view for accessing the byte and codepoint indexes of multibyte chars
         /// The table will use the codepoint hint defined above
-        using lookup_table_type = lookup_table_view<value_type, traits_type, codepoint_hint_step_size, size_type>;
+        using lookup_table_type =
+            detail::lookup_table_view<value_type, traits_type, codepoint_hint_step_size, size_type>;
         using const_lookup_table_type =
-            const_lookup_table_view<value_type, traits_type, codepoint_hint_step_size, size_type>;
+            detail::const_lookup_table_view<value_type, traits_type, codepoint_hint_step_size, size_type>;
 
         /// \brief We string view type for this string type
         using string_view_type = std::basic_string_view<value_type, traits_type>;
@@ -122,12 +122,12 @@ namespace small {
         using self_type = basic_string<CharT, N, Traits, WCharT, Allocator, CP_HINT_STEP, SizeType>;
 
         /// \section Types for iterating codepoints
-        using codepoint_reference = external_codepoint_reference<self_type>;
-        using const_codepoint_reference = const_external_codepoint_reference<self_type>;
-        using codepoint_iterator = external_codepoint_iterator<self_type>;
-        using const_codepoint_iterator = const_external_codepoint_iterator<self_type>;
-        using reverse_codepoint_iterator = reverse_external_codepoint_iterator<self_type>;
-        using const_reverse_codepoint_iterator = const_reverse_external_codepoint_iterator<self_type>;
+        using codepoint_reference = detail::external_codepoint_reference<self_type>;
+        using const_codepoint_reference = detail::const_external_codepoint_reference<self_type>;
+        using codepoint_iterator = detail::external_codepoint_iterator<self_type>;
+        using const_codepoint_iterator = detail::const_external_codepoint_iterator<self_type>;
+        using reverse_codepoint_iterator = detail::reverse_external_codepoint_iterator<self_type>;
+        using const_reverse_codepoint_iterator = detail::const_reverse_external_codepoint_iterator<self_type>;
 
         /// \brief A strong integer type for representing code point indexes
         /// Although it's a strong type, it still includes most operations to work with size_type
@@ -148,10 +148,10 @@ namespace small {
         /// The difference here is that we accept string views of any char type
         template <class T>
         using is_api_string_view = std::conjunction<
-            std::negation<std::is_same<extract_value_type_t<T>, void>>,
-            std::is_convertible<
-                const T &, std::basic_string_view<extract_value_type_t<T>, std::char_traits<extract_value_type_t<T>>>>,
-            std::negation<std::is_convertible<const T &, const extract_value_type_t<T> *>>>;
+            std::negation<std::is_same<detail::extract_value_type_t<T>, void>>,
+            std::is_convertible<const T &, std::basic_string_view<detail::extract_value_type_t<T>,
+                                                                  std::char_traits<detail::extract_value_type_t<T>>>>,
+            std::negation<std::is_convertible<const T &, const detail::extract_value_type_t<T> *>>>;
 
         template <class T> static constexpr bool is_api_string_view_v = is_api_string_view<T>::value;
 
@@ -194,7 +194,7 @@ namespace small {
             constexpr bool input_is_wide = sizeof(InputChar) > 1;
             uint8_t codeunits_per_codepoint = 1;
             if constexpr (input_is_wide) {
-                codeunits_per_codepoint = utf_size_as<value_type>(&cp, 1);
+                codeunits_per_codepoint = detail::utf_size_as<value_type>(&cp, 1);
             }
             size_.codeunit_size() = codeunits_per_codepoint * count;
             if constexpr (store_codepoint_size) {
@@ -209,11 +209,11 @@ namespace small {
             buffer_.resize(buffer_.capacity());
 
             // Fill the buffer
-            if constexpr (!is_same_utf_encoding_v<InputChar, value_type>) {
+            if constexpr (!detail::is_same_utf_encoding_v<InputChar, value_type>) {
                 if (codeunits_per_codepoint == 1) {
                     std::fill(buffer_.begin(), buffer_.begin() + count, static_cast<value_type>(cp));
                 } else {
-                    to_utf(&cp, 1, buffer_.data(), codeunits_per_codepoint);
+                    detail::to_utf(&cp, 1, buffer_.data(), codeunits_per_codepoint);
                     size_type n_to_copy = count;
                     for (value_type *it = buffer_.data(); --n_to_copy > 0;) {
                         std::memcpy(it += codeunits_per_codepoint, buffer_.data(), codeunits_per_codepoint);
@@ -279,8 +279,8 @@ namespace small {
             for (InputIt input_code_unit_it = first; input_code_unit_it != last && *input_code_unit_it;) {
                 // Get code point sizes
                 const size_type input_cu_left = last - input_code_unit_it;
-                uint8_t it_input_code_units = utf_size(*input_code_unit_it, input_cu_left);
-                uint8_t it_output_code_units = utf_size_as<value_type>(input_code_unit_it, input_cu_left);
+                uint8_t it_input_code_units = detail::utf_size(*input_code_unit_it, input_cu_left);
+                uint8_t it_output_code_units = detail::utf_size_as<value_type>(input_code_unit_it, input_cu_left);
 
                 // Count code points we will have in the output
                 if (it_output_code_units > 1) {
@@ -304,7 +304,7 @@ namespace small {
             buffer_.resize(buffer_.capacity());
 
             // Fill the buffer
-            if constexpr (is_same_utf_encoding_v<input_value_type, value_type>) {
+            if constexpr (detail::is_same_utf_encoding_v<input_value_type, value_type>) {
                 if constexpr (std::is_pointer_v<InputIt>) {
                     std::memcpy(buffer_.data(), first, input_code_units);
                 } else /* if (is iterator) */ {
@@ -317,10 +317,11 @@ namespace small {
                     // Get sizes
                     const size_type input_cu_left = last - input_code_unit_it;
                     const size_type output_cu_left = output_code_units - buffer_idx;
-                    const size_type it_input_code_units = utf_size(*input_code_unit_it, input_cu_left);
-                    const size_type it_output_code_units = utf_size_as<value_type>(input_code_unit_it, input_cu_left);
+                    const size_type it_input_code_units = detail::utf_size(*input_code_unit_it, input_cu_left);
+                    const size_type it_output_code_units =
+                        detail::utf_size_as<value_type>(input_code_unit_it, input_cu_left);
                     // Convert
-                    to_utf(input_code_unit_it, input_cu_left, buffer_.data() + buffer_idx, output_cu_left);
+                    detail::to_utf(input_code_unit_it, input_cu_left, buffer_.data() + buffer_idx, output_cu_left);
                     // Next
                     input_code_unit_it += it_input_code_units;
                     buffer_idx += it_output_code_units;
@@ -339,7 +340,7 @@ namespace small {
                     size_type multibyte_idx = 0;
                     while (codeunit_idx < size_.codeunit_size()) {
                         const size_type n_code_units =
-                            utf_size(buffer_[codeunit_idx], size_.codeunit_size() - codeunit_idx);
+                            detail::utf_size(buffer_[codeunit_idx], size_.codeunit_size() - codeunit_idx);
                         if (n_code_units > 1) {
                             t.insert_or_assign(multibyte_idx, codeunit_idx, codepoint_idx);
                             ++multibyte_idx;
@@ -363,14 +364,14 @@ namespace small {
         /// \brief Constructs the string with the first count characters of character string pointed to by s.
         template <typename InputChar>
         constexpr basic_string(const InputChar *s, size_type count, const allocator_type &alloc = allocator_type())
-            : basic_string(s, count != npos ? (s + count) : s + strlen(s), alloc) {}
+            : basic_string(s, count != npos ? (s + count) : s + detail::strlen(s), alloc) {}
 
         /// \brief Constructs the string with the contents initialized with a copy of the null-terminated character
         /// string pointed to by s.
         template <typename InputChar>
         /// NOLINTNEXTLINE(google-explicit-constructor): replicating the std::string constructor
         constexpr basic_string(const InputChar *s, const allocator_type &alloc = allocator_type())
-            : basic_string(s, strlen(s), alloc) {}
+            : basic_string(s, detail::strlen(s), alloc) {}
 
         /// \brief Copy constructor. Constructs the string with a copy of the contents of other.
         constexpr basic_string(const basic_string &other) : buffer_(other.buffer_), size_(other.size_) {}
@@ -558,7 +559,7 @@ namespace small {
         constexpr reference at(size_type byte_index) {
             const size_type size = this->size();
             if (byte_index >= size) {
-                throw_exception<std::out_of_range>("basic_string::at: index out of bounds");
+                detail::throw_exception<std::out_of_range>("basic_string::at: index out of bounds");
             }
             return operator[](byte_index);
         }
@@ -574,7 +575,7 @@ namespace small {
         constexpr codepoint_reference at(codepoint_index index) {
             const size_type size = this->size_.codepoint_size();
             if (index >= size) {
-                throw_exception<std::out_of_range>("basic_string::at: index out of bounds");
+                detail::throw_exception<std::out_of_range>("basic_string::at: index out of bounds");
             }
             return operator[](index);
         }
@@ -843,7 +844,7 @@ namespace small {
                 const_lookup_table_type t = const_lookup_table();
                 const size_type look_size_in_bytes = lookup_table_type::size_for(buffer_.capacity(), t.size());
                 return buffer_.capacity() - null_char_size -
-                       static_cast<size_type>(div_ceil(look_size_in_bytes, sizeof(value_type)));
+                       static_cast<size_type>(detail::div_ceil(look_size_in_bytes, sizeof(value_type)));
             } else {
                 return buffer_.capacity() - null_char_size;
             }
@@ -964,7 +965,7 @@ namespace small {
         /// \throws std::out_of_range if index > size()
         template <typename Char> constexpr basic_string &insert(size_type index, size_type count, Char ch) {
             if (index > size()) {
-                throw_exception<std::out_of_range>("basic_string::insert: index > size()");
+                detail::throw_exception<std::out_of_range>("basic_string::insert: index > size()");
             }
             insert(begin() + index, count, ch);
             return *this;
@@ -972,7 +973,7 @@ namespace small {
 
         template <typename Char> constexpr basic_string &insert(codepoint_index index, size_type count, Char ch) {
             if (index > size_codepoints()) {
-                throw_exception<std::out_of_range>("basic_string::insert: index > size_codepoints()");
+                detail::throw_exception<std::out_of_range>("basic_string::insert: index > size_codepoints()");
             }
             codepoint_iterator it = begin_codepoint() + index;
             return insert(it.byte_index(), count, ch);
@@ -983,7 +984,7 @@ namespace small {
         /// The length of the string is determined by the first null character using Traits::length(s)
         template <typename Char> constexpr basic_string &insert(size_type index, const Char *s) {
             if (index > size()) {
-                throw_exception<std::out_of_range>("basic_string::insert: index > size()");
+                detail::throw_exception<std::out_of_range>("basic_string::insert: index > size()");
             }
             insert(begin() + index, s, s + std::char_traits<Char>::length(s));
             return *this;
@@ -991,7 +992,7 @@ namespace small {
 
         template <typename Char> constexpr basic_string &insert(codepoint_index index, const Char *s) {
             if (index > size_codepoints()) {
-                throw_exception<std::out_of_range>("basic_string::insert: index > size_codepoints()");
+                detail::throw_exception<std::out_of_range>("basic_string::insert: index > size_codepoints()");
             }
             insert(begin_codepoint() + index, s, s + std::char_traits<Char>::length(s));
             return *this;
@@ -1002,7 +1003,7 @@ namespace small {
         /// \throws std::out_of_range if index > size()
         template <typename Char> constexpr basic_string &insert(size_type index, const Char *s, size_type count) {
             if (index > size()) {
-                throw_exception<std::out_of_range>("basic_string::insert: index > size()");
+                detail::throw_exception<std::out_of_range>("basic_string::insert: index > size()");
             }
             insert(begin() + index, s, s + count);
             return *this;
@@ -1010,7 +1011,7 @@ namespace small {
 
         template <typename Char> constexpr basic_string &insert(codepoint_index index, const Char *s, size_type count) {
             if (index > size_codepoints()) {
-                throw_exception<std::out_of_range>("basic_string::insert: index > size_codepoints()");
+                detail::throw_exception<std::out_of_range>("basic_string::insert: index > size_codepoints()");
             }
             insert(begin_codepoint() + index, s, s + count);
             return *this;
@@ -1020,7 +1021,7 @@ namespace small {
         /// \throws std::out_of_range if index > size()
         constexpr basic_string &insert(size_type index, const basic_string &str) {
             if (index > size()) {
-                throw_exception<std::out_of_range>("basic_string::insert: index > size()");
+                detail::throw_exception<std::out_of_range>("basic_string::insert: index > size()");
             }
             insert(begin() + index, str.begin(), str.end());
             return *this;
@@ -1028,7 +1029,7 @@ namespace small {
 
         constexpr basic_string &insert(codepoint_index index, const basic_string &str) {
             if (index > size_codepoints()) {
-                throw_exception<std::out_of_range>("basic_string::insert: index > size_codepoints()");
+                detail::throw_exception<std::out_of_range>("basic_string::insert: index > size_codepoints()");
             }
             insert(begin_codepoint() + index, str.begin(), str.end());
             return *this;
@@ -1039,10 +1040,10 @@ namespace small {
         constexpr basic_string &insert(size_type index, const basic_string &str, size_type index_str,
                                        size_type count = npos) {
             if (index > size()) {
-                throw_exception<std::out_of_range>("basic_string::insert: index > size()");
+                detail::throw_exception<std::out_of_range>("basic_string::insert: index > size()");
             }
             if (index_str > str.size()) {
-                throw_exception<std::out_of_range>("basic_string::insert: index_str > str.size()");
+                detail::throw_exception<std::out_of_range>("basic_string::insert: index_str > str.size()");
             }
             const_iterator str_first = str.begin() + index_str;
             const_iterator str_last = count != npos ? str_first + count : str.end();
@@ -1053,10 +1054,10 @@ namespace small {
         constexpr basic_string &insert(size_type index, const basic_string &str, codepoint_index index_str,
                                        codepoint_index count = codepoint_index(npos)) {
             if (index > size()) {
-                throw_exception<std::out_of_range>("basic_string::insert: index > size()");
+                detail::throw_exception<std::out_of_range>("basic_string::insert: index > size()");
             }
             if (index_str > str.size_codepoints()) {
-                throw_exception<std::out_of_range>("basic_string::insert: index_str > str.size_codepoints()");
+                detail::throw_exception<std::out_of_range>("basic_string::insert: index_str > str.size_codepoints()");
             }
             const_codepoint_iterator str_codepoint_first = str.begin_codepoint() + index_str;
             const_codepoint_iterator str_codepoint_last =
@@ -1070,10 +1071,10 @@ namespace small {
         constexpr basic_string &insert(codepoint_index index, const basic_string &str, size_type index_str,
                                        size_type count = npos) {
             if (index > size_codepoints()) {
-                throw_exception<std::out_of_range>("basic_string::insert: index > size_codepoints()");
+                detail::throw_exception<std::out_of_range>("basic_string::insert: index > size_codepoints()");
             }
             if (index_str > str.size()) {
-                throw_exception<std::out_of_range>("basic_string::insert: index_str > str.size()");
+                detail::throw_exception<std::out_of_range>("basic_string::insert: index_str > str.size()");
             }
             codepoint_iterator this_cp_pos = begin_codepoint() + index;
             const_iterator str_first = str.begin() + index_str;
@@ -1085,10 +1086,10 @@ namespace small {
         constexpr basic_string &insert(codepoint_index index, const basic_string &str, codepoint_index index_str,
                                        codepoint_index count = codepoint_index(npos)) {
             if (index > size_codepoints()) {
-                throw_exception<std::out_of_range>("basic_string::insert: index > size_codepoints()");
+                detail::throw_exception<std::out_of_range>("basic_string::insert: index > size_codepoints()");
             }
             if (index_str > str.size_codepoints()) {
-                throw_exception<std::out_of_range>("basic_string::insert: index_str > str.size_codepoints()");
+                detail::throw_exception<std::out_of_range>("basic_string::insert: index_str > str.size_codepoints()");
             }
             codepoint_iterator this_cp_pos = begin_codepoint() + index;
             const_codepoint_iterator str_codepoint_first = str.begin_codepoint() + index_str;
@@ -1122,7 +1123,7 @@ namespace small {
             }
 
             // Input properties
-            uint8_t codeunits_per_codepoint = utf_size_as<value_type>(&ch, 1);
+            uint8_t codeunits_per_codepoint = detail::utf_size_as<value_type>(&ch, 1);
             const size_type count_code_units = count * codeunits_per_codepoint;
             const size_type count_code_points = count;
 
@@ -1144,11 +1145,11 @@ namespace small {
             }
 
             // Fill the buffer with new elements
-            if constexpr (!is_same_utf_encoding_v<value_type, Char>) {
+            if constexpr (!detail::is_same_utf_encoding_v<value_type, Char>) {
                 if (codeunits_per_codepoint == 1) {
                     std::fill(begin() + pos_idx, new_pos, static_cast<value_type>(ch));
                 } else {
-                    to_utf(&ch, 1, buffer_.data() + pos_idx, codeunits_per_codepoint);
+                    detail::to_utf(&ch, 1, buffer_.data() + pos_idx, codeunits_per_codepoint);
                     size_type n_to_copy = count_code_points;
                     for (value_type *it = buffer_.data() + pos_idx; --n_to_copy > 0;) {
                         std::memcpy(it += codeunits_per_codepoint, buffer_.data() + pos_idx, codeunits_per_codepoint);
@@ -1171,7 +1172,7 @@ namespace small {
         constexpr codepoint_iterator insert(const_codepoint_iterator pos, size_type count, Char ch) {
             size_type pos_offset = pos.index();
             if (pos.index() > size_codepoints()) {
-                throw_exception<std::out_of_range>("basic_string::insert: pos.index() > size_codepoints()");
+                detail::throw_exception<std::out_of_range>("basic_string::insert: pos.index() > size_codepoints()");
             }
             insert(begin() + pos.byte_index(), count, ch);
             return begin_codepoint() + pos_offset;
@@ -1208,8 +1209,8 @@ namespace small {
             auto it = first;
             while (it != last) {
                 const size_type bytes_left = last - it;
-                const uint8_t it_input_code_units = utf_size(*it, bytes_left);
-                const uint8_t it_output_code_units = utf_size_as<value_type>(it, bytes_left);
+                const uint8_t it_input_code_units = detail::utf_size(*it, bytes_left);
+                const uint8_t it_output_code_units = detail::utf_size_as<value_type>(it, bytes_left);
                 output_code_units += it_output_code_units;
                 it += it_input_code_units;
                 if (it_output_code_units > 1) {
@@ -1237,13 +1238,13 @@ namespace small {
             }
 
             // Fill the buffer with new elements
-            if constexpr (!is_same_utf_encoding_v<value_type, input_value_type>) {
+            if constexpr (!detail::is_same_utf_encoding_v<value_type, input_value_type>) {
                 auto from_it = first;
                 auto to_it = begin() + pos_idx;
                 while (from_it != last) {
-                    uint8_t input_codepoint_size = utf_size(*from_it, last - from_it);
-                    uint8_t output_codepoint_size = utf_size_as<value_type>(from_it, last - from_it);
-                    to_utf(from_it, input_codepoint_size, to_it.base(), output_codepoint_size);
+                    uint8_t input_codepoint_size = detail::utf_size(*from_it, last - from_it);
+                    uint8_t output_codepoint_size = detail::utf_size_as<value_type>(from_it, last - from_it);
+                    detail::to_utf(from_it, input_codepoint_size, to_it.base(), output_codepoint_size);
                     from_it += input_codepoint_size;
                     to_it += output_codepoint_size;
                 }
@@ -1264,7 +1265,7 @@ namespace small {
         constexpr codepoint_iterator insert(const_codepoint_iterator pos, InputIt first, InputIt last) {
             const size_type pos_offset = pos.index();
             if (pos > end_codepoint()) {
-                throw_exception<std::out_of_range>("basic_string::insert: pos > end_codepoint()");
+                detail::throw_exception<std::out_of_range>("basic_string::insert: pos > end_codepoint()");
             }
             insert(begin() + pos.byte_index(), first, last);
             return begin_codepoint() + pos_offset;
@@ -1318,10 +1319,10 @@ namespace small {
         constexpr basic_string &insert(size_type index, const T &t, size_type index_str, size_type count = npos) {
             std::basic_string_view<typename T::value_type, std::char_traits<typename T::value_type>> sv(t);
             if (index > size()) {
-                throw_exception<std::out_of_range>("basic_string::insert: index > size()");
+                detail::throw_exception<std::out_of_range>("basic_string::insert: index > size()");
             }
             if (index_str > sv.size()) {
-                throw_exception<std::out_of_range>("basic_string::insert: index_str > str.size()");
+                detail::throw_exception<std::out_of_range>("basic_string::insert: index_str > str.size()");
             }
             auto substr = sv.substr(index_str, count);
             insert(begin() + index, substr.begin(), substr.end());
@@ -1332,10 +1333,10 @@ namespace small {
         constexpr basic_string &insert(codepoint_index index, const T &t, size_type index_str, size_type count = npos) {
             std::basic_string_view<typename T::value_type, std::char_traits<typename T::value_type>> sv(t);
             if (index > size_codepoints()) {
-                throw_exception<std::out_of_range>("basic_string::insert: index > size_codepoints()");
+                detail::throw_exception<std::out_of_range>("basic_string::insert: index > size_codepoints()");
             }
             if (index_str > sv.size()) {
-                throw_exception<std::out_of_range>("basic_string::insert: index_str > str.size()");
+                detail::throw_exception<std::out_of_range>("basic_string::insert: index_str > str.size()");
             }
             auto substr = sv.substr(index_str, count);
             insert(begin_codepoint() + index, substr.begin(), substr.end());
@@ -1349,7 +1350,7 @@ namespace small {
         /// \throws std::out_of_range if index > size()
         constexpr basic_string &erase(size_type index = 0, size_type count = npos) {
             if (index > size()) {
-                throw_exception<std::out_of_range>("basic_string::erase: index > size()");
+                detail::throw_exception<std::out_of_range>("basic_string::erase: index > size()");
             }
             iterator first = begin() + index;
             iterator last = first + std::min(count, size() - index);
@@ -1359,7 +1360,7 @@ namespace small {
 
         constexpr basic_string &erase(codepoint_index index = 0, codepoint_index count = codepoint_index(npos)) {
             if (index > size_codepoints()) {
-                throw_exception<std::out_of_range>("basic_string::erase: index > size_codepoints()");
+                detail::throw_exception<std::out_of_range>("basic_string::erase: index > size_codepoints()");
             }
             codepoint_iterator first_codepoint = begin_codepoint() + index;
             size_type count_codepoint = std::min(count.value_of(), size_codepoints() - index);
@@ -1403,7 +1404,7 @@ namespace small {
             }
             value_type *new_code_unit_begin = buffer_.data() + first_offset;
             value_type *code_unit_end_pos = buffer_.data() + size();
-            shift::shift_left(new_code_unit_begin, code_unit_end_pos, count_codeunit);
+            detail::shift::shift_left(new_code_unit_begin, code_unit_end_pos, count_codeunit);
 
             // Set null char
             value_type *new_code_unit_end_pos = code_unit_end_pos - count_codeunit;
@@ -1558,15 +1559,15 @@ namespace small {
             if (sv.empty()) {
                 return true;
             }
-            if constexpr (!is_same_utf_encoding_v<value_type, RhsChar>) {
+            if constexpr (!detail::is_same_utf_encoding_v<value_type, RhsChar>) {
                 auto this_first = begin();
                 auto this_last = end();
                 auto other_first = sv.begin();
                 auto other_last = sv.end();
                 while (this_first != this_last && other_first != other_last) {
-                    const uint8_t buf_size = utf_size_as<value_type>(other_first, other_last - other_first);
+                    const uint8_t buf_size = detail::utf_size_as<value_type>(other_first, other_last - other_first);
                     value_type buf[8];
-                    to_utf(other_first, other_last - other_first, buf, buf_size);
+                    detail::to_utf(other_first, other_last - other_first, buf, buf_size);
                     const size_type this_code_units_left = this_last - this_first;
                     if (this_code_units_left < buf_size) {
                         return false;
@@ -1574,7 +1575,7 @@ namespace small {
                     if (!std::equal(this_first, this_first + buf_size, buf, buf + buf_size)) {
                         return false;
                     }
-                    other_first += utf_size(*other_first, other_last - other_first);
+                    other_first += detail::utf_size(*other_first, other_last - other_first);
                     this_first += buf_size;
                 }
                 return !*other_first;
@@ -1593,10 +1594,10 @@ namespace small {
             if (empty()) {
                 return false;
             }
-            if constexpr (!is_same_utf_encoding_v<Char, value_type>) {
-                const uint8_t s = utf_size_as<value_type>(&c, 1);
+            if constexpr (!detail::is_same_utf_encoding_v<Char, value_type>) {
+                const uint8_t s = detail::utf_size_as<value_type>(&c, 1);
                 value_type buf[8];
-                to_utf(&c, 1, buf, s);
+                detail::to_utf(&c, 1, buf, s);
                 return size() >= s && std::equal(begin(), begin() + s, buf, buf + s);
             } else {
                 return front() == c;
@@ -1613,16 +1614,16 @@ namespace small {
             if (!*s) {
                 return true;
             }
-            if constexpr (!is_same_utf_encoding_v<value_type, Char>) {
+            if constexpr (!detail::is_same_utf_encoding_v<value_type, Char>) {
                 auto this_first = begin();
                 auto this_last = end();
                 auto other_first = s;
                 auto other_last = s + std::char_traits<Char>::length(s);
                 while (this_first != this_last && *other_first) {
                     const size_type other_values_left = other_last - other_first;
-                    const uint8_t buf_size = utf_size_as<value_type>(other_first, other_values_left);
+                    const uint8_t buf_size = detail::utf_size_as<value_type>(other_first, other_values_left);
                     value_type buf[8];
-                    to_utf(other_first, other_values_left, buf, buf_size);
+                    detail::to_utf(other_first, other_values_left, buf, buf_size);
                     const size_type this_bytes_left = this_last - this_first;
                     if (this_bytes_left < buf_size) {
                         return false;
@@ -1630,7 +1631,7 @@ namespace small {
                     if (!std::equal(this_first, this_first + buf_size, buf, buf + buf_size)) {
                         return false;
                     }
-                    other_first += utf_size(*other_first, other_values_left);
+                    other_first += detail::utf_size(*other_first, other_values_left);
                     this_first += buf_size;
                 }
                 return !*other_first;
@@ -1654,12 +1655,12 @@ namespace small {
             if (sv.empty()) {
                 return true;
             }
-            if constexpr (!is_same_utf_encoding_v<value_type, RhsChar>) {
+            if constexpr (!detail::is_same_utf_encoding_v<value_type, RhsChar>) {
                 // Count code points in other
                 auto it_other = sv.begin();
                 size_type other_code_points = 0;
                 while (it_other != sv.end()) {
-                    auto it_cp_size = utf_size(*it_other, sv.end() - it_other);
+                    auto it_cp_size = detail::utf_size(*it_other, sv.end() - it_other);
                     other_code_points += it_cp_size;
                     it_other += it_cp_size;
                 }
@@ -1674,10 +1675,10 @@ namespace small {
                 while (this_first != this_last && other_first != other_last) {
                     // Find other code point
                     auto other_entries_left = sv.end() - other_first;
-                    auto other_cp_size = utf_size(*other_first, other_entries_left);
+                    auto other_cp_size = detail::utf_size(*other_first, other_entries_left);
                     // Convert other codepoint to utf32
-                    utf32_char_type r{};
-                    auto ok = to_utf32(other_first, other_cp_size, &r, 1);
+                    detail::utf32_char_type r{};
+                    auto ok = detail::to_utf32(other_first, other_cp_size, &r, 1);
                     if (!ok) {
                         break;
                     }
@@ -1705,7 +1706,7 @@ namespace small {
             if (empty()) {
                 return false;
             }
-            if constexpr (!is_same_utf_encoding_v<Char, value_type>) {
+            if constexpr (!detail::is_same_utf_encoding_v<Char, value_type>) {
                 return *rbegin_codepoint() == c;
             } else {
                 return back() == c;
@@ -1754,10 +1755,10 @@ namespace small {
         constexpr basic_string &replace(size_type pos, size_type count, const basic_string &str, size_type pos2,
                                         size_type count2 = npos) {
             if (pos > size()) {
-                throw_exception<std::out_of_range>("string::replace: pos > size()");
+                detail::throw_exception<std::out_of_range>("string::replace: pos > size()");
             }
             if (pos2 > str.size()) {
-                throw_exception<std::out_of_range>("string::replace: pos2 > str.size()");
+                detail::throw_exception<std::out_of_range>("string::replace: pos2 > str.size()");
             }
             return replace(begin() + pos, begin() + pos + std::min(count, size() - pos), str.begin() + pos2,
                            str.begin() + pos2 + std::min(count2, str.size() - pos2));
@@ -1766,10 +1767,10 @@ namespace small {
         constexpr basic_string &replace(size_type pos, size_type count, const basic_string &str, codepoint_index pos2,
                                         codepoint_index count2 = codepoint_index(npos)) {
             if (pos > size()) {
-                throw_exception<std::out_of_range>("string::replace: pos > size()");
+                detail::throw_exception<std::out_of_range>("string::replace: pos > size()");
             }
             if (pos2 > str.size_codepoints()) {
-                throw_exception<std::out_of_range>("string::replace: pos2 > str.size_codepoints()");
+                detail::throw_exception<std::out_of_range>("string::replace: pos2 > str.size_codepoints()");
             }
             const_codepoint_iterator other_first_code_point = str.begin_codepoint() + pos2;
             const_codepoint_iterator other_last_code_point =
@@ -1783,10 +1784,10 @@ namespace small {
         constexpr basic_string &replace(codepoint_index pos, codepoint_index count, const basic_string &str,
                                         size_type pos2, size_type count2 = npos) {
             if (pos > size_codepoints()) {
-                throw_exception<std::out_of_range>("string::replace: pos > size_codepoints()");
+                detail::throw_exception<std::out_of_range>("string::replace: pos > size_codepoints()");
             }
             if (pos2 > str.size()) {
-                throw_exception<std::out_of_range>("string::replace: pos2 > str.size()");
+                detail::throw_exception<std::out_of_range>("string::replace: pos2 > str.size()");
             }
             codepoint_iterator first_code_point = begin_codepoint() + pos;
             codepoint_iterator last_code_point =
@@ -1800,10 +1801,10 @@ namespace small {
         constexpr basic_string &replace(codepoint_index pos, codepoint_index count, const basic_string &str,
                                         codepoint_index pos2, codepoint_index count2 = codepoint_index(npos)) {
             if (pos > size_codepoints()) {
-                throw_exception<std::out_of_range>("string::replace: pos > size_codepoints()");
+                detail::throw_exception<std::out_of_range>("string::replace: pos > size_codepoints()");
             }
             if (pos2 > str.size_codepoints()) {
-                throw_exception<std::out_of_range>("string::replace: pos2 > str.size_codepoints()");
+                detail::throw_exception<std::out_of_range>("string::replace: pos2 > str.size_codepoints()");
             }
             codepoint_iterator first_code_point = begin_codepoint() + pos;
             codepoint_iterator last_code_point =
@@ -1847,8 +1848,8 @@ namespace small {
                                    [](auto ch) { return static_cast<value_type>(ch); });
                     const size_type new_codepoint = size_codepoints(first, last);
                     if constexpr (has_lookup_table) {
-                        const bool prev_had_multibyte = cmp_not_equal(prev_codepoint, d1);
-                        const bool new_has_multibyte = cmp_not_equal(new_codepoint, d1);
+                        const bool prev_had_multibyte = detail::cmp_not_equal(prev_codepoint, d1);
+                        const bool new_has_multibyte = detail::cmp_not_equal(new_codepoint, d1);
                         if (prev_had_multibyte || new_has_multibyte) {
                             index_multibyte_codepoints(first, end());
                         }
@@ -1875,7 +1876,7 @@ namespace small {
         template <typename Char, std::enable_if_t<!is_api_string_view_v<Char>, int> = 0>
         constexpr basic_string &replace(size_type pos, size_type count, const Char *cstr, size_type count2) {
             if (pos > size()) {
-                throw_exception<std::out_of_range>("string::replace: pos > size()");
+                detail::throw_exception<std::out_of_range>("string::replace: pos > size()");
             }
             return replace(begin() + pos, begin() + pos + std::min(count, size() - pos), cstr, cstr + count2);
         }
@@ -1884,7 +1885,7 @@ namespace small {
         constexpr basic_string &replace(codepoint_index pos, codepoint_index count, const Char *cstr,
                                         size_type count2) {
             if (pos > size_codepoints()) {
-                throw_exception<std::out_of_range>("string::replace: pos > size_codepoints()");
+                detail::throw_exception<std::out_of_range>("string::replace: pos > size_codepoints()");
             }
             codepoint_iterator first_code_point = begin_codepoint() + pos;
             codepoint_iterator last_code_point =
@@ -1911,7 +1912,7 @@ namespace small {
         /// \brief Replaces the part of the string with cstr
         template <typename Char> constexpr basic_string &replace(size_type pos, size_type count, const Char *cstr) {
             if (pos > size()) {
-                throw_exception<std::out_of_range>("string::replace: pos > size()");
+                detail::throw_exception<std::out_of_range>("string::replace: pos > size()");
             }
             return replace(begin() + pos, begin() + pos + std::min(count, size() - count), cstr,
                            std::char_traits<Char>::length(cstr));
@@ -1920,7 +1921,7 @@ namespace small {
         template <typename Char>
         constexpr basic_string &replace(codepoint_index pos, codepoint_index count, const Char *cstr) {
             if (pos > size_codepoints()) {
-                throw_exception<std::out_of_range>("string::replace: pos > size_codepoints()");
+                detail::throw_exception<std::out_of_range>("string::replace: pos > size_codepoints()");
             }
             codepoint_iterator first_code_point = begin_codepoint() + pos;
             codepoint_iterator last_code_point =
@@ -1948,7 +1949,7 @@ namespace small {
         template <typename Char>
         constexpr basic_string &replace(size_type pos, size_type count, size_type count2, Char ch) {
             if (pos > size()) {
-                throw_exception<std::out_of_range>("string::replace: pos > size()");
+                detail::throw_exception<std::out_of_range>("string::replace: pos > size()");
             }
             return replace(begin() + pos, begin() + pos + std::min(count, size() - pos), count2, ch);
         }
@@ -1956,7 +1957,7 @@ namespace small {
         template <typename Char, std::enable_if_t<!is_api_string_view_v<Char>, int> = 0>
         constexpr basic_string &replace(codepoint_index pos, codepoint_index count, size_type count2, Char ch) {
             if (pos > size_codepoints()) {
-                throw_exception<std::out_of_range>("string::replace: pos > size_codepoints()");
+                detail::throw_exception<std::out_of_range>("string::replace: pos > size_codepoints()");
             }
             codepoint_iterator first_code_point = begin_codepoint() + pos;
             codepoint_iterator last_code_point =
@@ -2000,7 +2001,7 @@ namespace small {
         template <class T, std::enable_if_t<is_api_string_view_v<T>, int> = 0>
         constexpr basic_string &replace(size_type pos, size_type count, const T &t) {
             if (pos > size()) {
-                throw_exception<std::out_of_range>("string::replace: pos > size()");
+                detail::throw_exception<std::out_of_range>("string::replace: pos > size()");
             }
             std::basic_string_view sv(t);
             return replace(begin() + pos, begin() + pos + std::min(count, size() - pos), sv.begin(), sv.end());
@@ -2009,7 +2010,7 @@ namespace small {
         template <class T, std::enable_if_t<is_api_string_view_v<T>, int> = 0>
         constexpr basic_string &replace(codepoint_index pos, codepoint_index count, const T &t) {
             if (pos > size_codepoints()) {
-                throw_exception<std::out_of_range>("string::replace: pos > size_codepoints()");
+                detail::throw_exception<std::out_of_range>("string::replace: pos > size_codepoints()");
             }
             std::basic_string_view sv(t);
             codepoint_iterator first_code_point = begin_codepoint() + pos;
@@ -2040,7 +2041,7 @@ namespace small {
         constexpr basic_string &replace(size_type pos, size_type count, const T &t, size_type pos2,
                                         size_type count2 = npos) {
             if (pos > size()) {
-                throw_exception<std::out_of_range>("string::replace: pos > size()");
+                detail::throw_exception<std::out_of_range>("string::replace: pos > size()");
             }
             std::basic_string_view sv(t);
             sv = sv.substr(pos2, count2);
@@ -2051,7 +2052,7 @@ namespace small {
         constexpr basic_string &replace(codepoint_index pos, codepoint_index count, const T &t, size_type pos2,
                                         size_type count2 = npos) {
             if (pos > size_codepoints()) {
-                throw_exception<std::out_of_range>("string::replace: pos > size_codepoints()");
+                detail::throw_exception<std::out_of_range>("string::replace: pos > size_codepoints()");
             }
             std::basic_string_view sv(t);
             sv = sv.substr(pos2, count2);
@@ -2087,7 +2088,7 @@ namespace small {
         /// \throws If pos > size(), std::out_of_range is thrown
         template <typename Char> constexpr size_type copy(Char *dest, size_type count, size_type pos = 0) const {
             if (pos > size()) {
-                throw_exception<std::out_of_range>("string::copy: pos > size()");
+                detail::throw_exception<std::out_of_range>("string::copy: pos > size()");
             }
             const_iterator first = begin() + pos;
             const_iterator last = first + std::min(count, size() - pos);
@@ -2105,7 +2106,7 @@ namespace small {
         template <typename Char>
         constexpr size_type copy(Char *dest, codepoint_index count, codepoint_index pos = codepoint_index(0)) const {
             if (pos > size_codepoints()) {
-                throw_exception<std::out_of_range>("string::copy: pos > size_codepoints()");
+                detail::throw_exception<std::out_of_range>("string::copy: pos > size_codepoints()");
             }
             const const_codepoint_iterator first_cp = begin_codepoint() + pos;
             const const_codepoint_iterator last_cp =
@@ -2142,7 +2143,7 @@ namespace small {
                 downsize(count);
             } else if (count > size_codepoints()) {
                 size_type codepoint_increase = count - size_codepoints();
-                uint8_t code_units_per_code_point = utf_size_as<value_type>(&ch, 1);
+                uint8_t code_units_per_code_point = detail::utf_size_as<value_type>(&ch, 1);
                 size_type code_unit_increase = codepoint_increase * code_units_per_code_point;
                 upsize(size() + code_unit_increase, ch);
             }
@@ -2176,7 +2177,7 @@ namespace small {
         /// that begins before code_unit_index.
         [[nodiscard]] codepoint_iterator find_codepoint(size_type code_unit_index) {
             // Decrement to a codepoint start
-            while (is_utf8_continuation(buffer_[code_unit_index]) && code_unit_index > 0) {
+            while (detail::is_utf8_continuation(buffer_[code_unit_index]) && code_unit_index > 0) {
                 --code_unit_index;
             }
             // Find first multibyte >= this code unit and get its codepoint
@@ -2189,7 +2190,7 @@ namespace small {
             if (byte_distance == 0) {
                 return begin_codepoint() + first_multibyte_after_codepoint;
             } else {
-                const size_type this_size = utf8_size(buffer_[code_unit_index], size() - code_unit_index);
+                const size_type this_size = detail::utf8_size(buffer_[code_unit_index], size() - code_unit_index);
                 const size_type codepoint_distance = byte_distance - this_size + 1;
                 const size_type this_codepoint_index = first_multibyte_after_codepoint - codepoint_distance;
                 return begin_codepoint() + this_codepoint_index;
@@ -2225,7 +2226,7 @@ namespace small {
             if (pos >= size()) {
                 return npos;
             }
-            constexpr bool same_encoding = is_same_utf_encoding_v<value_type, Char>;
+            constexpr bool same_encoding = detail::is_same_utf_encoding_v<value_type, Char>;
             if constexpr (same_encoding) {
                 // Sequential search
                 const_iterator it = std::search(begin() + pos, end(), s, s + count);
@@ -2311,7 +2312,7 @@ namespace small {
             if (pos >= size()) {
                 return npos;
             }
-            constexpr bool same_encoding = is_same_utf_encoding_v<value_type, Char>;
+            constexpr bool same_encoding = detail::is_same_utf_encoding_v<value_type, Char>;
             if constexpr (same_encoding) {
                 const_iterator it = begin() + pos;
                 if (std::equal(it, it + count, s, s + count)) {
@@ -2331,7 +2332,7 @@ namespace small {
                 const_codepoint_iterator this_cp_first = find_codepoint(pos);
                 const_codepoint_iterator end = end_codepoint();
                 auto d_to_end = end - this_cp_first;
-                if (cmp_less(d_to_end, count)) {
+                if (detail::cmp_less(d_to_end, count)) {
                     this_cp_first -= (count - d_to_end);
                 }
                 const_codepoint_iterator this_cp_last = this_cp_first + count;
@@ -2568,7 +2569,7 @@ namespace small {
             const value_type *this_it = data();
             auto *this_end = this_it + size();
             while (this_it != this_end && first != last && *first) {
-                if constexpr (is_same_utf_encoding_v<value_type, input_value_type>) {
+                if constexpr (detail::is_same_utf_encoding_v<value_type, input_value_type>) {
                     if (*this_it != *first) {
                         return *this_it < *first ? -1 : 1;
                     }
@@ -2578,9 +2579,9 @@ namespace small {
                     // Encode to "this" utf type
                     value_type buf[8];
                     std::memset(buf, '\0', 8);
-                    width_type other_code_units = utf_size(*first, last - first);
-                    width_type this_code_units = utf_size_as<value_type>(first, other_code_units);
-                    to_utf(first, other_code_units, buf, this_code_units);
+                    width_type other_code_units = detail::utf_size(*first, last - first);
+                    width_type this_code_units = detail::utf_size_as<value_type>(first, other_code_units);
+                    detail::to_utf(first, other_code_units, buf, this_code_units);
                     // Compare the encoded arrays
                     value_type *encoded_first = buf;
                     value_type *encoded_last = buf + this_code_units;
@@ -2599,13 +2600,15 @@ namespace small {
         }
 
         /// \brief Compare this string with a range of chars
-        template <class Range, std::enable_if_t<is_range_v<Range>, int> = 0>
+        template <class Range, std::enable_if_t<detail::is_range_v<Range>, int> = 0>
         constexpr int compare(Range &&r) const noexcept {
             return compare(r.begin(), r.end());
         }
 
         /// \brief Compare this string with a null terminated char array
-        template <typename Char> constexpr int compare(const Char *s) const { return compare(s, s + strlen(s)); }
+        template <typename Char> constexpr int compare(const Char *s) const {
+            return compare(s, s + detail::strlen(s));
+        }
 
         /// \brief Compare this string with a null terminated std::string
         template <typename RhsCharT, typename RhsTraits, typename RhsAllocator>
@@ -2656,7 +2659,7 @@ namespace small {
                 // other small basic string type
                 is_small_basic_string<T>,
                 // range of chars
-                is_range<T>,
+                detail::is_range<T>,
                 // std::string
                 is_std_basic_string<T>,
                 // CharT*
@@ -2716,7 +2719,7 @@ namespace small {
         }
 
         template <typename T, std::enable_if_t<is_valid_comparison_rhs_v<std::decay_t<T>>, int> = 0>
-        constexpr friend bool operator<(T &&lhs, const basic_string &rhs) noexcept {
+        constexpr friend bool operator<(T && lhs, const basic_string &rhs) noexcept {
             return rhs.compare(lhs) > 0;
         }
 
@@ -2877,7 +2880,8 @@ namespace small {
             // 2) Then stores each character from the resulting sequence (the contents of str plus padding) to the
             // output stream os as if by calling os.rdbuf()->sputn(seq, n), where n=std::max(os.width(), str.size()) 3)
             // Finally, calls os.width(0) to cancel the effects of std::setw, if any
-            console_unicode_guard g(os, str.size(), str.size_codepoints(), (str.size() - str.size_codepoints()) > 2);
+            detail::console_unicode_guard g(os, str.size(), str.size_codepoints(),
+                                            (str.size() - str.size_codepoints()) > 2);
             os << str.c_str();
             return os;
         }
@@ -3035,9 +3039,9 @@ namespace small {
 
         /// \brief True if this string type supports utf8
         /// We use utf8 for the string whenever the char size is 1.
-        static constexpr bool is_utf8_string = is_utf8_v<value_type>;
-        static constexpr bool is_utf16_string = is_utf16_v<value_type>;
-        static constexpr bool is_utf32_string = is_utf32_v<value_type>;
+        static constexpr bool is_utf8_string = detail::is_utf8_v<value_type>;
+        static constexpr bool is_utf16_string = detail::is_utf16_v<value_type>;
+        static constexpr bool is_utf32_string = detail::is_utf32_v<value_type>;
 
         static_assert(is_utf8_string || is_utf16_string || is_utf32_string, "string: A unicode char type is required");
 
@@ -3069,7 +3073,7 @@ namespace small {
             assert(count > size());
 
             // Calculate increments
-            uint8_t code_units_per_char = utf_size_as<value_type>(&ch, 1);
+            uint8_t code_units_per_char = detail::utf_size_as<value_type>(&ch, 1);
             size_type code_unit_increment = count - size();
             size_type code_point_increment = code_unit_increment / code_units_per_char;
             const_lookup_table_type ct = const_lookup_table();
@@ -3080,12 +3084,12 @@ namespace small {
             // Fill the buffer
             value_type *fill_begin = (buffer_.begin() + size()).base();
             value_type *fill_end = fill_begin + code_unit_increment;
-            if constexpr (!is_same_utf_encoding_v<value_type, Char>) {
+            if constexpr (!detail::is_same_utf_encoding_v<value_type, Char>) {
                 if (code_units_per_char == 1) {
                     std::fill(fill_begin, fill_end, static_cast<value_type>(ch));
                 } else {
                     // Fill buffer
-                    to_utf(&ch, 1, fill_begin, code_unit_increment);
+                    detail::to_utf(&ch, 1, fill_begin, code_unit_increment);
                     if (code_units_per_char < code_unit_increment) {
                         for (size_type i = 1; i < code_point_increment; ++i) {
                             std::memcpy(fill_begin + i * code_units_per_char, fill_begin, code_units_per_char);
@@ -3226,7 +3230,7 @@ namespace small {
             size_type input_multibytes_in_range = 0;
             auto it = first;
             while (it < last) {
-                uint8_t s = utf8_size(*it, end() - it);
+                uint8_t s = detail::utf8_size(*it, end() - it);
                 if (s > 1) {
                     ++input_multibytes_in_range;
                 }
@@ -3260,7 +3264,7 @@ namespace small {
             // Iterate and reindex codepoints from first to end()
             while (codeunit_idx < size_.codeunit_size()) {
                 const size_type utf8_code_units =
-                    utf8_size(buffer_[codeunit_idx], size_.codeunit_size() - codeunit_idx);
+                    detail::utf8_size(buffer_[codeunit_idx], size_.codeunit_size() - codeunit_idx);
                 if (utf8_code_units > 1) {
                     t.insert_or_assign(multibyte_idx, codeunit_idx, codepoint_idx);
                     ++multibyte_idx;
@@ -3464,10 +3468,10 @@ namespace small {
     };
 
     /// \brief Typedef of string (data type: char)
-    using string = basic_string<utf8_char_type>;
+    using string = basic_string<detail::utf8_char_type>;
 
     /// \brief Typedef of u8string (data type char8_t)
-    using u8string = basic_string<utf8_char_type>;
+    using u8string = basic_string<detail::utf8_char_type>;
 
     /// \brief Forms a string literal of the desired type
     /// returns std::string{str, len}
@@ -3483,11 +3487,11 @@ namespace small {
         char *p_end;
         const long i = std::strtol(str.c_str(), &p_end, base);
         if (str.c_str() == p_end) {
-            throw_exception<std::invalid_argument>("stoi(small::string): no conversion could be performed");
+            detail::throw_exception<std::invalid_argument>("stoi(small::string): no conversion could be performed");
         }
-        if (errno == ERANGE || cmp_greater(i, std::numeric_limits<int>::max()) ||
-            cmp_less(i, std::numeric_limits<int>::min())) {
-            throw_exception<std::out_of_range>(
+        if (errno == ERANGE || detail::cmp_greater(i, std::numeric_limits<int>::max()) ||
+            detail::cmp_less(i, std::numeric_limits<int>::min())) {
+            detail::throw_exception<std::out_of_range>(
                 "stoi(small::string): converted value falls out of the range of the result type");
         }
         if (pos) {
@@ -3506,10 +3510,10 @@ namespace small {
         char *p_end;
         const long i = std::strtol(str.c_str(), &p_end, base);
         if (str.c_str() == p_end) {
-            throw_exception<std::invalid_argument>("stol(small::string): no conversion could be performed");
+            detail::throw_exception<std::invalid_argument>("stol(small::string): no conversion could be performed");
         }
         if (errno == ERANGE) {
-            throw_exception<std::out_of_range>(
+            detail::throw_exception<std::out_of_range>(
                 "stol(small::string): converted value falls out of the range of the result type");
         }
         if (pos) {
@@ -3528,10 +3532,10 @@ namespace small {
         char *p_end;
         const long long i = std::strtoll(str.c_str(), &p_end, base);
         if (str.c_str() == p_end) {
-            throw_exception<std::invalid_argument>("stoll(small::string): no conversion could be performed");
+            detail::throw_exception<std::invalid_argument>("stoll(small::string): no conversion could be performed");
         }
         if (errno == ERANGE) {
-            throw_exception<std::out_of_range>(
+            detail::throw_exception<std::out_of_range>(
                 "stoll(small::string): converted value falls out of the range of the result type");
         }
         if (pos) {
@@ -3550,10 +3554,10 @@ namespace small {
         char *p_end;
         const unsigned long i = std::strtoul(str.c_str(), &p_end, base);
         if (str.c_str() == p_end) {
-            throw_exception<std::invalid_argument>("stoul(small::string): no conversion could be performed");
+            detail::throw_exception<std::invalid_argument>("stoul(small::string): no conversion could be performed");
         }
         if (errno == ERANGE) {
-            throw_exception<std::out_of_range>(
+            detail::throw_exception<std::out_of_range>(
                 "stoul(small::string): converted value falls out of the range of the result type");
         }
         if (pos) {
@@ -3572,10 +3576,10 @@ namespace small {
         char *p_end;
         const unsigned long long i = std::strtoull(str.c_str(), &p_end, base);
         if (str.c_str() == p_end) {
-            throw_exception<std::invalid_argument>("stoull(small::string): no conversion could be performed");
+            detail::throw_exception<std::invalid_argument>("stoull(small::string): no conversion could be performed");
         }
         if (errno == ERANGE) {
-            throw_exception<std::out_of_range>(
+            detail::throw_exception<std::out_of_range>(
                 "stoull(small::string): converted value falls out of the range of the result type");
         }
         if (pos) {
@@ -3594,10 +3598,10 @@ namespace small {
         char *p_end;
         const float i = std::strtof(str.c_str(), &p_end);
         if (str.c_str() == p_end) {
-            throw_exception<std::invalid_argument>("stof(small::string): no conversion could be performed");
+            detail::throw_exception<std::invalid_argument>("stof(small::string): no conversion could be performed");
         }
         if (errno == ERANGE) {
-            throw_exception<std::out_of_range>(
+            detail::throw_exception<std::out_of_range>(
                 "stof(small::string): converted value falls out of the range of the result type");
         }
         if (pos) {
@@ -3616,10 +3620,10 @@ namespace small {
         char *p_end;
         const double i = std::strtod(str.c_str(), &p_end);
         if (str.c_str() == p_end) {
-            throw_exception<std::invalid_argument>("stod(small::string): no conversion could be performed");
+            detail::throw_exception<std::invalid_argument>("stod(small::string): no conversion could be performed");
         }
         if (errno == ERANGE) {
-            throw_exception<std::out_of_range>(
+            detail::throw_exception<std::out_of_range>(
                 "stod(small::string): converted value falls out of the range of the result type");
         }
         if (pos) {
@@ -3638,10 +3642,10 @@ namespace small {
         char *p_end;
         const long double i = std::strtold(str.c_str(), &p_end);
         if (str.c_str() == p_end) {
-            throw_exception<std::invalid_argument>("stold(small::string): no conversion could be performed");
+            detail::throw_exception<std::invalid_argument>("stold(small::string): no conversion could be performed");
         }
         if (errno == ERANGE) {
-            throw_exception<std::out_of_range>(
+            detail::throw_exception<std::out_of_range>(
                 "stold(small::string): converted value falls out of the range of the result type");
         }
         if (pos) {
@@ -3670,17 +3674,17 @@ namespace small {
     [[nodiscard]] constexpr bool is_malformed(
         const small::basic_string<CharT, N, Traits, WCharT, Allocator, CP_HINT_STEP, SizeType> &string) noexcept {
         using string_type = small::basic_string<CharT, N, Traits, WCharT, Allocator, CP_HINT_STEP, SizeType>;
-        if constexpr (!is_utf32_v<typename string_type::value_type>) {
+        if constexpr (!detail::is_utf32_v<typename string_type::value_type>) {
             auto first = string.begin();
             auto last = string.end();
             while (first != last) {
-                if (is_utf_continuation(*first)) {
+                if (::small::detail::is_utf_continuation(*first)) {
                     return true;
                 } else {
-                    uint8_t codepoint_size = utf_size(*first, 8);
+                    uint8_t codepoint_size = detail::utf_size(*first, 8);
                     ++first;
                     for (uint8_t i = 1; i < codepoint_size; ++i) {
-                        if (!is_utf_continuation(*first)) {
+                        if (!detail::is_utf_continuation(*first)) {
                             return true;
                         }
                         ++first;

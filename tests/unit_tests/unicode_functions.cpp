@@ -22,6 +22,7 @@
 
 TEST_CASE("Unicode") {
     using namespace small;
+    using namespace small::detail;
 
     SECTION("UTF8") {
         utf8_char_type a = 'g';

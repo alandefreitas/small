@@ -35,7 +35,7 @@ TEST_CASE("Small Set") {
 
         SECTION("Allocator") {
             std::allocator<int> alloc;
-            associative_vector<false, false, true, vector<int, 5, std::allocator<int>>> a(alloc);
+            detail::associative_vector<false, false, true, vector<int, 5, std::allocator<int>>> a(alloc);
             REQUIRE(a.empty());
             REQUIRE(equal_il(a, {}));
             REQUIRE(a.get_allocator() == alloc);
@@ -348,7 +348,7 @@ TEST_CASE("Max Size Set") {
 
         SECTION("Allocator") {
             std::allocator<int> alloc;
-            associative_vector<false, false, true, vector<int, 5, std::allocator<int>>> a(alloc);
+            detail::associative_vector<false, false, true, vector<int, 5, std::allocator<int>>> a(alloc);
             REQUIRE(a.empty());
             REQUIRE(equal_il(a, {}));
             REQUIRE(a.get_allocator() == alloc);

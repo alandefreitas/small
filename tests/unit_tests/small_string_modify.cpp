@@ -824,5 +824,4 @@ TEST_CASE("String Modify") {
             REQUIRE(a == "🙂😀🙂😀😐");
         }
     }
-
 }

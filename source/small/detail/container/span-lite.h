@@ -642,8 +642,7 @@ namespace nonstd {
 
 #elif span_HAVE(CONSTRAINED_SPAN_CONTAINER_CTOR)
 
-            template <typename T, std::size_t N>
-            inline span_constexpr auto size(const T (&)[N]) span_noexcept -> size_t {
+            template <typename T, std::size_t N> inline span_constexpr auto size(const T (&)[N]) span_noexcept->size_t {
                 return N;
             }
 
@@ -651,7 +650,7 @@ namespace nonstd {
                 return cont.size();
             }
 
-            template <typename T, std::size_t N> inline span_constexpr auto data(T (&arr)[N]) span_noexcept -> T * {
+            template <typename T, std::size_t N> inline span_constexpr auto data(T (&arr)[N]) span_noexcept->T * {
                 return &arr[0];
             }
 
@@ -664,7 +663,7 @@ namespace nonstd {
             }
 
             template <typename E>
-            inline span_constexpr auto data(std::initializer_list<E> il) span_noexcept -> E const * {
+            inline span_constexpr auto data(std::initializer_list<E> il) span_noexcept->E const * {
                 return il.begin();
             }
 
@@ -1372,28 +1371,28 @@ namespace nonstd {
 #if span_USES_STD_SPAN
 
         template <class Container, class EP = decltype(std::data(std::declval<Container &>()))>
-        inline span_constexpr auto make_span(Container &cont) span_noexcept
-            -> span<typename std::remove_pointer<EP>::type> {
+        inline span_constexpr auto
+        make_span(Container &cont) span_noexcept->span<typename std::remove_pointer<EP>::type> {
             return span<typename std::remove_pointer<EP>::type>(cont);
         }
 
         template <class Container, class EP = decltype(std::data(std::declval<Container &>()))>
-        inline span_constexpr auto make_span(Container const &cont) span_noexcept
-            -> span<const typename std::remove_pointer<EP>::type> {
+        inline span_constexpr auto
+        make_span(Container const &cont) span_noexcept->span<const typename std::remove_pointer<EP>::type> {
             return span<const typename std::remove_pointer<EP>::type>(cont);
         }
 
 #elif span_HAVE(CONSTRAINED_SPAN_CONTAINER_CTOR) && span_HAVE(AUTO)
 
         template <class Container, class EP = decltype(std17::data(std::declval<Container &>()))>
-        inline span_constexpr auto make_span(Container &cont) span_noexcept
-            -> span<typename std::remove_pointer<EP>::type> {
+        inline span_constexpr auto
+        make_span(Container &cont) span_noexcept->span<typename std::remove_pointer<EP>::type> {
             return span<typename std::remove_pointer<EP>::type>(cont);
         }
 
         template <class Container, class EP = decltype(std17::data(std::declval<Container &>()))>
-        inline span_constexpr auto make_span(Container const &cont) span_noexcept
-            -> span<const typename std::remove_pointer<EP>::type> {
+        inline span_constexpr auto
+        make_span(Container const &cont) span_noexcept->span<const typename std::remove_pointer<EP>::type> {
             return span<const typename std::remove_pointer<EP>::type>(cont);
         }
 
@@ -1521,13 +1520,12 @@ namespace nonstd {
 namespace nonstd {
     namespace span_lite {
 
-        template <class T>
-        inline span_constexpr auto byte_span(T &t) span_noexcept -> span<std17::byte, span_sizeof(T)> {
+        template <class T> inline span_constexpr auto byte_span(T &t) span_noexcept->span<std17::byte, span_sizeof(T)> {
             return span<std17::byte, span_sizeof(t)>(reinterpret_cast<std17::byte *>(&t), span_sizeof(T));
         }
 
         template <class T>
-        inline span_constexpr auto byte_span(T const &t) span_noexcept -> span<const std17::byte, span_sizeof(T)> {
+        inline span_constexpr auto byte_span(T const &t) span_noexcept->span<const std17::byte, span_sizeof(T)> {
             return span<const std17::byte, span_sizeof(t)>(reinterpret_cast<std17::byte const *>(&t), span_sizeof(T));
         }
 

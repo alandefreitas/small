@@ -1879,7 +1879,7 @@ namespace small {
                     "basic_string::erase: index > size()");
             }
             iterator first = begin() + index;
-            iterator last = first + std::min(count, size() - index);
+            iterator last = first + (std::min)(count, size() - index);
             erase(first, last);
             return *this;
         }
@@ -2022,7 +2022,7 @@ namespace small {
             insert(
                 end(),
                 str.begin() + pos,
-                str.begin() + pos + std::min(count, str.size() - pos));
+                str.begin() + pos + (std::min)(count, str.size() - pos));
             return *this;
         }
 
@@ -2035,7 +2035,7 @@ namespace small {
                                                        + pos;
             const_codepoint_iterator last_codepoint
                 = first_codepoint
-                  + std::min(count.value_of(), str.size_codepoints() - pos);
+                  + (std::min)(count.value_of(), str.size_codepoints() - pos);
             insert(
                 end(),
                 str.cbegin() + first_codepoint.byte_index(),
@@ -2438,9 +2438,9 @@ namespace small {
             }
             return replace(
                 begin() + pos,
-                begin() + pos + std::min(count, size() - pos),
+                begin() + pos + (std::min)(count, size() - pos),
                 str.begin() + pos2,
-                str.begin() + pos2 + std::min(count2, str.size() - pos2));
+                str.begin() + pos2 + (std::min)(count2, str.size() - pos2));
         }
 
         constexpr basic_string &
@@ -2462,14 +2462,14 @@ namespace small {
                 = str.begin_codepoint() + pos2;
             const_codepoint_iterator other_last_code_point
                 = other_first_code_point
-                  + std::min(count2.value_of(), str.size_codepoints() - pos2);
+                  + (std::min)(count2.value_of(), str.size_codepoints() - pos2);
             const_iterator other_first_code_unit
                 = str.begin() + other_first_code_point.byte_index();
             const_iterator other_last_code_unit
                 = str.begin() + other_last_code_point.byte_index();
             return replace(
                 begin() + pos,
-                begin() + pos + std::min(count, size() - pos),
+                begin() + pos + (std::min)(count, size() - pos),
                 other_first_code_unit,
                 other_last_code_unit);
         }
@@ -2492,14 +2492,14 @@ namespace small {
             codepoint_iterator first_code_point = begin_codepoint() + pos;
             codepoint_iterator last_code_point
                 = begin_codepoint() + pos
-                  + std::min(count.value_of(), size_codepoints() - pos);
+                  + (std::min)(count.value_of(), size_codepoints() - pos);
             iterator first_code_unit = begin() + first_code_point.byte_index();
             iterator last_code_unit = begin() + last_code_point.byte_index();
             return replace(
                 first_code_unit,
                 last_code_unit,
                 str.begin() + pos2,
-                str.begin() + pos2 + std::min(count2, str.size() - pos2));
+                str.begin() + pos2 + (std::min)(count2, str.size() - pos2));
         }
 
         constexpr basic_string &
@@ -2520,14 +2520,14 @@ namespace small {
             codepoint_iterator first_code_point = begin_codepoint() + pos;
             codepoint_iterator last_code_point
                 = begin_codepoint() + pos
-                  + std::min(count.value_of(), size_codepoints() - pos);
+                  + (std::min)(count.value_of(), size_codepoints() - pos);
             iterator first_code_unit = begin() + first_code_point.byte_index();
             iterator last_code_unit = begin() + last_code_point.byte_index();
             const_codepoint_iterator other_first_code_point
                 = str.begin_codepoint() + pos;
             const_codepoint_iterator other_last_code_point
                 = str.begin_codepoint() + pos
-                  + std::min(count2.value_of(), str.size_codepoints() - pos2);
+                  + (std::min)(count2.value_of(), str.size_codepoints() - pos2);
             const_iterator other_first_code_unit
                 = str.begin() + other_first_code_point.byte_index();
             const_iterator other_last_code_unit
@@ -2628,7 +2628,7 @@ namespace small {
             }
             return replace(
                 begin() + pos,
-                begin() + pos + std::min(count, size() - pos),
+                begin() + pos + (std::min)(count, size() - pos),
                 cstr,
                 cstr + count2);
         }
@@ -2688,7 +2688,7 @@ namespace small {
             }
             return replace(
                 begin() + pos,
-                begin() + pos + std::min(count, size() - count),
+                begin() + pos + (std::min)(count, size() - count),
                 cstr,
                 std::char_traits<Char>::length(cstr));
         }
@@ -2750,7 +2750,7 @@ namespace small {
             }
             return replace(
                 begin() + pos,
-                begin() + pos + std::min(count, size() - pos),
+                begin() + pos + (std::min)(count, size() - pos),
                 count2,
                 ch);
         }
@@ -2844,7 +2844,7 @@ namespace small {
             std::basic_string_view sv(t);
             return replace(
                 begin() + pos,
-                begin() + pos + std::min(count, size() - pos),
+                begin() + pos + (std::min)(count, size() - pos),
                 sv.begin(),
                 sv.end());
         }
@@ -2906,7 +2906,7 @@ namespace small {
             sv = sv.substr(pos2, count2);
             return replace(
                 begin() + pos,
-                begin() + pos + std::min(count, size() - pos),
+                begin() + pos + (std::min)(count, size() - pos),
                 sv.begin(),
                 sv.end());
         }
@@ -2974,7 +2974,7 @@ namespace small {
                     "string::copy: pos > size()");
             }
             const_iterator first = begin() + pos;
-            const_iterator last = first + std::min(count, size() - pos);
+            const_iterator last = first + (std::min)(count, size() - pos);
             if constexpr (sizeof(Char) == sizeof(value_type)) {
                 auto last_copied = std::copy(first, last, dest);
                 return last_copied - dest;
@@ -4024,7 +4024,7 @@ namespace small {
             //   the character sequence
             // 2) Then stores each character from the resulting sequence (the
             // contents of str plus padding) to the output stream os as if by
-            // calling os.rdbuf()->sputn(seq, n), where n=std::max(os.width(),
+            // calling os.rdbuf()->sputn(seq, n), where n=(std::max)(os.width(),
             // str.size()) 3) Finally, calls os.width(0) to cancel the effects
             // of std::setw, if any
             detail::console_unicode_guard

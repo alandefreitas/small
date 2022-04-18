@@ -754,7 +754,7 @@ namespace small {
                 return static_cast<size_type>(num_inline_elements);
             } else {
                 constexpr size_type max_with_mask = size_type(clear_size_mask);
-                return std::min<size_type>(
+                return (std::min)(
                     std::allocator_traits<allocator_type>::max_size(
                         enable_allocator_type::get_allocator()),
                     max_with_mask);
@@ -1436,7 +1436,7 @@ namespace small {
             const auto old_capacity = capacity();
             // Set the initial capacity
             if (old_capacity == 0) {
-                return std::max(64 / sizeof(value_type), size_type(5));
+                return (std::max)(64 / sizeof(value_type), size_type(5));
             }
             // Blocks larger than or equal to 4096 bytes can be expanded in place
             constexpr size_t min_in_place_expansion = 4096;
@@ -1451,7 +1451,7 @@ namespace small {
                 return capacity() * 2;
             }
             // Apply usual growth factor
-            return std::min(
+            return (std::min)(
                 (static_cast<size_type>(GrowthFactor::num) * capacity())
                         / static_cast<size_type>(GrowthFactor::den)
                     + 1,
@@ -1466,7 +1466,7 @@ namespace small {
             size_t from_size,
             Iterator2 to,
             size_t to_size) {
-            const size_t min_size = std::min(from_size, to_size);
+            const size_t min_size = (std::min)(from_size, to_size);
             std::copy(from, from + min_size, to);
             if (from_size > to_size) {
                 std::uninitialized_copy(
@@ -1788,7 +1788,7 @@ namespace small {
     template <
         class T,
         size_t N_INPUT,
-        size_t N_OUTPUT = std::max(default_inline_storage_v<T>, N_INPUT)>
+        size_t N_OUTPUT = (std::max)(default_inline_storage_v<T>, N_INPUT)>
     constexpr vector<std::remove_cv_t<T>, N_OUTPUT>
     to_vector(T (&a)[N_INPUT]) {
         return vector<std::remove_cv_t<T>, N_OUTPUT>(a, a + N_INPUT);
@@ -1799,7 +1799,7 @@ namespace small {
     template <
         class T,
         size_t N_INPUT,
-        size_t N_OUTPUT = std::max(default_inline_storage_v<T>, N_INPUT)>
+        size_t N_OUTPUT = (std::max)(default_inline_storage_v<T>, N_INPUT)>
     constexpr vector<std::remove_cv_t<T>, N_OUTPUT>
     to_vector(T (&&a)[N_INPUT]) {
         return vector<std::remove_cv_t<T>, N_OUTPUT>(a, a + N_INPUT);
@@ -1808,7 +1808,7 @@ namespace small {
     template <
         class T,
         size_t N
-        = std::max((sizeof(std::vector<T>) * 2) / sizeof(T), std::size_t(5)),
+        = (std::max)((sizeof(std::vector<T>) * 2) / sizeof(T), std::size_t(5)),
         class Allocator = std::allocator<T>,
         class SizeType = size_t>
     using max_size_vector = vector<T, N, Allocator, std::false_type, SizeType>;
@@ -1816,7 +1816,7 @@ namespace small {
     template <
         class T,
         size_t N
-        = std::max((sizeof(std::vector<T>) * 2) / sizeof(T), std::size_t(5)),
+        = (std::max)((sizeof(std::vector<T>) * 2) / sizeof(T), std::size_t(5)),
         class Allocator = std::allocator<T>,
         class SizeType = size_t>
     using inline_vector = vector<T, N, Allocator, std::true_type, SizeType>;

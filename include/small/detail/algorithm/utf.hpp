@@ -233,7 +233,7 @@ namespace small {
                            && available_code_units > 1 ?
                        2 :
                        static_cast<Result>(
-                           std::min(Size(1), available_code_units));
+                           (std::min)(Size(1), available_code_units));
         }
 
         /// \brief Check if a char is a UTF32 is a continuation char
@@ -260,7 +260,7 @@ namespace small {
         template <class Char32, class Size = size_t, class Result = uint8_t>
         constexpr Result
         utf32_size(Char32, Size available_code_units = 1) noexcept {
-            return static_cast<Result>(std::min(Size(1), available_code_units));
+            return static_cast<Result>((std::min)(Size(1), available_code_units));
         }
 
         /// \brief Get size a utf32 char would have when/if converted to utf8
@@ -378,7 +378,7 @@ namespace small {
         template <typename InputIt, typename Size, typename Result = uint8_t>
         constexpr Result
         utf16_size_as_utf32(InputIt, Size count) noexcept {
-            return std::min(1, count);
+            return (std::min)(1, count);
         }
 
         /// \brief Get size a utf8 sequence would have when/if converted to
@@ -392,7 +392,7 @@ namespace small {
         template <typename InputIt, typename Size, typename Result = uint8_t>
         constexpr Result
         utf8_size_as_utf32(InputIt, Size count) noexcept {
-            return std::min(1, count);
+            return (std::min)(1, count);
         }
 
         /// \brief Get size a utf sequence would have when/if converted to utf8
@@ -432,7 +432,7 @@ namespace small {
         template <typename InputIt, typename Size, typename Result = uint8_t>
         constexpr Result
         utf_size_as_utf32(InputIt, Size count) noexcept {
-            return std::min(1, count);
+            return (std::min)(1, count);
         }
 
         /// \brief Get size a utf sequence would have when/if converted to
@@ -735,10 +735,10 @@ namespace small {
                     OutputIt>::value_type;
                 std::transform(
                     source,
-                    source + std::min(source_count, dest_count),
+                    source + (std::min)(source_count, dest_count),
                     dest,
                     [](auto in) { return static_cast<output_value_type>(in); });
-                return static_cast<uint8_t>(std::min(source_count, dest_count));
+                return static_cast<uint8_t>((std::min)(source_count, dest_count));
             } else {
                 return static_cast<uint8_t>(
                     from_utf8_to_utf16(source, source_count, dest, dest_count));

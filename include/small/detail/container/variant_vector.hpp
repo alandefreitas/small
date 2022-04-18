@@ -369,7 +369,7 @@ namespace small {
             /// \brief Get small array max size
             [[nodiscard]] constexpr size_type
             max_size() const noexcept {
-                return std::min<size_type>(
+                return (std::min)<size_type>(
                     std::allocator_traits<allocator_type>::max_size(alloc_),
                     std::numeric_limits<difference_type>::max());
             }

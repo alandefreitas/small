@@ -183,7 +183,7 @@ TEST_CASE("Small Set") {
         REQUIRE(a.size() == 3);
         REQUIRE(a.max_size() > 5);
         REQUIRE_FALSE(a.empty());
-        REQUIRE(a.capacity() == std::max(size_t(5), a.size()));
+        REQUIRE(a.capacity() == (std::max)(size_t(5), a.size()));
     }
 
     SECTION("Element access") {
@@ -502,7 +502,7 @@ TEST_CASE("Max Size Set") {
         REQUIRE(a.size() == 3);
         REQUIRE(a.max_size() == 5);
         REQUIRE_FALSE(a.empty());
-        REQUIRE(a.capacity() == std::max(size_t(5), a.size()));
+        REQUIRE(a.capacity() == (std::max)(size_t(5), a.size()));
     }
 
     SECTION("Element access") {

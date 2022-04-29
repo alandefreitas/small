@@ -214,7 +214,7 @@ main(int argc, char **argv) {
                 std::istreambuf_iterator<char>()
             };
             std::regex include_guard_expression(
-                "(^|\n) *# *ifndef *([a-zA-Z_/\\. ]+)");
+                "(^|\n) *# *ifndef *([a-zA-Z0-9_/\\. ]+)");
             std::smatch include_guard_match;
             if (std::regex_search(
                     file_content,

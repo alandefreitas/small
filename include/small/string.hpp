@@ -5127,4 +5127,4 @@ namespace std {
     };
 } // namespace std
 
-#endif // SMALL_UTF8_STRING_H
+#endif // SMALL_STRING_HPP

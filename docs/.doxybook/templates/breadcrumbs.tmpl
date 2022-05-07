@@ -1,0 +1,19 @@
+{% if exists("moduleBreadcrumbs") -%}
+{%- for module in moduleBreadcrumbs -%}
+**[{{module.title}}]({{module.url}})**{% if not loop.is_last or exists("title") %} **/** {% endif -%}
+{% endfor %}
+{% if exists("title") -%}
+{% if exists("url") -%}
+**[{{ stripNamespace(title) }}]({{url}})**
+{% else %}
+{{title}}
+{% endif %}
+{% endif -%}
+
+{% endif -%}
+
+{% if exists("location") -%}
+<sup>Defined in header [`<{{ location.file }}>`](https://github.com/alandefreitas/small/blob/master/include/{{ location.file }})</sup>
+
+{% endif -%}
+

@@ -1,0 +1,34 @@
+{% include "header" -%}
+
+{% include "breadcrumbs" %}
+
+```cpp
+{% if exists("templateParams") -%}
+template <{% for param in templateParams %}
+    {{param.typePlain}} {{param.name}}{% if existsIn(param, "defvalPlain") %} ={{param.defvalPlain}}{% endif -%}
+{% if not loop.is_last %},{% endif -%}
+{% endfor %}
+> {% endif -%}
+{% if kind == "interface" %}class{% else %}{{kind}}{% endif %} {{ stripNamespace(name) }};
+```
+
+{%- include "details" -%}
+
+{%- if exists("baseClasses") %}Inherits from {% for child in baseClasses %}{% if existsIn(child, "url") %}[{{stripNamespace(child.name)}}]({{child.url}}){% else %}`{{child.name}}`{% endif %}{% if not loop.is_last %}, {% endif %}{% endfor %}
+
+{% endif -%}
+
+{%- if exists("derivedClasses") %}Inherited by {% for child in derivedClasses %}{% if existsIn(child, "url") %}[{{stripNamespace(child.name)}}]({{child.url}}){% else %}{{child.name}}{% endif %}{% if not loop.is_last %}, {% endif %}{% endfor %}
+
+{% endif -%}
+
+{%- include "class_members_tables" -%}
+
+{% if hasAdditionalMembers %}## Additional inherited members
+
+{% include "class_members_inherited_tables" %}
+{% endif -%}
+
+{% include "class_members_details" -%}
+
+{% include "footer" %}

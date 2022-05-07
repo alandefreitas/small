@@ -5,11 +5,27 @@ repo_name: alandefreitas/small
 
 site_description: "Small: C++ Small Containers"
 
+nav:
+  - Home: index.md
+  - Quickstart: quickstart.md
+  - Vectors: vectors.md
+  - Strings: strings.md
+  - Sets and Maps: sets_and_maps.md
+  - Reference: # Reference is organized by module
+      - Small: reference/Modules/index.md        # futures module
+      - basic_string: reference/Classes/classsmall_1_1basic__string.md
+      - vector: reference/Classes/classsmall_1_1vector.md
+      - Classes: reference/Classes/index.md                  # All Classes
+      - Files: reference/Files/index.md
+      - Index: reference/Namespaces/namespacesmall.md      # The futures namespace contains everything
+  - Contributing: contributing.md
+
+
 theme:
   name: material
   custom_dir: docs/overrides
   palette:
-    scheme: preference
+    scheme: small
   icon:
     repo: fontawesome/brands/git-alt
     logo: fontawesome/solid/code
@@ -18,11 +34,15 @@ edit_uri: ""
 
 plugins:
   - search
-  - awesome-pages
+  #  - mermaid2
+  - macros:
+      module_name: docs/macros
+      include_dir: ..
 
-google_analytics:
-  - UA-109858331-6
-  - auto
+extra:
+  analytics:
+    provider: google
+    property: G-290016612
 
 copyright: Copyright &copy; Alan Freitas
 
@@ -31,11 +51,12 @@ markdown_extensions:
   - pymdownx.details
   - pymdownx.highlight:
       use_pygments: true
-      linenums: true
+      linenums: false
       linenums_style: pymdownx.inline
   - pymdownx.inlinehilite
   - pymdownx.superfences
-  - pymdownx.tabbed
+  - pymdownx.tabbed:
+      alternate_style: true
   - pymdownx.snippets
   - pymdownx.arithmatex:
       generic: true
@@ -45,3 +66,7 @@ extra_javascript:
   - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
   - https://media.ethicalads.io/media/client/ethicalads.min.js
+  - javascripts/extra.js
+
+extra_css:
+  - stylesheets/extra.css

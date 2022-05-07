@@ -1,0 +1,399 @@
+{% if child.kind in ["function", "slot", "signal", "event"] -%}
+
+{# COUNT OVERLOADS #}
+{% set n_overloads = 0 -%}
+{% set n_brief = 0 -%}
+{% set all_of_briefs_equal = true -%}
+{% set first_brief = "" -%}
+{% set n_details = 0 -%}
+{% set n_template_params = 0 -%}
+{% set n_params = 0 -%}
+{% set n_headers = 0 -%}
+{% set n_see_also = 0 -%}
+{% set n_returns = 0 -%}
+{% set all_of_notes_equal = true -%}
+{% set first_returns_list = [] -%}
+{% set n_notes = 0 -%}
+{% set all_of_returns_equal = true -%}
+{% set first_notes_list = [] -%}
+{% for overload_candidate in overload_candidates -%}
+{% if overload_candidate.name==child.name and overload_candidate.kind==child.kind -%}
+{% set n_overloads = n_overloads + 1 -%}
+{% if existsIn(overload_candidate, "brief") -%}
+{% if n_brief == 0 -%}
+{% set first_brief = overload_candidate.brief -%}
+{% else if first_brief != overload_candidate.brief -%}
+{% set all_of_briefs_equal = false -%}
+{% endif -%}
+{% set n_brief = n_brief + 1 -%}
+{% endif -%}
+{% if existsIn(overload_candidate, "details") -%}
+{% if overload_candidate.details != "" -%}
+{% set n_details = n_details + 1 -%}
+{% endif -%}
+{% endif -%}
+{% if existsIn(overload_candidate, "see") -%}
+{% set n_see_also = n_see_also + 1 -%}
+{% endif -%}
+{% if existsIn(overload_candidate, "paramList") -%}
+{% set n_params = n_params + 1 -%} 
+{% endif -%}
+{% if existsIn(overload_candidate, "templateParamsList") -%}
+{% set n_template_params = n_template_params + 1 -%} 
+{% endif -%}
+{% if existsIn(overload_candidate, "location") -%}
+{% set n_headers = n_headers + 1 -%} 
+{% endif -%}
+{% if existsIn(overload_candidate, "returns") -%}
+{% if n_returns == 0 -%}
+{% set first_returns_list = overload_candidate.returns -%}
+{% else if first_returns_list != overload_candidate.returns %}
+{% set all_of_returns_equal = false -%}
+{% endif -%}
+{% set n_returns = n_returns + 1 -%}
+{% endif -%}
+{% if existsIn(overload_candidate, "note") -%}
+{% if n_notes == 0 -%}
+{% set first_notes_list = overload_candidate.note -%}
+{% else if first_notes_list != overload_candidate.note %}
+{% set all_of_notes_equal = false -%}
+{% endif -%}
+{% set n_notes = n_notes + 1 -%}
+{% endif -%}
+{% endif -%}
+{% endfor %}
+
+{# RENDER HEADERS #}
+{% if n_headers>0 -%}
+<sup>Defined in header {% set overload_counter = 1 -%}
+{% set n_headers_rendered = 0 -%}
+{% set last_header_rendered.name = "" -%}
+{% for overload_candidate in overload_candidates -%}
+{% if overload_candidate.name==child.name and overload_candidate.kind==child.kind -%}
+{% set overload = overload_candidate -%}
+{% if existsIn(overload, "location") -%}
+
+{# Check blacklist huge workaround: inja does not support manipulating lists so we implement a linked list -#}
+{% set current_header_is_blacklisted = false -%}
+{% if n_headers_rendered > 0 -%}
+{% set current_header_rendered = last_header_rendered -%}
+{% for i in range(n_headers_rendered) -%}
+{% if current_header_rendered.name == overload.location.file -%}
+{% set current_header_is_blacklisted = true -%}
+{% endif -%} {# current_header_rendered.name == overload.location.file -#}
+{% if existsIn(current_header_rendered, "next") -%}
+{% set current_header_rendered = current_header_rendered.next -%}
+{% endif -%}
+{% endfor -%} {# range(n_headers_rendered) -#}
+{% endif -%} {# n_headers_rendered > 0 -#}
+{#- Render if not blacklisted and update -#}
+{%- if not current_header_is_blacklisted -%}[`<{{ overload.location.file }}>`](https://github.com/alandefreitas/small/blob/master/include/{{ overload.location.file }}){%- if n_headers_rendered > 0 -%}
+{% set last_header_rendered.next = last_header_rendered -%}  {% endif -%}
+{% set last_header_rendered.name = overload.location.file -%}
+{% set n_headers_rendered = n_headers_rendered + 1 -%}
+{% endif -%} {# not current_header_is_blacklisted -#}
+{% endif -%} {# existsIn(overload, "location") -#}
+{% set overload_counter = overload_counter + 1 -%}
+{% endif -%} {# overload_candidate.name==child.name -#}
+{% endfor -%} {# overload_candidates -#}</sup>
+{% endif -%} {# n_headers>1 -#}
+
+{# RENDER DECLARATIONS #}
+{% set overload_counter = 1 %}
+{% for overload_candidate in overload_candidates -%}
+{% if overload_candidate.name==child.name and overload_candidate.kind==child.kind -%}
+{% set overload = overload_candidate %}
+
+
+```{% if exists(overload.language) %}{{overload.language}}{% else %}cpp{% endif %} {% if n_overloads > 1 %} title="({{ overload_counter }})" {% endif %}
+{# Render template paramaters -#}
+{% if existsIn(overload, "templateParams") -%}
+template <{% for param in overload.templateParams %}{{param.typePlain}}{{param.name}}{% if existsIn(param, "defvalPlain") %} ={{param.defvalPlain}}{% endif -%}
+{% if not loop.is_last -%},{%- endif %}{% endfor %}>
+{% endif -%}
+
+{# Render prefix -#}
+{% if overload.static %}static {% endif -%}
+{# {% if overload.inline and overload.language != "csharp" %}inline {% endif -%} -#}
+{% if overload.explicit %}explicit {% endif -%}
+{% if overload.virtual %}virtual {% endif -%}
+
+{# Render return type -#}
+{% if existsIn(overload, "typePlain") -%}
+{%- if overload.typePlain in ["__implementation_defined__", "auto", "decltype(auto)"] -%}
+/* see below */{% else if overload.typePlain == "decltype(auto) constexpr" -%}
+constexpr /* see below */{% else -%}
+{{- overload.typePlain -}}
+{%- endif %} {% endif %}
+{# Render function name -#}
+{{overload.name}}{% if length(overload.params) > 0 -%}
+({% for param in overload.params %}{{param.typePlain}} {{param.name}}{% if existsIn(param, "defvalPlain") %} ={{param.defvalPlain}}{% endif -%}
+{% if not loop.is_last %}, {% endif %}{% endfor -%}){% else -%}(){% endif -%}
+
+{# Render suffix -#}
+{% if overload.const %} const{% endif -%}
+{% if overload.override %} override{% endif -%}
+{% if overload.default %} = default{% endif -%}
+{% if overload.deleted %} = delete{% endif -%}
+{% if overload.pureVirtual %} =0{% endif %};
+```
+
+{% set overload_counter = overload_counter + 1 %}
+{% endif -%}
+{% endfor %}
+
+{# RENDER BRIEF #}
+{% if all_of_briefs_equal -%}
+{{ first_brief }}
+{% else %}
+{% set overload_counter = 1 %}
+{% for overload_candidate in overload_candidates -%}
+{% if overload_candidate.name==child.name and overload_candidate.kind==child.kind -%}
+{% set overload = overload_candidate -%}
+{% if n_overloads > 1 %}{{ overload_counter }}.{% endif -%}
+{% if existsIn(overload, "brief") -%}
+{{ overload.brief }}
+{% else -%}
+{{ overload.name }} ({{overload_counter}})
+{%- endif -%}
+{% set overload_counter = overload_counter + 1 %}
+{% endif -%}
+{% endfor %}
+{% endif -%} {# all_of_briefs_equal #}
+
+{# RENDER TEMPLATE PARAMETERS #}
+{% if n_template_params>0 -%}
+**Template Parameters**
+{% set overload_counter = 1 %}
+{% set n_template_params_rendered = 0 %}
+{% set last_param_rendered.name = "" -%}
+{% set last_param_rendered.text = "" -%}
+{% for overload_candidate in overload_candidates -%}
+{% if overload_candidate.name==child.name and overload_candidate.kind==child.kind -%}
+{% set overload = overload_candidate -%}
+{% if existsIn(overload, "templateParamsList") -%}
+{% for param in overload.templateParamsList -%}
+
+{# Check blacklist huge workaround: inja does not support manipulating lists so we implement a linked list -#}
+{% set current_param_is_blacklisted = false -%}
+{% if n_template_params_rendered > 0 -%}
+{% set current_param_rendered = last_param_rendered -%}
+{% for i in range(n_template_params_rendered) -%}
+{% if current_param_rendered.name == param.name -%}
+{% set current_param_is_blacklisted = true -%}
+{% endif -%} {# current_param_rendered.name == param.name -#}
+{% if existsIn(current_param_rendered, "next") -%}
+{% set current_param_rendered = current_param_rendered.next -%}
+{% endif -%}
+{% endfor -%} {# range(n_template_params_rendered) -#}
+{% endif -%} {# n_template_params_rendered > 0 -#}
+
+{# Render if not blacklisted and update -#}
+{% if not current_param_is_blacklisted -%}
+- **{{ param.name }}** - {{ param.text }}
+{% if n_template_params_rendered > 0 -%}
+{% set last_param_rendered.next = last_param_rendered -%}
+{% endif -%}
+{% set last_param_rendered.name = param.name -%}
+{% set n_template_params_rendered = n_template_params_rendered + 1 -%}
+{% endif -%} {# not current_param_is_blacklisted -#}
+{% endfor -%} {# overload.templateParamsList -#}
+{% endif -%} {# existsIn(overload, "templateParamsList") -#}
+
+{% set overload_counter = overload_counter + 1 %}
+{% endif -%} {# overload_candidate.name==child.name -#}
+{% endfor %} {# overload_candidates -#}
+{% endif -%} {# n_template_params>1 -#}
+
+{# RENDER PARAMETERS #}
+{% if n_params>0 -%}
+**Parameters**
+{% set overload_counter = 1 %}
+{% set n_params_rendered = 0 %}
+{% set last_param_rendered.name = "" -%}
+{% set last_param_rendered.text = "" -%}
+{% for overload_candidate in overload_candidates -%}
+{% if overload_candidate.name==child.name and overload_candidate.kind==child.kind -%}
+{% set overload = overload_candidate -%}
+{% if existsIn(overload, "paramList") -%}
+{% for param in overload.paramList -%}
+
+{# Check blacklist huge workaround: inja does not support manipulating lists so we implement a linked list -#}
+{% set current_param_is_blacklisted = false -%}
+{% if n_params_rendered > 0 -%}
+{% set current_param_rendered = last_param_rendered -%}
+{% for i in range(n_params_rendered) -%}
+{% if current_param_rendered.name == param.name -%}
+{% set current_param_is_blacklisted = true -%}
+{% endif -%} {# current_param_rendered.name == param.name -#}
+{% if existsIn(current_param_rendered, "next") -%}
+{% set current_param_rendered = current_param_rendered.next -%}
+{% endif -%}
+{% endfor -%} {# range(n_params_rendered) -#}
+{% endif -%} {# n_params_rendered > 0 -#}
+
+{# Render if not blacklisted and update -#}
+{% if not current_param_is_blacklisted -%}
+- **{{ param.name }}** - {{ param.text }}
+{% if n_params_rendered > 0 -%}
+{% set last_param_rendered.next = last_param_rendered -%}
+{% endif -%}
+{% set last_param_rendered.name = param.name -%}
+{% set last_param_rendered.text = param.text -%}
+{% set n_params_rendered = n_params_rendered + 1 -%}
+{% endif -%} {# not current_param_is_blacklisted -#}
+{% endfor -%} {# overload.paramList -#}
+{% endif -%} {# existsIn(overload, "paramList") -#}
+
+{% set overload_counter = overload_counter + 1 %}
+{% endif -%} {# overload_candidate.name==child.name -#}
+{% endfor %} {# overload_candidates -#}
+{% endif -%} {# n_params>1 -#}
+
+{# RENDER RETURN #}
+{% if n_returns>0 -%}
+**Return value**
+
+{% if all_of_notes_equal -%}
+{% if length(first_returns_list) == 1 %}
+{{ first(first_returns_list) }}
+{% else %}
+{% for return in first_returns_list -%}
+{{ loop.index + 1 }}) {{ return }}
+
+{% endfor -%}
+{% endif %}
+{% else -%}
+{% set overload_counter = 1 %}
+{% for overload_candidate in overload_candidates -%}
+{% if overload_candidate.name==child.name and overload_candidate.kind==child.kind -%}
+{% set overload = overload_candidate -%}
+{% if existsIn(overload, "returns") -%}
+{% if length(overload.returns) == 1 -%}
+{% for return in overload.returns -%}
+{{ overload_counter }}. {{ return }}
+{% endfor -%}
+{% else -%}
+- ({{ overload_counter }})
+{%- for return in overload.returns %}    - {{ return }} {% endfor -%}
+{% endif -%} {# length(overload.returns) == 1 -#}
+{% endif -%}
+{% set overload_counter = overload_counter + 1 -%}
+{% endif -%}
+{% endfor %}
+{% endif -%}
+{% endif -%}
+
+
+{# RENDER DETAILS #}
+{% if n_details > 0 -%}
+**Description**
+{% set overload_counter = 1 %}
+{% for overload_candidate in overload_candidates -%}
+{% if overload_candidate.name==child.name and overload_candidate.kind==child.kind -%}
+{% set overload = overload_candidate %}
+{%- if existsIn(overload, "details") -%}
+{% if n_details > 1 -%}
+({{ overload_counter }})
+{% endif %} {# n_details > 1 -#}
+{{ overload.details -}}
+{% endif -%}
+{% set overload_counter = overload_counter + 1 %}
+{% endif -%}
+{% endfor %}
+{% endif -%} {# n_details > 0 #}
+
+{# RENDER NOTES #}
+{% if n_notes>0 -%}
+**Notes**
+
+{% if all_of_notes_equal -%}
+{% if length(first_notes_list) == 1 %}
+{{ first(first_notes_list) }}
+{% else %}
+{% for note in first_notes_list -%}
+{{ loop.index + 1 }}) {{ note }}
+
+{% endfor -%}
+{% endif %}
+{% else -%}
+{% set overload_counter = 1 %}
+{% for overload_candidate in overload_candidates -%}
+{% if overload_candidate.name==child.name and overload_candidate.kind==child.kind -%}
+{% set overload = overload_candidate -%}
+{% if existsIn(overload, "note") -%}
+{% if length(overload.note) == 1 -%}
+{% for note in overload.note -%}
+{{ overload_counter }}. {{ note }}
+{% endfor -%}
+{% else -%}
+- ({{ overload_counter }})
+{%- for note in overload.note %}    - {{ note }} {% endfor -%}
+{% endif -%} {# length(overload.note) == 1 -#}
+{% endif -%}
+{% set overload_counter = overload_counter + 1 -%}
+{% endif -%}
+{% endfor %}
+{% endif -%}
+{% endif -%}
+
+
+{# RENDER PARAGRAPHS #}
+{% set overload_counter = 1 %}
+{% for overload_candidate in overload_candidates -%}
+{% if overload_candidate.name==child.name and overload_candidate.kind==child.kind -%}
+{% set overload = overload_candidate %}
+{%- if existsIn(overload, "par") -%}
+{%- for p in overload.par -%}
+> {{ p }}
+{%- endfor -%}
+{%- endif -%} {# existsIn(overload, "par") -#}
+{% set overload_counter = overload_counter + 1 %}
+{% endif -%} {# overload_candidate.name==child.name #}
+{% endfor %} {# overload_candidates #}
+
+{# RENDER SEE ALSO #}
+{% if n_see_also>0 -%}
+**See also**
+{% set overload_counter = 1 %}
+{% set n_see_also_rendered = 0 %}
+{% set last_see_rendered.link = "" -%}
+{% for overload_candidate in overload_candidates -%}
+{% if overload_candidate.name==child.name and overload_candidate.kind==child.kind -%}
+{% set overload = overload_candidate -%}
+{% if existsIn(overload, "see") -%}
+{% for see in overload.see -%}
+
+{# Check blacklist huge workaround: inja does not support manipulating lists so we implement a linked list -#}
+{% set current_see_is_blacklisted = false -%}
+{% if n_see_also_rendered > 0 -%}
+{% set current_see_rendered = last_see_rendered -%}
+{% for i in range(n_see_also_rendered) -%}
+{% if current_see_rendered.link == see -%}
+{% set current_see_is_blacklisted = true -%}
+{% endif -%} {# current_see_rendered.link == see.link -#}
+{% if existsIn(current_see_rendered, "next") -%}
+{% set current_see_rendered = current_see_rendered.next -%}
+{% endif -%}
+{% endfor -%} {# range(n_see_also_rendered) -#}
+{% endif -%} {# n_see_also_rendered > 0 -#}
+
+{# Render if not blacklisted and update -#}
+{% if not current_see_is_blacklisted -%}
+- {{ see }}
+{% if n_see_also_rendered > 0 -%}
+{% set last_see_rendered.next = last_see_rendered -%}
+{% endif -%}
+{% set last_see_rendered.link = see -%}
+{% set n_see_also_rendered = n_see_also_rendered + 1 -%}
+{% endif -%} {# not current_see_is_blacklisted -#}
+{% endfor -%} {# overload.see -#}
+{% endif -%} {# existsIn(overload, "see") -#}
+{% set overload_counter = overload_counter + 1 %}
+{% endif -%} {# overload_candidate.link==child.link -#}
+{% endfor %} {# overload_candidates -#}
+{% endif -%} {# n_see_also>1 -#}
+
+
+
+{% endif %}

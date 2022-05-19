@@ -237,6 +237,8 @@
 namespace nonstd {
 
     using std::span;
+    using std::as_bytes;
+    using std::as_writable_bytes;
 
     // Note: C++20 does not provide comparison
     // using std::operator==;

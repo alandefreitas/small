@@ -253,10 +253,15 @@ namespace small {
             /// \section Custom types
             using byte_type = std::conditional_t<
                 IS_CONST_LOOKUP,
-                const nonstd::span_lite::std17::byte,
-                nonstd::span_lite::std17::byte>;
+                const std::byte,
+                std::byte>;
+#if span_USES_STD_SPAN
+            static constexpr std::size_t dynamic_extent_value
+                = std::dynamic_extent;
+#else
             static constexpr nonstd::span_lite::extent_t dynamic_extent_value
                 = nonstd::span_lite::dynamic_extent;
+#endif
             using byte_span_type = nonstd::span<byte_type, dynamic_extent_value>;
             using string_view_type = std::basic_string_view<CharT, Traits>;
 
@@ -1168,11 +1173,11 @@ namespace small {
                         = last_it.is_at_step_size() ?
                               entry_size_for(old_size) :
                               0;
-                    typename byte_span_type::pointer byte_begin_pos
-                        = last_it.span().data() - codepoint_hint_shift;
+                    typename byte_span_type::iterator byte_begin_pos
+                        = last_it.span().begin() - codepoint_hint_shift;
                     // 1.b) Last byte is after where the first is stored (where
                     // size storage begins)
-                    typename byte_span_type::pointer byte_end_pos
+                    typename byte_span_type::iterator byte_end_pos
                         = data_.end() - 1 - old_size_of_size;
                     // Shift the table entries:
                     // - left by new_size_of_size - old_size_of_size bytes, or
@@ -1180,7 +1185,7 @@ namespace small {
                     if (new_size_of_size > old_size_of_size) {
                         const size_type shift_size = old_size_of_size
                                                      - new_size_of_size;
-                        typename byte_span_type::pointer new_byte_begin
+                        typename byte_span_type::iterator new_byte_begin
                             = byte_begin_pos - shift_size;
                         shift::shift_left(
                             new_byte_begin,
@@ -1189,7 +1194,7 @@ namespace small {
                     } else {
                         const size_type shift_size = old_size_of_size
                                                      - new_size_of_size;
-                        typename byte_span_type::pointer new_byte_end
+                        typename byte_span_type::iterator new_byte_end
                             = byte_end_pos + shift_size;
                         shift::shift_right(
                             byte_begin_pos,

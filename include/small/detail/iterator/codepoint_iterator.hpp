@@ -128,11 +128,14 @@ namespace small {
                     const codepoint_reference_impl &impl) {
                     if constexpr (not is_utf32_v<value_type>) {
                         if (impl.size() == 1) {
-                            os << impl.container_->operator[](impl.byte_index_);
+                            os << static_cast<char>(
+                                impl.container_->operator[](impl.byte_index_));
                         } else {
                             console_unicode_guard g(os, impl.size(), 1);
                             os << std::string_view(
-                                impl.container_->data() + impl.byte_index_,
+                                reinterpret_cast<const char *>(
+                                    impl.container_->data())
+                                    + impl.byte_index_,
                                 impl.size());
                         }
                     } else {
@@ -234,7 +237,10 @@ namespace small {
                         // Compare codepoints now
                         for (size_type i = 0; i < rhs_utf8_size; ++i) {
                             if (lhs.container_->operator[](lhs.byte_index_ + i)
-                                != rhs[i]) {
+                                != static_cast<
+                                    typename codepoint_reference_impl::
+                                        string_type::value_type>(rhs[i]))
+                            {
                                 return false;
                             }
                         }

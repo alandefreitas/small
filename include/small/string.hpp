@@ -3602,7 +3602,7 @@ namespace small {
                 if constexpr (detail::is_same_utf_encoding_v<
                                   value_type,
                                   input_value_type>) {
-                    if (*this_it != *first) {
+                    if (*this_it != static_cast<value_type>(*first)) {
                         return *this_it < *first ? -1 : 1;
                     }
                     ++this_it;
@@ -4061,7 +4061,16 @@ namespace small {
             // on is, which may throw std::ios_base::failure 3) Finally, calls
             // is.width(0) to cancel the effects of std::setw, if any
             std::ios_base::iostate state = std::ios_base::goodbit;
-            typename std::basic_istream<CharT, Traits>::sentry sen(is);
+            using sentry_char_type = std::conditional_t<
+                std::is_same_v<detail::utf8_char_type, CharT>,
+                char,
+                CharT>;
+            using sentry_traits_type = std::conditional_t<
+                std::is_same_v<detail::utf8_char_type, CharT>,
+                std::char_traits<char>,
+                Traits>;
+            typename std::basic_istream<sentry_char_type, sentry_traits_type>::
+                sentry sen(is);
             if (sen) {
 #ifndef SMALL_DISABLE_EXCEPTIONS
                 try {
@@ -4073,15 +4082,15 @@ namespace small {
                     if (n <= 0)
                         n = std::numeric_limits<std::streamsize>::max();
                     std::streamsize c = 0;
-                    const std::ctype<CharT>
-                        &ct = std::use_facet<std::ctype<CharT>>(is.getloc());
+                    const std::ctype<sentry_char_type>
+                        &ct = std::use_facet<std::ctype<sentry_char_type>>(is.getloc());
                     while (c < n) {
                         typename Traits::int_type i = is.rdbuf()->sgetc();
                         if (Traits::eq_int_type(i, Traits::eof())) {
                             state |= std::ios_base::eofbit;
                             break;
                         }
-                        CharT ch = Traits::to_char_type(i);
+                        sentry_char_type ch = Traits::to_char_type(i);
                         if (ct.is(ct.space, ch))
                             break;
                         str.push_back(ch);
@@ -4135,7 +4144,16 @@ namespace small {
             // 3) If no characters were extracted for whatever reason (not even
             // the discarded delimiter), getline sets failbit and returns
             std::ios_base::iostate state = std::ios_base::goodbit;
-            typename std::basic_istream<CharT, Traits>::sentry sen(is, true);
+            using sentry_char_type = std::conditional_t<
+                std::is_same_v<detail::utf8_char_type, CharT>,
+                char,
+                CharT>;
+            using sentry_traits_type = std::conditional_t<
+                std::is_same_v<detail::utf8_char_type, CharT>,
+                std::char_traits<char>,
+                Traits>;
+            typename std::basic_istream<sentry_char_type, sentry_traits_type>::
+                sentry sen(is, true);
             if (sen) {
 #ifndef SMALL_DISABLE_EXCEPTIONS
                 try {
@@ -4768,6 +4786,16 @@ namespace small {
     /// \brief Typedef of u8string (data type char8_t)
     using u8string = basic_string<detail::utf8_char_type>;
 
+    /// \brief Typedef of string (data type: char)
+    using string_view = std::basic_string_view<
+        detail::utf8_char_type,
+        std::char_traits<detail::utf8_char_type>>;
+
+    /// \brief Typedef of string (data type: char8_t)
+    using u8_string_view = std::basic_string_view<
+        detail::utf8_char_type,
+        std::char_traits<detail::utf8_char_type>>;
+
     /// \brief Forms a string literal of the desired type
     /// returns std::string{str, len}
     inline small::string operator""_ss(const char *str, std::size_t len) {
@@ -4784,8 +4812,10 @@ namespace small {
     stoi(const small::string &str, std::size_t *pos = nullptr, int base = 10) {
         errno = 0;
         char *p_end;
-        const long i = std::strtol(str.c_str(), &p_end, base);
-        if (str.c_str() == p_end) {
+        // this is OK because numbers are in the same value range
+        auto s_begin = reinterpret_cast<const char *>(str.c_str());
+        const long i = std::strtol(s_begin, &p_end, base);
+        if (s_begin == p_end) {
             detail::throw_exception<std::invalid_argument>(
                 "stoi(small::string): no conversion could be performed");
         }
@@ -4798,7 +4828,7 @@ namespace small {
                 "of the result type");
         }
         if (pos) {
-            *pos = p_end - str.c_str();
+            *pos = p_end - s_begin;
         }
         return static_cast<int>(i);
     }
@@ -4813,8 +4843,9 @@ namespace small {
     stol(const small::string &str, std::size_t *pos = nullptr, int base = 10) {
         errno = 0;
         char *p_end;
-        const long i = std::strtol(str.c_str(), &p_end, base);
-        if (str.c_str() == p_end) {
+        auto s_begin = reinterpret_cast<const char *>(str.c_str());
+        const long i = std::strtol(s_begin, &p_end, base);
+        if (s_begin == p_end) {
             detail::throw_exception<std::invalid_argument>(
                 "stol(small::string): no conversion could be performed");
         }
@@ -4824,7 +4855,7 @@ namespace small {
                 "of the result type");
         }
         if (pos) {
-            *pos = p_end - str.c_str();
+            *pos = p_end - s_begin;
         }
         return i;
     }
@@ -4839,8 +4870,9 @@ namespace small {
     stoll(const small::string &str, std::size_t *pos = nullptr, int base = 10) {
         errno = 0;
         char *p_end;
-        const long long i = std::strtoll(str.c_str(), &p_end, base);
-        if (str.c_str() == p_end) {
+        auto s_begin = reinterpret_cast<const char *>(str.c_str());
+        const long long i = std::strtoll(s_begin, &p_end, base);
+        if (s_begin == p_end) {
             detail::throw_exception<std::invalid_argument>(
                 "stoll(small::string): no conversion could be performed");
         }
@@ -4850,7 +4882,7 @@ namespace small {
                 "of the result type");
         }
         if (pos) {
-            *pos = p_end - str.c_str();
+            *pos = p_end - s_begin;
         }
         return i;
     }
@@ -4865,8 +4897,9 @@ namespace small {
     stoul(const small::string &str, std::size_t *pos = nullptr, int base = 10) {
         errno = 0;
         char *p_end;
-        const unsigned long i = std::strtoul(str.c_str(), &p_end, base);
-        if (str.c_str() == p_end) {
+        auto s_begin = reinterpret_cast<const char *>(str.c_str());
+        const unsigned long i = std::strtoul(s_begin, &p_end, base);
+        if (s_begin == p_end) {
             detail::throw_exception<std::invalid_argument>(
                 "stoul(small::string): no conversion could be performed");
         }
@@ -4876,7 +4909,7 @@ namespace small {
                 "of the result type");
         }
         if (pos) {
-            *pos = p_end - str.c_str();
+            *pos = p_end - s_begin;
         }
         return i;
     }
@@ -4891,8 +4924,9 @@ namespace small {
     stoull(const small::string &str, std::size_t *pos = nullptr, int base = 10) {
         errno = 0;
         char *p_end;
-        const unsigned long long i = std::strtoull(str.c_str(), &p_end, base);
-        if (str.c_str() == p_end) {
+        auto s_begin = reinterpret_cast<const char *>(str.c_str());
+        const unsigned long long i = std::strtoull(s_begin, &p_end, base);
+        if (s_begin == p_end) {
             detail::throw_exception<std::invalid_argument>(
                 "stoull(small::string): no conversion could be performed");
         }
@@ -4902,7 +4936,7 @@ namespace small {
                 "of the result type");
         }
         if (pos) {
-            *pos = p_end - str.c_str();
+            *pos = p_end - s_begin;
         }
         return i;
     }
@@ -4917,8 +4951,9 @@ namespace small {
     stof(const small::string &str, std::size_t *pos = nullptr) {
         errno = 0;
         char *p_end;
-        const float i = std::strtof(str.c_str(), &p_end);
-        if (str.c_str() == p_end) {
+        auto s_begin = reinterpret_cast<const char *>(str.c_str());
+        const float i = std::strtof(s_begin, &p_end);
+        if (s_begin == p_end) {
             detail::throw_exception<std::invalid_argument>(
                 "stof(small::string): no conversion could be performed");
         }
@@ -4928,7 +4963,7 @@ namespace small {
                 "of the result type");
         }
         if (pos) {
-            *pos = p_end - str.c_str();
+            *pos = p_end - s_begin;
         }
         return i;
     }
@@ -4943,8 +4978,9 @@ namespace small {
     stod(const small::string &str, std::size_t *pos = nullptr) {
         errno = 0;
         char *p_end;
-        const double i = std::strtod(str.c_str(), &p_end);
-        if (str.c_str() == p_end) {
+        auto s_begin = reinterpret_cast<const char *>(str.c_str());
+        const double i = std::strtod(s_begin, &p_end);
+        if (s_begin == p_end) {
             detail::throw_exception<std::invalid_argument>(
                 "stod(small::string): no conversion could be performed");
         }
@@ -4954,7 +4990,7 @@ namespace small {
                 "of the result type");
         }
         if (pos) {
-            *pos = p_end - str.c_str();
+            *pos = p_end - s_begin;
         }
         return i;
     }
@@ -4969,8 +5005,9 @@ namespace small {
     stold(const small::string &str, std::size_t *pos = nullptr) {
         errno = 0;
         char *p_end;
-        const long double i = std::strtold(str.c_str(), &p_end);
-        if (str.c_str() == p_end) {
+        auto s_begin = reinterpret_cast<const char *>(str.c_str());
+        const long double i = std::strtold(s_begin, &p_end);
+        if (s_begin == p_end) {
             detail::throw_exception<std::invalid_argument>(
                 "stold(small::string): no conversion could be performed");
         }
@@ -4980,7 +5017,7 @@ namespace small {
                 "of the result type");
         }
         if (pos) {
-            *pos = p_end - str.c_str();
+            *pos = p_end - s_begin;
         }
         return i;
     }

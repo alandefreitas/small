@@ -14,8 +14,8 @@ main() {
     small::string str = U"Hello 🌎!";
 
     // Accessing bytes
-    std::cout << str[4] << '\n'; // o
-    std::cout << str[6] << '\n'; // �
+    std::cout << static_cast<char>(str[4]) << '\n'; // o
+    std::cout << static_cast<char>(str[6]) << '\n'; // �
 
     // Accessing codepoints
     using cp_idx = small::string::codepoint_index;

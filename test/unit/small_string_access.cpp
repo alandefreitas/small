@@ -146,10 +146,10 @@ TEST_CASE("String") {
 
         SECTION("Data") {
             string s = "1😀2😀3😀5";
-            std::string_view sv(s.data(), s.size());
+            string_view sv(s.data(), s.size());
             REQUIRE(s == sv);
             REQUIRE(s.data() == s.c_str());
-            REQUIRE(s.operator std::string_view() == sv);
+            REQUIRE(s.operator string_view() == sv);
         }
     }
 

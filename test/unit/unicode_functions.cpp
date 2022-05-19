@@ -24,9 +24,9 @@ TEST_CASE("Unicode") {
         utf8_char_type a = 'g';
         // utf8_char_type b = 'á'; // <- can't fit in 8 bits
         // utf8_char_type c = '😀';
-        std::basic_string<utf8_char_type> d = "g";
-        std::basic_string<utf8_char_type> e = "á";
-        std::basic_string<utf8_char_type> f = "😀";
+        std::basic_string<utf8_char_type> d = u8"g";
+        std::basic_string<utf8_char_type> e = u8"á";
+        std::basic_string<utf8_char_type> f = u8"😀";
         SECTION("Check") {
             // Check container sizes
             REQUIRE(d.size() == 1);

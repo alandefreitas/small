@@ -21,6 +21,7 @@ namespace small {
     namespace detail {
         /// Set the types for UTF in C++
 #ifdef cpp_char8_t
+        // there's no operator<<(stream, char8_t) in C++20
         using utf8_char_type = char8_t;
 #else
         using utf8_char_type = char;
@@ -260,7 +261,8 @@ namespace small {
         template <class Char32, class Size = size_t, class Result = uint8_t>
         constexpr Result
         utf32_size(Char32, Size available_code_units = 1) noexcept {
-            return static_cast<Result>((std::min)(Size(1), available_code_units));
+            return static_cast<Result>(
+                (std::min)(Size(1), available_code_units));
         }
 
         /// \brief Get size a utf32 char would have when/if converted to utf8
@@ -738,7 +740,8 @@ namespace small {
                     source + (std::min)(source_count, dest_count),
                     dest,
                     [](auto in) { return static_cast<output_value_type>(in); });
-                return static_cast<uint8_t>((std::min)(source_count, dest_count));
+                return static_cast<uint8_t>(
+                    (std::min)(source_count, dest_count));
             } else {
                 return static_cast<uint8_t>(
                     from_utf8_to_utf16(source, source_count, dest, dest_count));
@@ -803,7 +806,22 @@ namespace small {
                 return to_utf8(source, source_count, dest, dest_count);
             }
         }
+
     } // namespace detail
 } // namespace small
+
+#ifdef cpp_char8_t
+inline
+std::ostream&
+operator<<(std::ostream& os, char8_t c) {
+    return os << static_cast<char>(c);
+}
+
+inline
+std::ostream&
+operator<<(std::ostream& os, const char8_t* c) {
+    return os << reinterpret_cast<const char*>(c);
+}
+#endif
 
 #endif // SMALL_DETAIL_ALGORITHM_UTF_HPP

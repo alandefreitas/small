@@ -137,6 +137,7 @@ TEST_CASE("String Non-Member") {
             SECTION("Input") {
                 std::stringstream ss;
                 ss << "123";
+                REQUIRE(ss.str() == "123");
                 ss >> a;
                 REQUIRE(a == "123");
             }

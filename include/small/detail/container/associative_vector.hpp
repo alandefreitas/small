@@ -507,7 +507,7 @@ namespace small {
             template <class K>
             constexpr mapped_type &
             operator[](K &&k) {
-                return element_access_implementation<true>(std::move(k));
+                return element_access_implementation<true>(std::forward(k));
             }
 
             /// \brief Check bound and get reference to element in buffered map
@@ -533,7 +533,7 @@ namespace small {
             template <class K>
             constexpr mapped_type &
             at(K &&k) {
-                return element_access_implementation<false>(std::move(k));
+                return element_access_implementation<false>(std::forward(k));
             }
 
             /// \brief Check bound and get reference to element in buffered map
@@ -559,7 +559,7 @@ namespace small {
             template <class K>
             constexpr const mapped_type &
             at(K &&k) const {
-                return element_access_implementation<false>(std::move(k));
+                return element_access_implementation<false>(std::forward(k));
             }
 
             /// \brief Get reference to first element in small array
@@ -1127,7 +1127,7 @@ namespace small {
                         if constexpr (create_if_not_found) {
                             std::tie(it, std::ignore) = emplace(
                                 std::piecewise_construct,
-                                std::forward_as_tuple(std::move(k)),
+                                std::forward_as_tuple(std::forward(k)),
                                 std::tuple<>());
                         } else {
                             throw_exception<std::out_of_range>(
@@ -1154,7 +1154,7 @@ namespace small {
             element_access_implementation(K &&k) const {
                 return (const_cast<associative_vector *>(this))
                     ->template element_access_implementation<false>(
-                        std::move(k));
+                        std::forward(k));
             }
 
             /// \brief Check if small map invariants are ok

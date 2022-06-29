@@ -1069,13 +1069,15 @@ namespace small {
             if (first == last) {
                 return unconst(first);
             }
-            if constexpr (is_relocatable_v<value_type> && using_std_allocator) {
-                // Directly destroy elements before mem moving
-                if constexpr (!std::is_trivially_destructible_v<T>) {
-                    for (auto it = first; it != last; ++it) {
-                        it->~value_type();
-                    }
+            
+            // Directly destroy elements before mem moving
+            if constexpr (!std::is_trivially_destructible_v<T>) {
+                for (auto it = first; it != last; ++it) {
+                    it->~value_type();
                 }
+            }
+            
+            if constexpr (is_relocatable_v<value_type> && using_std_allocator) {
                 // Move elements directly in memory
                 const auto n_erase = last - first;
                 const auto n_after_erase = cend() - last;

@@ -1,0 +1,26 @@
+---
+{% if exists("title") -%}
+title: {{title}}
+{% else if exists("name") -%}
+title: {{name}}
+{% endif -%}
+{% if exists("summary") -%}
+summary: {{summary}}
+{% endif -%}
+{% include "meta" %}
+---
+
+{% if exists("title") -%}
+{% if exists("kind") and kind == "group" -%}
+{% if exists("moduleBreadcrumbs") -%}
+# {{title}} Module
+{% else -%}
+# {{title}} Library
+{% endif -%}
+{% else -%}
+# {{title}}
+{% endif -%}
+{% else if exists("kind") and kind != "page" -%}
+# {{name}} {{title(kind)}} Reference
+{% endif %}
+

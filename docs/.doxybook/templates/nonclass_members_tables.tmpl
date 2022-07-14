@@ -1,0 +1,133 @@
+{% if exists("groups") %} 
+
+| Submodules     |            |
+| -------------- |  --------- |
+{% for child in groups -%}
+| **[{{child.title}}]({{child.url}})** | {% if existsIn(child, "brief") %}{{child.brief}}{% else %}{{child.title}} submodule{% endif %}<br> <sup><span style="color:green">(submodule)</span></sup> |
+{%- endfor %}
+{% endif -%}
+
+{% if exists("dirs") %}
+
+| Directories    |
+| -------------- |
+{% for child in dirs -%}
+| **[{{child.title}}]({{child.url}})** {% if existsIn(child, "brief") %}<br>{{child.brief}}{% endif %} |
+{%- endfor %}
+{% endif -%}
+
+{% if exists("files") %}
+
+| Files          |
+| -------------- |
+{% for child in files -%}
+| **[{{child.title}}]({{child.url}})** {% if existsIn(child, "brief") %}<br>{{child.brief}}{% endif %} |
+{%- endfor %}
+{% endif -%}
+
+{%- if exists("namespaces") %}
+
+| Namespaces     |
+| -------------- |
+{% for child in namespaces -%}
+| **[{{child.name}}]({{child.url}})** {% if existsIn(child, "brief") %}<br>{{child.brief}}{% endif %} |
+{% endfor %}
+{% endif -%}
+{%- if exists("publicClasses") %}
+
+| Classes        |     |
+| -------------- |-----|
+{% for child in publicClasses -%}
+| **[{{ stripNamespace(child.name) }}]({{child.url}})** | {% if existsIn(child, "brief") %}{{child.brief}}{% else %}{{child.name}}{% endif %}<br> <sup><span style="color:green">({{child.kind}})</span></sup> |
+{% endfor %}
+{% endif -%}
+{%- if exists("publicTypes") %}
+
+| Types          |           |
+| -------------- |-----------|
+{% for child in publicTypes -%}
+| **[{{ stripNamespace(child.name) }}]({{child.url}})** | {% if existsIn(child, "brief") %}{{child.brief}}{% else if existsIn(child, "type") %}{% if child.type == "__see_below__" %}`/* see below */`{% else %}`{{child.type}}`{% endif %}{% else %}`{{child.name}}`{% endif %}<br> <sup><span style="color:green">({{child.kind}})</span></sup> |
+{% endfor %}
+{% endif -%}
+{%- if exists("publicSlots") %} 
+
+| Slots          |         |
+| -------------- |---------|
+{% for child in publicSlots -%}
+| {% if existsIn(child, "templateParams") -%}
+template <{% for param in child.templateParams -%}
+{{param.typePlain}} {{param.name}}{% if existsIn(param, "defvalPlain") %} ={{param.defvalPlain}}{% endif -%}
+{% if not loop.is_last %},{% endif -%}
+{% endfor %}\> <br>{% endif -%}
+{% if child.virtual %}virtual {% endif -%}
+{% if existsIn(child, "type") %}{{child.type}} {% endif -%}
+| **[{{child.name}}]({{child.url}})**({% for param in child.params -%}
+{{param.type}} {{param.name}}{% if existsIn(param, "defval") %} ={{param.defval}}{% endif -%}
+{% if not loop.is_last %}, {% endif -%}
+{% endfor %}){% if child.const %} const{% endif -%}
+{% if child.override %} override{% endif -%}
+{% if child.default %} =default{% endif -%}
+{% if child.deleted %} =delete{% endif -%}
+{% if child.pureVirtual %} =0{% endif -%}
+ {% if existsIn(child, "brief") %}<br>{{child.brief}}{% endif %} |
+{% endfor %}
+{% endif -%}
+{%- if exists("publicSignals") %} 
+
+| Signals        |          |
+| -------------- |----------|
+{% for child in publicSignals -%}
+| {% if existsIn(child, "templateParams") -%}
+template <{% for param in child.templateParams -%}
+{{param.typePlain}} {{param.name}}{% if existsIn(param, "defvalPlain") %} ={{param.defvalPlain}}{% endif -%}
+{% if not loop.is_last %},{% endif -%}
+{% endfor %}\> <br>{% endif -%}
+{% if child.virtual %}virtual {% endif -%}
+{% if existsIn(child, "type") %}{{child.type}} {% endif -%}
+| **[{{child.name}}]({{child.url}})**({% for param in child.params -%}
+{{param.type}} {{param.name}}{% if existsIn(param, "defval") %} ={{param.defval}}{% endif -%}
+{% if not loop.is_last %}, {% endif -%}
+{% endfor %}){% if child.const %} const{% endif -%}
+{% if child.override %} override{% endif -%}
+{% if child.default %} =default{% endif -%}
+{% if child.deleted %} =delete{% endif -%}
+{% if child.pureVirtual %} =0{% endif -%}
+ {% if existsIn(child, "brief") %}<br>{{child.brief}}{% endif %} |
+{% endfor %}
+{% endif -%}
+{%- if exists("publicFunctions") %} 
+
+| Functions |              |
+|-----------|--------------|
+{%- set previous_overload="" -%}
+{% for child in publicFunctions -%}
+{% if previous_overload!=child.name -%}
+| **[{{replace(child.name, "|","\\|")}}]({{replace(child.url, "|", "_1")}})** {% if child.override %} override{% endif -%}
+{% if child.default %} =default{% endif -%}
+{% if child.deleted %} =delete{% endif -%}
+{% if child.pureVirtual %} =0{% endif -%}
+{% if child.const %} const{% endif -%}
+ | {% if existsIn(child, "brief") %}{{replace(child.brief, "|", "\\|")}}<br>{% endif %} <sup><span style="color:green">({% if child.virtual %}virtual {% endif -%}{{child.kind}}{% if existsIn(child, "templateParams") %} template{% endif %})</span></sup> |
+{%- set previous_overload=child.name -%}
+{% endif -%}
+{% endfor %}
+
+{% endif -%}
+
+{%- if exists("publicAttributes") %}
+
+| Attributes               |            |
+| -------------- | -------------- |
+{% for child in publicAttributes -%}
+| **[{{ stripNamespace(child.name) }}]({{child.url}})** | {% if existsIn(child, "brief") %}{{child.brief}}{% else if existsIn(child, "type") %}{% if child.type == "__see_below__" %}`/* see below */`{% else %}`{{child.type}}`{% endif %}{% else %}`{{child.name}}`{% endif %}<br> <sup><span style="color:green">({{child.kind}})</span></sup> |
+{% endfor %}
+{% endif -%}
+
+{%- if exists("defines") %}
+
+| Defines               |            |
+| -------------- | -------------- |
+{% for child in defines -%}
+| {% if existsIn(child, "type") %}{{child.type}}{% endif %} | **[{{child.name}}]({{child.url}})**{% if existsIn(child, "params") %}({% for param in child.params %}{{param.name}}{% if existsIn(param, "defval") %} ={{param.defval}}{% endif %}{% if not loop.is_last %}, {% endif %}{% endfor %}){% endif %} {% if existsIn(child, "brief") %}<br>{{child.brief}}{% endif %} |
+{% endfor %}
+{% endif -%}

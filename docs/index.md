@@ -2,7 +2,7 @@
 
 > C++ Small Containers
 
-[![Small](docs/img/small_banner.svg)](https://alandefreitas.github.io/small/)
+[![Small](img/small_banner.svg)](https://alandefreitas.github.io/small/)
 
 <br/>
 
@@ -33,14 +33,3 @@
 [![HackerNews](https://img.shields.io/twitter/url/http/shields.io.svg?style=social&label=Share+on+HackerNews&logo=y-combinator)](https://news.ycombinator.com/submitlink?u=https://github.com/alandefreitas/small/&t=small:%20C%2B%2B%20small%20containers)
 
 <br/>
-
-<!-- START mdsplit-ignore -->
-<!-- Remove link to documentation from the documentation -->
-
-<h2>
-
-[READ THE DOCUMENTATION FOR A QUICK START AND EXAMPLES](https://alandefreitas.github.io/small/)
-
-[![Small](https://upload.wikimedia.org/wikipedia/commons/2/2a/Documentation-plain.svg)](https://alandefreitas.github.io/small/)
-
-</h2>

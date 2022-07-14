@@ -1,0 +1,35 @@
+{% if exists("publicTypes") %}## Types
+
+{% for child in publicTypes %}### {{child.kind}} {{child.name}}
+
+{{ render("member_details", child) }}
+{% endfor %}{% endif %}
+
+{% if exists("publicFunctions") %}## Functions
+
+{%- set previous_overload="" -%}
+{% for child in publicFunctions -%}
+{% if previous_overload!=child.name -%}
+
+{{ "###" }} {{child.kind}} {{child.name}}
+
+{% set input.child = child -%}
+{% set input.overload_candidates = publicFunctions -%}
+
+{{ render("merged_overload_details", input) }}
+{%- set previous_overload=child.name -%}
+{% endif -%}
+{% endfor %}{% endif %}
+
+{% if exists("publicAttributes") %}## Attributes
+
+{% for child in publicAttributes %}### {{child.kind}} {{child.name}}
+
+{{ render("member_details", child) }}
+{% endfor %}{% endif %}
+{% if exists("defines") %}## Macros
+
+{% for child in defines %}### {{child.kind}} {{child.name}}
+
+{{ render("member_details", child) }}
+{% endfor %}{% endif %}

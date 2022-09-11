@@ -910,10 +910,9 @@ namespace small {
         emplace_back(Args &&...args) {
             // Handle inline vector
             if (size_ < num_inline_elements) {
-                new (data_.buffer() + size_)
-                    value_type(std::forward<Args>(args)...);
+                auto* ptr = new (data_.buffer() + size_) value_type(std::forward<Args>(args)...);
                 this->increment_internal_size(1);
-                return *(data_.buffer() + size_);
+                return *ptr;
             } else {
                 if constexpr (!should_use_heap) {
                     detail::throw_exception<std::length_error>(

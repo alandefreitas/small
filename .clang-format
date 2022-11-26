@@ -103,7 +103,6 @@ AlignConsecutiveMacros: Consecutive
 AttributeMacros: ['SMALL_CONSTEXPR']
 #    Declaration
 PointerAlignment: Left
-ReferenceAlignment: Pointer
 DerivePointerAlignment: true
 AlignConsecutiveDeclarations: None
 #    Namespace

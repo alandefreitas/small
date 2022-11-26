@@ -13,7 +13,6 @@
 #include <small/detail/container/lookup_table_view.hpp>
 #include <small/detail/iterator/codepoint_iterator.hpp>
 #include <small/detail/traits/extract_value_type.hpp>
-#include <small/detail/traits/strong_type.hpp>
 #include <sstream>
 
 namespace small {
@@ -91,6 +90,170 @@ namespace small {
     namespace detail {
         constexpr size_t default_codepoint_hint_step = 10;
     } // namespace detail
+
+    namespace strong{
+
+         namespace impl {
+            template <typename T, typename... V>
+            using WhenConstructible = std::enable_if_t<
+                std::is_constructible<T, V...>::value>;
+        } // namespace impl
+
+        template <typename M, typename T>
+        using modifier = typename M::template modifier<T>;
+
+        struct uninitialized_t
+        {};
+        static constexpr uninitialized_t uninitialized{};
+
+        struct default_constructible
+        {
+            template <typename T>
+            class modifier
+            {};
+        };
+
+        namespace impl {
+            template <typename T>
+            constexpr bool
+            supports_default_construction(
+                const strong::default_constructible::modifier<T> *) {
+                return true;
+            }
+        } // namespace impl
+
+        template <typename T, typename Tag, typename... M>
+        class type : public modifier<M, type<T, Tag, M...>>...
+        {
+        public:
+            template <
+                typename TT = T,
+                typename = std::enable_if_t<std::is_trivially_constructible<TT>{}>>
+            explicit type(uninitialized_t) noexcept {}
+            template <
+                typename type_ = type,
+                bool = impl::supports_default_construction(
+                    static_cast<type_ *>(nullptr))>
+            constexpr type() noexcept(noexcept(T{})) : val{} {}
+
+            template <
+                typename U,
+                typename = impl::WhenConstructible<T, std::initializer_list<U>>>
+            constexpr explicit type(std::initializer_list<U> us) noexcept(
+                noexcept(T{ us }))
+                : val{ us } {}
+            template <
+                typename... U,
+                typename = std::enable_if_t<
+                    std::is_constructible<T, U &&...>::value && (sizeof...(U) > 0)>>
+            constexpr explicit type(U &&...u) noexcept(
+                std::is_nothrow_constructible<T, U...>::value)
+                : val(std::forward<U>(u)...) {}
+
+            friend constexpr void
+            swap(type &a, type &b) noexcept(
+                std::is_nothrow_move_constructible<type>::value
+                    &&std::is_nothrow_move_assignable<type>::value) {
+                using std::swap;
+                swap(a.val, b.val);
+            }
+
+            [[nodiscard]]
+            constexpr T &
+            value_of() &noexcept {
+                return val;
+            }
+            [[nodiscard]]
+            constexpr const T &
+            value_of() const &noexcept {
+                return val;
+            }
+            [[nodiscard]]
+            constexpr T &&
+            value_of() &&noexcept {
+                return std::move(val);
+            }
+
+            [[nodiscard]]
+            friend constexpr T &
+            value_of(type &t) noexcept {
+                return t.val;
+            }
+            [[nodiscard]]
+            friend constexpr const T &
+            value_of(const type &t) noexcept {
+                return t.val;
+            }
+            [[nodiscard]]
+            friend constexpr T &&
+            value_of(type &&t) noexcept {
+                return std::move(t).val;
+            }
+
+        private:
+            T val;
+        };
+
+        namespace impl {
+            template <typename T, typename Tag, typename... Ms>
+            constexpr bool
+            is_strong_type_func(const strong::type<T, Tag, Ms...> *) {
+                return true;
+            }
+            constexpr bool
+            is_strong_type_func(...) {
+                return false;
+            }
+            template <typename T, typename Tag, typename... Ms>
+            constexpr T
+            underlying_type(strong::type<T, Tag, Ms...> *);
+
+        } // namespace impl
+
+            template <typename T>
+            struct is_strong_type
+                : std::integral_constant<
+                      bool,
+                      impl::is_strong_type_func(static_cast<T *>(nullptr))>
+            {};
+            template <typename T, bool = is_strong_type<T>::value>
+            struct underlying_type
+            {
+                using type = decltype(impl::underlying_type(static_cast<T *>(nullptr)));
+            };
+
+            template <typename T>
+            using underlying_type_t = typename underlying_type<T>::type;
+
+            namespace impl {
+
+            template <typename T, typename D>
+            struct converter
+            {
+                constexpr explicit operator D() const noexcept(noexcept(
+                    static_cast<D>(std::declval<const underlying_type_t<T> &>()))) {
+                    auto &self = static_cast<const T &>(*this);
+                    return static_cast<D>(value_of(self));
+                }
+            };
+            template <typename T, typename D>
+            struct implicit_converter
+            {
+                constexpr operator D() const noexcept(noexcept(
+                    static_cast<D>(std::declval<const underlying_type_t<T> &>()))) {
+                    auto &self = static_cast<const T &>(*this);
+                    return static_cast<D>(value_of(self));
+                }
+            };
+        } // namespace impl
+            template <typename... Ts>
+            struct implicitly_convertible_to
+            {
+                template <typename T>
+                struct modifier : impl::implicit_converter<T, Ts>...
+                {};
+            };
+    }// namespace strong
 
     template <
         typename CharT = char,

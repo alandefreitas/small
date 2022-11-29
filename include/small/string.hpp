@@ -93,11 +93,9 @@ namespace small {
 
     namespace strong{
 
-         namespace impl {
-            template <typename T, typename... V>
-            using WhenConstructible = std::enable_if_t<
-                std::is_constructible<T, V...>::value>;
-        } // namespace impl
+        template <typename T, typename... V>
+        using WhenConstructible = std::enable_if_t<
+            std::is_constructible<T, V...>::value>;
 
         template <typename M, typename T>
         using modifier = typename M::template modifier<T>;
@@ -113,14 +111,12 @@ namespace small {
             {};
         };
 
-        namespace impl {
             template <typename T>
             constexpr bool
             supports_default_construction(
                 const strong::default_constructible::modifier<T> *) {
                 return true;
             }
-        } // namespace impl
 
         template <typename T, typename Tag, typename... M>
         class type : public modifier<M, type<T, Tag, M...>>...
@@ -132,13 +128,13 @@ namespace small {
             explicit type(uninitialized_t) noexcept {}
             template <
                 typename type_ = type,
-                bool = impl::supports_default_construction(
+                bool = supports_default_construction(
                     static_cast<type_ *>(nullptr))>
             constexpr type() noexcept(noexcept(T{})) : val{} {}
 
             template <
                 typename U,
-                typename = impl::WhenConstructible<T, std::initializer_list<U>>>
+                typename = WhenConstructible<T, std::initializer_list<U>>>
             constexpr explicit type(std::initializer_list<U> us) noexcept(
                 noexcept(T{ us }))
                 : val{ us } {}
@@ -194,63 +190,57 @@ namespace small {
             T val;
         };
 
-        namespace impl {
-            template <typename T, typename Tag, typename... Ms>
-            constexpr bool
-            is_strong_type_func(const strong::type<T, Tag, Ms...> *) {
-                return true;
-            }
-            constexpr bool
-            is_strong_type_func(...) {
-                return false;
-            }
+        template <typename T, typename Tag, typename... Ms>
+        constexpr bool
+        is_strong_type_func(const strong::type<T, Tag, Ms...> *) {
+            return true;
+        }
+
             template <typename T, typename Tag, typename... Ms>
             constexpr T
-            underlying_type(strong::type<T, Tag, Ms...> *);
+            T_underlying_type(strong::type<T, Tag, Ms...> *);
 
-        } // namespace impl
 
             template <typename T>
             struct is_strong_type
                 : std::integral_constant<
                       bool,
-                      impl::is_strong_type_func(static_cast<T *>(nullptr))>
+                      is_strong_type_func(static_cast<T *>(nullptr))>
             {};
             template <typename T, bool = is_strong_type<T>::value>
             struct underlying_type
             {
-                using type = decltype(impl::underlying_type(static_cast<T *>(nullptr)));
+                using type = decltype(T_underlying_type(static_cast<T *>(nullptr)));
             };
 
             template <typename T>
             using underlying_type_t = typename underlying_type<T>::type;
 
-            namespace impl {
 
-            template <typename T, typename D>
-            struct converter
-            {
-                constexpr explicit operator D() const noexcept(noexcept(
+        template <typename T, typename D>
+        struct converter
+        {
+            constexpr explicit operator D() const noexcept(noexcept(
                     static_cast<D>(std::declval<const underlying_type_t<T> &>()))) {
-                    auto &self = static_cast<const T &>(*this);
-                    return static_cast<D>(value_of(self));
-                }
-            };
-            template <typename T, typename D>
-            struct implicit_converter
-            {
-                constexpr operator D() const noexcept(noexcept(
+                auto &self = static_cast<const T &>(*this);
+                return static_cast<D>(value_of(self));
+            }
+        };
+        template <typename T, typename D>
+        struct implicit_converter
+        {
+            constexpr operator D() const noexcept(noexcept(
                     static_cast<D>(std::declval<const underlying_type_t<T> &>()))) {
-                    auto &self = static_cast<const T &>(*this);
-                    return static_cast<D>(value_of(self));
-                }
-            };
-        } // namespace impl
+                auto &self = static_cast<const T &>(*this);
+                return static_cast<D>(value_of(self));
+            }
+        };
+
             template <typename... Ts>
             struct implicitly_convertible_to
             {
                 template <typename T>
-                struct modifier : impl::implicit_converter<T, Ts>...
+                struct modifier : implicit_converter<T, Ts>...
                 {};
             };
     }// namespace strong

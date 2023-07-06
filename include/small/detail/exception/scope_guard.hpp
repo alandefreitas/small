@@ -9,6 +9,7 @@
 #define SMALL_DETAIL_EXCEPTION_SCOPE_GUARD_HPP
 
 #include <small/detail/exception/throw.hpp>
+#include <cstdint>
 #include <functional>
 #include <iostream>
 #include <utility>

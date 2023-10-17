@@ -23,7 +23,6 @@
 #include <limits>
 #include <new>
 #include <ratio>
-#include <vector>
 
 namespace small {
     /// \brief Vector of elements with a buffer for small vectors

@@ -1809,7 +1809,7 @@ namespace small {
     template <
         class T,
         size_t N
-        = (std::max)((sizeof(std::vector<T>) * 2) / sizeof(T), std::size_t(5)),
+        = (std::max)((24 * 2) / sizeof(T), std::size_t(5)),
         class Allocator = std::allocator<T>,
         class SizeType = size_t>
     using max_size_vector = vector<T, N, Allocator, std::false_type, SizeType>;
@@ -1817,7 +1817,7 @@ namespace small {
     template <
         class T,
         size_t N
-        = (std::max)((sizeof(std::vector<T>) * 2) / sizeof(T), std::size_t(5)),
+        = (std::max)((24 * 2) / sizeof(T), std::size_t(5)),
         class Allocator = std::allocator<T>,
         class SizeType = size_t>
     using inline_vector = vector<T, N, Allocator, std::true_type, SizeType>;

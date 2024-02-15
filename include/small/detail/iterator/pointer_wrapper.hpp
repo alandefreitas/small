@@ -146,186 +146,186 @@ namespace small {
 
             public /* friends */:
             /// \brief Get distance between iterators
-            template <class Iter1, class Iter2>
+            template <class Pointer1, class Pointer2>
             constexpr friend auto
             operator-(
-                const pointer_wrapper<Iter1> &x,
-                const pointer_wrapper<Iter2> &y) noexcept
+                const pointer_wrapper<Pointer1> &x,
+                const pointer_wrapper<Pointer2> &y) noexcept
                 -> decltype(x.base() - y.base());
 
             /// \brief Sum iterators
-            template <class Iter1>
-            constexpr friend pointer_wrapper<Iter1> operator+(
-                typename pointer_wrapper<Iter1>::difference_type,
-                pointer_wrapper<Iter1>) noexcept;
+            template <class Pointer1>
+            constexpr friend pointer_wrapper<Pointer1> operator+(
+                typename pointer_wrapper<Pointer1>::difference_type,
+                pointer_wrapper<Pointer1>) noexcept;
 
         private:
             /// Base pointer
             iterator_type base_;
         };
 
-        template <class Iter1, class Iter2>
+        template <class Pointer1, class Pointer2>
         inline constexpr bool
         operator==(
-            const pointer_wrapper<Iter1> &x,
-            const pointer_wrapper<Iter2> &y) noexcept {
+            const pointer_wrapper<Pointer1> &x,
+            const pointer_wrapper<Pointer2> &y) noexcept {
             return x.base() == y.base();
         }
 
-        template <class Iter1, class Iter2>
+        template <class Pointer1, class Pointer2>
         inline constexpr bool
         operator!=(
-            const pointer_wrapper<Iter1> &x,
-            const pointer_wrapper<Iter2> &y) noexcept {
+            const pointer_wrapper<Pointer1> &x,
+            const pointer_wrapper<Pointer2> &y) noexcept {
             return !(x == y);
         }
 
-        template <class Iter1, class Iter2>
+        template <class Pointer1, class Pointer2>
         inline constexpr bool
         operator<(
-            const pointer_wrapper<Iter1> &x,
-            const pointer_wrapper<Iter2> &y) noexcept {
+            const pointer_wrapper<Pointer1> &x,
+            const pointer_wrapper<Pointer2> &y) noexcept {
             return x.base() < y.base();
         }
 
-        template <class Iter1, class Iter2>
+        template <class Pointer1, class Pointer2>
         inline constexpr bool
         operator>(
-            const pointer_wrapper<Iter1> &x,
-            const pointer_wrapper<Iter2> &y) noexcept {
+            const pointer_wrapper<Pointer1> &x,
+            const pointer_wrapper<Pointer2> &y) noexcept {
             return y < x;
         }
 
-        template <class Iter1, class Iter2>
+        template <class Pointer1, class Pointer2>
         inline constexpr bool
         operator>=(
-            const pointer_wrapper<Iter1> &x,
-            const pointer_wrapper<Iter2> &y) noexcept {
+            const pointer_wrapper<Pointer1> &x,
+            const pointer_wrapper<Pointer2> &y) noexcept {
             return !(x < y);
         }
 
-        template <class Iter1, class Iter2>
+        template <class Pointer1, class Pointer2>
         inline constexpr bool
         operator<=(
-            const pointer_wrapper<Iter1> &x,
-            const pointer_wrapper<Iter2> &y) noexcept {
+            const pointer_wrapper<Pointer1> &x,
+            const pointer_wrapper<Pointer2> &y) noexcept {
             return !(y < x);
         }
 
-        template <class Iter>
+        template <class Pointer>
         inline constexpr bool
         operator==(
-            const pointer_wrapper<Iter> &x,
-            const pointer_wrapper<Iter> &y) noexcept {
+            const pointer_wrapper<Pointer> &x,
+            const pointer_wrapper<Pointer> &y) noexcept {
             return x.base() == y.base();
         }
 
-        template <class Iter>
+        template <class Pointer>
         inline constexpr bool
         operator!=(
-            const pointer_wrapper<Iter> &x,
-            const pointer_wrapper<Iter> &y) noexcept {
+            const pointer_wrapper<Pointer> &x,
+            const pointer_wrapper<Pointer> &y) noexcept {
             return !(x == y);
         }
 
-        template <class Iter>
+        template <class Pointer>
         inline constexpr bool
         operator>(
-            const pointer_wrapper<Iter> &x,
-            const pointer_wrapper<Iter> &y) noexcept {
+            const pointer_wrapper<Pointer> &x,
+            const pointer_wrapper<Pointer> &y) noexcept {
             return y < x;
         }
 
-        template <class Iter>
+        template <class Pointer>
         inline constexpr bool
         operator>=(
-            const pointer_wrapper<Iter> &x,
-            const pointer_wrapper<Iter> &y) noexcept {
+            const pointer_wrapper<Pointer> &x,
+            const pointer_wrapper<Pointer> &y) noexcept {
             return !(x < y);
         }
 
-        template <class Iter>
+        template <class Pointer>
         inline constexpr bool
         operator<=(
-            const pointer_wrapper<Iter> &x,
-            const pointer_wrapper<Iter> &y) noexcept {
+            const pointer_wrapper<Pointer> &x,
+            const pointer_wrapper<Pointer> &y) noexcept {
             return !(y < x);
         }
 
-        template <class Iter>
+        template <class Pointer>
         inline constexpr bool
-        operator==(const pointer_wrapper<Iter> &x, Iter y) noexcept {
+        operator==(const pointer_wrapper<Pointer> &x, Pointer y) noexcept {
             return x.base() == y;
         }
 
-        template <class Iter>
+        template <class Pointer>
         inline constexpr bool
-        operator!=(const pointer_wrapper<Iter> &x, Iter y) noexcept {
+        operator!=(const pointer_wrapper<Pointer> &x, Pointer y) noexcept {
             return !(x == y);
         }
 
-        template <class Iter>
+        template <class Pointer>
         inline constexpr bool
-        operator>(const pointer_wrapper<Iter> &x, Iter y) noexcept {
+        operator>(const pointer_wrapper<Pointer> &x, Pointer y) noexcept {
             return y < x;
         }
 
-        template <class Iter>
+        template <class Pointer>
         inline constexpr bool
-        operator>=(const pointer_wrapper<Iter> &x, Iter y) noexcept {
+        operator>=(const pointer_wrapper<Pointer> &x, Pointer y) noexcept {
             return !(x < y);
         }
 
-        template <class Iter>
+        template <class Pointer>
         inline constexpr bool
-        operator<=(const pointer_wrapper<Iter> &x, Iter y) noexcept {
+        operator<=(const pointer_wrapper<Pointer> &x, Pointer y) noexcept {
             return !(y < x);
         }
 
-        template <class Iter>
+        template <class Pointer>
         inline constexpr bool
-        operator==(Iter x, const pointer_wrapper<Iter> &y) noexcept {
+        operator==(Pointer x, const pointer_wrapper<Pointer> &y) noexcept {
             return x.base() == y.base();
         }
 
-        template <class Iter>
+        template <class Pointer>
         inline constexpr bool
-        operator!=(Iter x, const pointer_wrapper<Iter> &y) noexcept {
+        operator!=(Pointer x, const pointer_wrapper<Pointer> &y) noexcept {
             return !(x == y);
         }
 
-        template <class Iter>
+        template <class Pointer>
         inline constexpr bool
-        operator>(Iter x, const pointer_wrapper<Iter> &y) noexcept {
+        operator>(Pointer x, const pointer_wrapper<Pointer> &y) noexcept {
             return y < x;
         }
 
-        template <class Iter>
+        template <class Pointer>
         inline constexpr bool
-        operator>=(Iter x, const pointer_wrapper<Iter> &y) noexcept {
+        operator>=(Pointer x, const pointer_wrapper<Pointer> &y) noexcept {
             return !(x < y);
         }
 
-        template <class Iter>
+        template <class Pointer>
         inline constexpr bool
-        operator<=(Iter x, const pointer_wrapper<Iter> &y) noexcept {
+        operator<=(Pointer x, const pointer_wrapper<Pointer> &y) noexcept {
             return !(y < x);
         }
 
-        template <class Iter1, class Iter2>
+        template <class Pointer1, class Pointer2>
         inline constexpr auto
         operator-(
-            const pointer_wrapper<Iter1> &x,
-            const pointer_wrapper<Iter2> &y) noexcept
+            const pointer_wrapper<Pointer1> &x,
+            const pointer_wrapper<Pointer2> &y) noexcept
             -> decltype(x.base() - y.base()) {
             return x.base() - y.base();
         }
 
-        template <class Iter>
-        inline constexpr pointer_wrapper<Iter>
+        template <class Pointer>
+        inline constexpr pointer_wrapper<Pointer>
         operator+(
-            typename pointer_wrapper<Iter>::difference_type n,
-            pointer_wrapper<Iter> x) noexcept {
+            typename pointer_wrapper<Pointer>::difference_type n,
+            pointer_wrapper<Pointer> x) noexcept {
             x += n;
             return x;
         }

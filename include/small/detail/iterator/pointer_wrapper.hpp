@@ -252,63 +252,63 @@ namespace small {
             return !(y < x);
         }
 
-        template <class Iter, class BaseIter>
+        template <class Iter>
         inline constexpr bool
-        operator==(const pointer_wrapper<Iter> &x, const BaseIter &y) noexcept {
+        operator==(const pointer_wrapper<Iter> &x, Iter y) noexcept {
             return x.base() == y;
         }
 
-        template <class Iter, class BaseIter>
+        template <class Iter>
         inline constexpr bool
-        operator!=(const pointer_wrapper<Iter> &x, const BaseIter &y) noexcept {
+        operator!=(const pointer_wrapper<Iter> &x, Iter y) noexcept {
             return !(x == y);
         }
 
-        template <class Iter, class BaseIter>
+        template <class Iter>
         inline constexpr bool
-        operator>(const pointer_wrapper<Iter> &x, const BaseIter &y) noexcept {
+        operator>(const pointer_wrapper<Iter> &x, Iter y) noexcept {
             return y < x;
         }
 
-        template <class Iter, class BaseIter>
+        template <class Iter>
         inline constexpr bool
-        operator>=(const pointer_wrapper<Iter> &x, const BaseIter &y) noexcept {
+        operator>=(const pointer_wrapper<Iter> &x, Iter y) noexcept {
             return !(x < y);
         }
 
-        template <class Iter, class BaseIter>
+        template <class Iter>
         inline constexpr bool
-        operator<=(const pointer_wrapper<Iter> &x, const BaseIter &y) noexcept {
+        operator<=(const pointer_wrapper<Iter> &x, Iter y) noexcept {
             return !(y < x);
         }
 
-        template <class Iter, class BaseIter>
+        template <class Iter>
         inline constexpr bool
-        operator==(const BaseIter &x, const pointer_wrapper<Iter> &y) noexcept {
+        operator==(Iter x, const pointer_wrapper<Iter> &y) noexcept {
             return x.base() == y.base();
         }
 
-        template <class Iter, class BaseIter>
+        template <class Iter>
         inline constexpr bool
-        operator!=(const BaseIter &x, const pointer_wrapper<Iter> &y) noexcept {
+        operator!=(Iter x, const pointer_wrapper<Iter> &y) noexcept {
             return !(x == y);
         }
 
-        template <class Iter, class BaseIter>
+        template <class Iter>
         inline constexpr bool
-        operator>(const BaseIter &x, const pointer_wrapper<Iter> &y) noexcept {
+        operator>(Iter x, const pointer_wrapper<Iter> &y) noexcept {
             return y < x;
         }
 
-        template <class Iter, class BaseIter>
+        template <class Iter>
         inline constexpr bool
-        operator>=(const BaseIter &x, const pointer_wrapper<Iter> &y) noexcept {
+        operator>=(Iter x, const pointer_wrapper<Iter> &y) noexcept {
             return !(x < y);
         }
 
-        template <class Iter, class BaseIter>
+        template <class Iter>
         inline constexpr bool
-        operator<=(const BaseIter &x, const pointer_wrapper<Iter> &y) noexcept {
+        operator<=(Iter x, const pointer_wrapper<Iter> &y) noexcept {
             return !(y < x);
         }
 

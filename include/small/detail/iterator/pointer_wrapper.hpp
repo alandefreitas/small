@@ -8,6 +8,7 @@
 #ifndef SMALL_DETAIL_ITERATOR_POINTER_WRAPPER_HPP
 #define SMALL_DETAIL_ITERATOR_POINTER_WRAPPER_HPP
 
+#include <small/detail/traits/ptr_to_const.hpp>
 #include <algorithm>
 #include <iterator>
 #include <type_traits>
@@ -254,61 +255,81 @@ namespace small {
 
         template <class Pointer>
         inline constexpr bool
-        operator==(const pointer_wrapper<Pointer> &x, Pointer y) noexcept {
+        operator==(
+            const pointer_wrapper<Pointer> &x,
+            ptr_to_const_t<Pointer> y) noexcept {
             return x.base() == y;
         }
 
         template <class Pointer>
         inline constexpr bool
-        operator!=(const pointer_wrapper<Pointer> &x, Pointer y) noexcept {
+        operator!=(
+            const pointer_wrapper<Pointer> &x,
+            ptr_to_const_t<Pointer> y) noexcept {
             return !(x == y);
         }
 
         template <class Pointer>
         inline constexpr bool
-        operator>(const pointer_wrapper<Pointer> &x, Pointer y) noexcept {
+        operator>(
+            const pointer_wrapper<Pointer> &x,
+            ptr_to_const_t<Pointer> y) noexcept {
             return y < x;
         }
 
         template <class Pointer>
         inline constexpr bool
-        operator>=(const pointer_wrapper<Pointer> &x, Pointer y) noexcept {
+        operator>=(
+            const pointer_wrapper<Pointer> &x,
+            ptr_to_const_t<Pointer> y) noexcept {
             return !(x < y);
         }
 
         template <class Pointer>
         inline constexpr bool
-        operator<=(const pointer_wrapper<Pointer> &x, Pointer y) noexcept {
+        operator<=(
+            const pointer_wrapper<Pointer> &x,
+            ptr_to_const_t<Pointer> y) noexcept {
             return !(y < x);
         }
 
         template <class Pointer>
         inline constexpr bool
-        operator==(Pointer x, const pointer_wrapper<Pointer> &y) noexcept {
+        operator==(
+            ptr_to_const_t<Pointer> x,
+            const pointer_wrapper<Pointer> &y) noexcept {
             return x.base() == y.base();
         }
 
         template <class Pointer>
         inline constexpr bool
-        operator!=(Pointer x, const pointer_wrapper<Pointer> &y) noexcept {
+        operator!=(
+            ptr_to_const_t<Pointer> x,
+            const pointer_wrapper<Pointer> &y) noexcept {
             return !(x == y);
         }
 
         template <class Pointer>
         inline constexpr bool
-        operator>(Pointer x, const pointer_wrapper<Pointer> &y) noexcept {
+        operator>(
+            ptr_to_const_t<Pointer> x,
+            const pointer_wrapper<Pointer> &y) noexcept {
             return y < x;
         }
 
         template <class Pointer>
         inline constexpr bool
-        operator>=(Pointer x, const pointer_wrapper<Pointer> &y) noexcept {
+        operator>=(
+            ptr_to_const_t<Pointer> x,
+            const pointer_wrapper<Pointer> &y) noexcept {
             return !(x < y);
         }
 
         template <class Pointer>
         inline constexpr bool
-        operator<=(Pointer x, const pointer_wrapper<Pointer> &y) noexcept {
+        operator<=(
+            ptr_to_const_t<Pointer> x,
+            const pointer_wrapper<Pointer> &y) noexcept {
             return !(y < x);
         }
 

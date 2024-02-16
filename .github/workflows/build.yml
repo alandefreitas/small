@@ -64,7 +64,17 @@ jobs:
             name: "Ubuntu/20.04/Static/X64/Release",
             os: ubuntu-20.04,
             config: Release,
-            cmake_extra_args: "-DCMAKE_C_COMPILER=/usr/bin/gcc-10 -DCMAKE_CXX_COMPILER=/usr/bin/g++-10  -DCMAKE_CXX_FLAGS=\"-O2\"",
+            cmake_extra_args: "-DCMAKE_C_COMPILER=/usr/bin/gcc-10 -DCMAKE_CXX_COMPILER=/usr/bin/g++-10 -DCMAKE_CXX_FLAGS=\"-O2\"",
+            sudocmd: "sudo",
+            artifact_name: "Linux",
+            cores: 2,
+            install_dir: "/usr/local/"
+          }
+          - {
+            name: "Ubuntu/20.04/Static/X64/fsanitize",
+            os: ubuntu-20.04,
+            config: Debug,
+            cmake_extra_args: "-DCMAKE_C_COMPILER=/usr/bin/clang-12 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-12 -DCMAKE_C_FLAGS='-fsanitize=address,pointer-compare,pointer-subtract,leak,undefined' -DCMAKE_CXX_FLAGS='-fsanitize=address,pointer-compare,pointer-subtract,leak,undefined'",
             sudocmd: "sudo",
             artifact_name: "Linux",
             cores: 2,

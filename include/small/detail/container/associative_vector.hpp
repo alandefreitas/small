@@ -708,6 +708,21 @@ namespace small::detail {
             return iterator(data_.erase(maybe_base(first), maybe_base(last)));
         }
 
+        /// \brief Erase elements that match the predicate
+        template <typename Pred>
+        size_type
+        erase_if(Pred p) {
+            auto const old_size = size();
+            for (auto iter = begin(); iter != end();) {
+                if (p(*iter)) {
+                    iter = erase(iter);
+                } else {
+                    ++iter;
+                }
+            }
+            return old_size - size();
+        }
+
         /// \brief Clear elements in the small map
         constexpr void
         clear() noexcept {

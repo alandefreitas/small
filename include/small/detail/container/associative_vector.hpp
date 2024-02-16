@@ -800,6 +800,17 @@ namespace small::detail {
             return iterator(data_.erase(maybe_base(first), maybe_base(last)));
         }
 
+        /// \brief Erase elements that match the predicate
+        template <typename Pred>
+        size_type
+        erase_if(Pred p) {
+            auto const old_size = size();
+            data_.erase(
+                std::remove_if(data_.begin(), data_.end(), p),
+                data_.end());
+            return old_size - size();
+        }
+
         /// \brief Clear elements in the small map
         constexpr void
         clear() noexcept {
@@ -1273,6 +1284,13 @@ namespace small::detail {
         associative_vector<b1, b2, b3, V, C> &x,
         associative_vector<b1, b2, b3, V, C> &y) noexcept(noexcept(x.swap(y))) {
         x.swap(y);
+    }
+
+    /// \brief Erase elements that match the predicate
+    template <bool b1, bool b2, bool b3, class V, class C, class Pred>
+    typename associative_vector<b1, b2, b3, V, C>::size_type
+    erase_if(associative_vector<b1, b2, b3, V, C> &c, Pred p) {
+        return c.erase_if(p);
     }
 } // namespace small::detail
 

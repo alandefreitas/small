@@ -547,6 +547,27 @@ TEST_CASE("Small Map") {
         }
     }
 
+    SECTION("Find in small map") {
+        small_map_type a = {
+            { 1, 1 },
+            { 2, 2 },
+            { 3, 3 }
+        };
+
+        REQUIRE(a.find(1) == a.begin());
+        REQUIRE(a.find(4) == a.end());
+    }
+
+    SECTION("Find in big map") {
+        small_map_type a = {};
+        for (int i = 0; i < 1000; ++i) {
+            a[i] = i;
+        }
+
+        REQUIRE(a.find(0) == a.begin());
+        REQUIRE(a.find(1000) == a.end());
+    }
+
     SECTION("Relational Operators") {
         small_map_type a = {
             { 1, 1 },

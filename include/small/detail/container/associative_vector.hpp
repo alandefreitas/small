@@ -94,6 +94,16 @@ namespace small::detail {
         using first_type_or_void_t = typename first_type_or_void<T>::type;
         template <class T>
         using second_type_or_void_t = typename second_type_or_void<T>::type;
+        template <class, class = void>
+        struct is_transparent : std::false_type
+        {};
+        template <class Func>
+        struct is_transparent<Func, std::void_t<typename Func::is_transparent>>
+            : std::true_type
+        {};
+        template <typename Func>
+        static auto constexpr is_transparent_v = is_transparent<Func>::value;
+        static auto constexpr is_comp_tr = is_transparent_v<Compare>;
 
         /* static asserts */
         static_assert(
@@ -758,7 +768,7 @@ namespace small::detail {
     public /* map operations */:
         /// \brief Find element in the small map
         template <typename K>
-        iterator
+        std::enable_if_t<is_comp_tr || std::is_same_v<K, key_type>, iterator>
         find(const K &k) {
             if (!IsOrdered || size() < 100) {
                 for (auto it = begin(); it != end(); ++it) {
@@ -784,20 +794,14 @@ namespace small::detail {
 
         /// \brief Count elements with a given key (0 or 1)
         template <typename K>
-        size_type
+        std::enable_if_t<is_comp_tr || std::is_same_v<K, key_type>, size_type>
         count(const K &x) const {
             return find(x) != end() ? 1 : 0;
         }
 
-        /// \brief Count elements with a given key (0 or 1)
-        size_type
-        count(const key_type &k) const {
-            return find(k) != end() ? 1 : 0;
-        }
-
         /// \brief Check if elements with a given key exists
         template <typename K>
-        bool
+        std::enable_if_t<is_comp_tr || std::is_same_v<K, key_type>, bool>
         contains(const K &x) const {
             return count(x) > 0;
         }
@@ -856,7 +860,9 @@ namespace small::detail {
         /// \brief Iterator to first element not less than key
         /// This will only work properly for ordered containers
         template <typename K>
-        typename vector_type::iterator
+        std::enable_if_t<
+            is_comp_tr || std::is_same_v<K, key_type>,
+            typename vector_type::iterator>
         lower_bound_partial(
             typename vector_type::const_iterator first,
             typename vector_type::const_iterator last,
@@ -884,7 +890,9 @@ namespace small::detail {
 
         /// \brief Iterator to first element not less than key
         template <typename K>
-        typename vector_type::iterator
+        std::enable_if_t<
+            is_comp_tr || std::is_same_v<K, key_type>,
+            typename vector_type::iterator>
         upper_bound_partial(
             typename vector_type::const_iterator first,
             typename vector_type::const_iterator last,

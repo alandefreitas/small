@@ -314,6 +314,23 @@ TEST_CASE("Small Set") {
         REQUIRE(equal_il(a, {}));
     }
 
+    SECTION("Find in small set") {
+        small_set_type a = { 1, 2, 3 };
+
+        REQUIRE(a.find(1) == a.begin());
+        REQUIRE(a.find(4) == a.end());
+    }
+
+    SECTION("Find in big set") {
+        small_set_type a = {};
+        for (int i = 0; i < 1000; ++i) {
+            a.insert(i);
+        }
+
+        REQUIRE(a.find(0) == a.begin());
+        REQUIRE(a.find(1000) == a.end());
+    }
+
     SECTION("Element access errors") {
         small_set_type a = { 1, 2, 3 };
         REQUIRE_THROWS(a.at(4));

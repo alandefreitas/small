@@ -592,9 +592,9 @@ namespace small::detail {
                 data_.emplace_back(std::move(tmp));
                 return std::make_pair(std::prev(end()), true);
             } else {
-                const bool same_key
-                    = !comp_(maybe_first(*emplace_pos), maybe_first(tmp))
-                      && !comp_(maybe_first(tmp), maybe_first(*emplace_pos));
+                const bool same_key = keys_equivalent(
+                    maybe_first(*emplace_pos),
+                    maybe_first(tmp));
                 if (IsMulti || !same_key) {
                     typename vector_type::iterator emplaced_it = data_.emplace(
                         maybe_base(emplace_pos),
@@ -742,22 +742,15 @@ namespace small::detail {
         template <typename K>
         iterator
         find(const K &k) {
-            constexpr static auto Found = [](auto const& it, auto const& key) {
-                if constexpr (IsMap) {
-                    return it->first == key;
-                } else {
-                    return *it == key;
-                }
-            };
             if (!IsOrdered || size() < 100) {
                 for (auto it = begin(); it != end(); ++it) {
-                    if (Found(it, k)) {
+                    if (keys_equivalent(maybe_first(*it), k)) {
                         return it;
                     }
                 }
             } else {
                 auto const it = lower_bound(k);
-                if (it != end() && Found(it, k)) {
+                if (it != end() && keys_equivalent(maybe_first(*it), k)) {
                     return it;
                 }
             }
@@ -939,6 +932,12 @@ namespace small::detail {
             } else {
                 return true;
             }
+        }
+
+        /// \brief Check if 2 keys are equivalent
+        bool
+        keys_equivalent(const key_type &lhs, const key_type &rhs) {
+            return !comp_(lhs, rhs) && !comp_(rhs, lhs);
         }
 
         template <class EL>

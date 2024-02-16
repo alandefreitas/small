@@ -571,19 +571,17 @@ namespace small {
             iterator
             emplace_hint(const_iterator position, Args &&...args) {
                 value_type obj(std::forward<Args>(args)...);
+                value_compare val_comp = value_comp();
                 // Handle iterator to end()
-                if (position == end()
-                    && comp_(maybe_first(data_.back()), maybe_first(obj)))
-                {
+                if (position == end() && val_comp(data_.back(), obj)) {
                     return iterator(data_.emplace(data_.end(), std::move(obj)));
                 } else {
                     // else, check if object should come after position...
-                    if (comp_(maybe_first(*position), maybe_first(obj))) {
+                    if (val_comp(*position, obj)) {
                         // ... and check if object should come before next
                         // position
                         auto next_position = std::next(position);
-                        if (next_position == end()
-                            || comp_(maybe_first(obj), maybe_first(*position)))
+                        if (next_position == end() || val_comp(obj, *position))
                         {
                             // If so, insert element there with this correct
                             // hint and return
@@ -846,28 +844,14 @@ namespace small {
             find(const key_type &k) {
                 if (!IsOrdered || data_.size() < 100) {
                     for (auto it = data_.begin(); it != data_.end(); ++it) {
-                        const bool found = [&]() {
-                            if constexpr (IsMap) {
-                                return it->first == k;
-                            } else {
-                                return *it == k;
-                            }
-                        }();
-                        if (found) {
+                        if (keys_equivalent(maybe_first(*it), k)) {
                             return iterator(it);
                         }
                     }
                     return end();
                 } else {
                     auto it = lower_bound(k);
-                    const bool found = [&]() {
-                        if constexpr (IsMap) {
-                            return it->first == k;
-                        } else {
-                            return *it == k;
-                        }
-                    }();
-                    if (found) {
+                    if (keys_equivalent(maybe_first(*it), k)) {
                         return it;
                     } else {
                         return end();
@@ -1126,6 +1110,12 @@ namespace small {
                 } else {
                     return true;
                 }
+            }
+
+            /// \brief Check if 2 keys are equivalent
+            bool
+            keys_equivalent(const key_type &lhs, const key_type &rhs) {
+                return !comp_(lhs, rhs) && !comp_(rhs, lhs);
             }
 
             template <class EL>

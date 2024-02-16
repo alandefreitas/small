@@ -888,35 +888,7 @@ namespace small {
             /// \brief Find element in the small map
             iterator
             find(const key_type &k) {
-                if (!IsOrdered || data_.size() < 100) {
-                    for (auto it = data_.begin(); it != data_.end(); ++it) {
-                        const bool found = [&]() {
-                            if constexpr (IsMap) {
-                                return it->first == k;
-                            } else {
-                                return *it == k;
-                            }
-                        }();
-                        if (found) {
-                            return iterator(it);
-                        }
-                    }
-                    return end();
-                } else {
-                    auto it = lower_bound(k);
-                    const bool found = [&]() {
-                        if constexpr (IsMap) {
-                            return it->first == k;
-                        } else {
-                            return *it == k;
-                        }
-                    }();
-                    if (found) {
-                        return it;
-                    } else {
-                        return end();
-                    }
-                }
+                return find<key_type>(k);
             }
 
             /// \brief Find element in the small map
@@ -928,22 +900,27 @@ namespace small {
             /// \brief Find element in the small map
             template <typename K>
             iterator
-            find(const K &x) {
-                if (!IsOrdered || data_.size() < 100) {
-                    for (auto it = data_.begin(); it != data_.end(); ++it) {
-                        if (it->first == x) {
-                            return const_key_iterator(it);
+            find(const K &k) {
+                constexpr static auto Found = [](auto const& it, auto const& key) {
+                    if constexpr (IsMap) {
+                        return it->first == key;
+                    } else {
+                        return *it == key;
+                    }
+                };
+                if (!IsOrdered || size() < 100) {
+                    for (auto it = begin(); it != end(); ++it) {
+                        if (Found(it, k)) {
+                            return it;
                         }
                     }
-                    return end();
                 } else {
-                    auto it = lower_bound(x);
-                    if (it->first == x) {
+                    auto const it = lower_bound(k);
+                    if (it != end() && Found(it, k)) {
                         return it;
-                    } else {
-                        return end();
                     }
                 }
+                return end();
             }
 
             /// \brief Find element in the small map

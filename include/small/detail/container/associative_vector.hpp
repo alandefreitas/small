@@ -694,8 +694,11 @@ namespace small::detail {
         /// \brief Erase element at a position in small map
         size_type
         erase(const key_type &k) {
-            auto it = find(k);
-            if (it != end()) {
+            if constexpr (IsMulti) {
+                return erase_if([this, &k](const value_type &v) {
+                    return keys_equivalent(maybe_first(v), k);
+                });
+            } else if (auto it = find(k); it != end()) {
                 erase(it);
                 return 1;
             }

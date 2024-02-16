@@ -793,104 +793,40 @@ namespace small::detail {
 
         /// \brief Iterator to first element not less than key
         /// This will only work properly for ordered containers
-        iterator
-        lower_bound(const key_type &k) {
-            return iterator(std::lower_bound(
-                data_.begin(),
-                data_.end(),
-                k,
-                [this](const auto &p, const auto &v) {
-                return comp_(maybe_first(p), v);
-                }));
-        }
-
-        /// \brief Iterator to first element not less than key
-        /// This will only work properly for ordered containers
-        const_iterator
-        lower_bound(const key_type &k) const {
-            return const_iterator(
-                (const_cast<associative_vector *>(this))
-                    ->template lower_bound(k));
-        }
-
-        /// \brief Iterator to first element not less than key
-        /// This will only work properly for ordered containers
         template <typename K>
         iterator
         lower_bound(const K &x) {
-            return const_key_iterator(std::lower_bound(
-                data_.begin(),
-                data_.end(),
-                x,
-                [this](
-                    const typename vector_type::value_type &p,
-                    const K &v) { return comp_(p.first, v); }));
+            return iterator(lower_bound_partial(data_.begin(), data_.end(), x));
         }
 
         /// \brief Iterator to first element not less than key
+        /// This will only work properly for ordered containers
         template <typename K>
         const_iterator
         lower_bound(const K &x) const {
             return const_iterator(
-                (const_cast<associative_vector *>(this))
-                    ->template lower_bound(x));
+                lower_bound_partial(data_.begin(), data_.end(), x));
         }
 
         /// \brief Iterator to first element greater than key
-        iterator
-        upper_bound(const key_type &k) {
-            return const_key_iterator(std::upper_bound(
-                data_.begin(),
-                data_.end(),
-                k,
-                [this](
-                    const typename vector_type::value_type &p,
-                    const key_type &v) { return comp_(p.first, v); }));
-        }
-
-        /// \brief Iterator to first element greater than key
-        const_iterator
-        upper_bound(const key_type &k) const {
-            return const_iterator(
-                (const_cast<associative_vector *>(this))
-                    ->template upper_bound(k));
-        }
-
-        /// \brief Iterator to first element greater than key
+        /// This will only work properly for ordered containers
         template <typename K>
         iterator
         upper_bound(const K &x) {
-            return const_key_iterator(std::upper_bound(
-                data_.begin(),
-                data_.end(),
-                x,
-                [this](const auto &p, const auto &v) {
-                return comp_(p.first, v);
-                }));
+            return iterator(upper_bound_partial(data_.begin(), data_.end(), x));
         }
 
         /// \brief Iterator to first element greater than key
+        /// This will only work properly for ordered containers
         template <typename K>
         const_iterator
         upper_bound(const K &x) const {
             return const_iterator(
-                (const_cast<associative_vector *>(this))
-                    ->template upper_bound(x));
+                upper_bound_partial(data_.begin(), data_.end(), x));
         }
 
         /// \brief Get pair with lower_bound and upper_bound
-        std::pair<iterator, iterator>
-        equal_range(const key_type &k) {
-            return std::make_pair(lower_bound(k), upper_bound(k));
-        }
-
-        /// \brief Get pair with lower_bound and upper_bound
-        std::pair<const_iterator, const_iterator>
-        equal_range(const key_type &k) const {
-            return std::make_pair(lower_bound(k), upper_bound(k));
-        }
-
-        /// \brief Get pair with lower_bound and upper_bound
+        /// This will only work properly for ordered containers
         template <typename K>
         std::pair<iterator, iterator>
         equal_range(const K &x) {
@@ -898,6 +834,7 @@ namespace small::detail {
         }
 
         /// \brief Get pair with lower_bound and upper_bound
+        /// This will only work properly for ordered containers
         template <typename K>
         std::pair<const_iterator, const_iterator>
         equal_range(const K &x) const {
@@ -905,6 +842,63 @@ namespace small::detail {
         }
 
     private /* element access */:
+        /// \brief Iterator to first element not less than key
+        /// This will only work properly for ordered containers
+        template <typename K>
+        typename vector_type::iterator
+        lower_bound_partial(
+            typename vector_type::const_iterator first,
+            typename vector_type::const_iterator last,
+            const K &x) {
+            return std::lower_bound(
+                data_.begin() + (first - data_.cbegin()),
+                data_.begin() + (last - data_.cbegin()),
+                x,
+                [this](const typename vector_type::value_type &p, const K &v) {
+                return comp_(maybe_first(p), v);
+            });
+        }
+
+        /// \brief Iterator to first element not less than key
+        /// This will only work properly for ordered containers
+        template <typename K>
+        typename vector_type::const_iterator
+        lower_bound_partial(
+            typename vector_type::const_iterator begin,
+            typename vector_type::const_iterator end,
+            const K &x) const {
+            return const_cast<associative_vector *>(this)
+                ->lower_bound_partial(begin, end, x);
+        }
+
+        /// \brief Iterator to first element not less than key
+        template <typename K>
+        typename vector_type::iterator
+        upper_bound_partial(
+            typename vector_type::const_iterator first,
+            typename vector_type::const_iterator last,
+            const K &x) {
+            return std::upper_bound(
+                data_.begin() + (first - data_.cbegin()),
+                data_.begin() + (last - data_.cbegin()),
+                x,
+                [this](const typename vector_type::value_type &p, const K &v) {
+                return comp_(maybe_first(p), v);
+            });
+        }
+
+        /// \brief Iterator to first element not less than key
+        /// This will only work properly for ordered containers
+        template <typename K>
+        typename vector_type::const_iterator
+        upper_bound_partial(
+            typename vector_type::const_iterator begin,
+            typename vector_type::const_iterator end,
+            const K &x) const {
+            return const_cast<associative_vector *>(this)
+                ->upper_bound_partial(begin, end, x);
+        }
+
         /// \brief Logic to access a mapped_type
         template <bool create_if_not_found, class K>
         constexpr mapped_type &

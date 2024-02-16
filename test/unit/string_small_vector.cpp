@@ -206,6 +206,36 @@ TEST_CASE("String Vector") {
 
     SECTION("Iterators") {
         vector<std::string, 5> a = { "one", "two", "three" };
+        auto iter = a.begin();
+
+        // LegacyContiguousIterator
+        REQUIRE(*(a.begin() + 2) == *(std::addressof(*a.begin()) + 2));
+
+        // LegacyRandomAccessIterator
+        REQUIRE((iter += 2) == a.begin() + 2);
+        REQUIRE(a.begin() + 1 == 1 + a.begin());
+        REQUIRE((iter -= 2) == a.begin());
+        REQUIRE(a.end() - 2 == a.begin() + 1);
+        REQUIRE(a.end() - a.begin() == 3);
+        REQUIRE(a.begin()[1] == "two");
+        REQUIRE(a.end()[-1] == "three");
+
+        REQUIRE(a.begin() == a.begin());
+        REQUIRE(a.begin() != a.begin() + 2);
+        REQUIRE(a.begin() < a.begin() + 2);
+        REQUIRE(a.begin() + 2 > a.begin());
+
+        // LegacyBidirectionalIterator + LegacyForwardIterator
+        iter = a.begin() + 1;
+        REQUIRE(--iter == a.begin());
+        REQUIRE(iter++ == a.begin());
+        REQUIRE(iter-- == a.begin() + 1);
+        iter = a.begin() + 1;
+        REQUIRE(*iter-- == "two");
+
+        // LegacyInputIterator/LegacyIterator
+        iter = a.begin();
+        REQUIRE(++iter == a.begin() + 1);
 
         REQUIRE(a.begin() == a.data());
         REQUIRE(a.end() == a.data() + a.size());
@@ -224,6 +254,17 @@ TEST_CASE("String Vector") {
 
         REQUIRE(*a.crbegin() == "three");
         REQUIRE(*std::prev(a.crend()) == "one");
+
+        // Custom comparison operators
+        REQUIRE(a.begin() == a.data());
+        REQUIRE(a.begin() != a.data() + 2);
+        REQUIRE(a.begin() < a.data() + 2);
+        REQUIRE(a.begin() + 2 > a.data());
+
+        REQUIRE(a.data() == a.begin());
+        REQUIRE(a.data() != a.begin() + 2);
+        REQUIRE(a.data() < a.begin() + 2);
+        REQUIRE(a.data() + 2 > a.begin());
     }
 
     SECTION("Capacity") {

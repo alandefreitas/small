@@ -939,22 +939,14 @@ namespace small {
             /// This will only work properly for ordered containers
             iterator
             lower_bound(const key_type &k) {
-                return iterator(std::lower_bound(
-                    data_.begin(),
-                    data_.end(),
-                    k,
-                    [this](const auto &p, const auto &v) {
-                    return comp_(maybe_first(p), v);
-                }));
+                return lower_bound<decltype(k)>(k);
             }
 
             /// \brief Iterator to first element not less than key
             /// This will only work properly for ordered containers
             const_iterator
             lower_bound(const key_type &k) const {
-                return const_iterator(
-                    (const_cast<associative_vector *>(this))
-                        ->template lower_bound(k));
+                return lower_bound<decltype(k)>(k);
             }
 
             /// \brief Iterator to first element not less than key
@@ -962,79 +954,63 @@ namespace small {
             template <typename K>
             iterator
             lower_bound(const K &x) {
-                return iterator(std::lower_bound(
-                    data_.begin(),
-                    data_.end(),
-                    x,
-                    [this](
-                        const typename vector_type::value_type &p,
-                        const K &v) { return comp_(p.first, v); }));
+                return lower_bound_partial(begin(), end(), x);
             }
 
             /// \brief Iterator to first element not less than key
+            /// This will only work properly for ordered containers
             template <typename K>
             const_iterator
             lower_bound(const K &x) const {
-                return const_iterator(
-                    (const_cast<associative_vector *>(this))
-                        ->template lower_bound(x));
+                return const_cast<associative_vector *>(this)->lower_bound(x);
             }
 
             /// \brief Iterator to first element greater than key
+            /// This will only work properly for ordered containers
             iterator
             upper_bound(const key_type &k) {
-                return iterator(std::upper_bound(
-                    data_.begin(),
-                    data_.end(),
-                    k,
-                    [this](
-                        const typename vector_type::value_type &p,
-                        const key_type &v) { return comp_(p.first, v); }));
+                return upper_bound<decltype(k)>(k);
             }
 
             /// \brief Iterator to first element greater than key
+            /// This will only work properly for ordered containers
             const_iterator
             upper_bound(const key_type &k) const {
-                return const_iterator(
-                    (const_cast<associative_vector *>(this))
-                        ->template upper_bound(k));
+                return upper_bound<decltype(k)>(k);
             }
 
             /// \brief Iterator to first element greater than key
+            /// This will only work properly for ordered containers
             template <typename K>
             iterator
             upper_bound(const K &x) {
-                return iterator(std::upper_bound(
-                    data_.begin(),
-                    data_.end(),
-                    x,
-                    [this](const auto &p, const auto &v) {
-                    return comp_(p.first, v);
-                }));
+                return upper_bound_partial(begin(), end(), x);
             }
 
             /// \brief Iterator to first element greater than key
+            /// This will only work properly for ordered containers
             template <typename K>
             const_iterator
             upper_bound(const K &x) const {
-                return const_iterator(
-                    (const_cast<associative_vector *>(this))
-                        ->template upper_bound(x));
+                return const_cast<associative_vector *>(this)->upper_bound(x);
             }
 
             /// \brief Get pair with lower_bound and upper_bound
+            /// This will only work properly for ordered containers
             std::pair<iterator, iterator>
             equal_range(const key_type &k) {
-                return std::make_pair(lower_bound(k), upper_bound(k));
+                return equal_range<decltype(k)>(k);
             }
 
             /// \brief Get pair with lower_bound and upper_bound
+            /// This will only work properly for ordered containers
             std::pair<const_iterator, const_iterator>
             equal_range(const key_type &k) const {
-                return std::make_pair(lower_bound(k), upper_bound(k));
+                return equal_range<decltype(k)>(k);
             }
 
             /// \brief Get pair with lower_bound and upper_bound
+            /// This will only work properly for ordered containers
             template <typename K>
             std::pair<iterator, iterator>
             equal_range(const K &x) {
@@ -1042,13 +1018,71 @@ namespace small {
             }
 
             /// \brief Get pair with lower_bound and upper_bound
+            /// This will only work properly for ordered containers
             template <typename K>
             std::pair<const_iterator, const_iterator>
             equal_range(const K &x) const {
-                return std::make_pair(lower_bound(x), upper_bound(x));
+                return const_cast<associative_vector *>(this)->equal_range(x);
             }
 
         private /* element access */:
+            /// \brief Iterator to first element not less than key
+            /// This will only work properly for ordered containers
+            template <typename K>
+            iterator
+            lower_bound_partial(
+                const_iterator first,
+                const_iterator last,
+                const K &x) {
+                return iterator(std::lower_bound(
+                    maybe_base(begin() + (first - cbegin())),
+                    maybe_base(begin() + (last - cbegin())),
+                    x,
+                    [this](const auto &p, const auto &v) {
+                    return comp_(maybe_first(p), v);
+                }));
+            }
+
+            /// \brief Iterator to first element not less than key
+            /// This will only work properly for ordered containers
+            template <typename K>
+            const_iterator
+            lower_bound_partial(
+                const_iterator begin,
+                const_iterator end,
+                const K &x) const {
+                return const_cast<associative_vector *>(this)
+                    ->lower_bound_partial(begin, end, x);
+            }
+
+            /// \brief Iterator to first element not less than key
+            template <typename K>
+            iterator
+            upper_bound_partial(
+                const_iterator first,
+                const_iterator last,
+                const K &x) {
+                return iterator(std::upper_bound(
+                    maybe_base(begin() + (first - cbegin())),
+                    maybe_base(begin() + (last - cbegin())),
+                    x,
+                    [this](const auto &p, const auto &v) {
+                    return comp_(maybe_first(p), v);
+                }));
+            }
+
+            /// \brief Iterator to first element not less than key
+            /// This will only work properly for ordered containers
+            template <typename K>
+            const_iterator
+            upper_bound_partial(
+                const_iterator begin,
+                const_iterator end,
+                const K &x) const {
+                return const_cast<associative_vector *>(this)
+                    ->upper_bound_partial(begin, end, x);
+            }
+
             /// \brief Logic to access a mapped_type
             template <bool create_if_not_found, class K>
             constexpr mapped_type &
@@ -1094,7 +1128,7 @@ namespace small {
 
             template <class EL>
             constexpr static auto &
-            maybe_first(EL &el) {
+            maybe_first(EL &&el) {
                 if constexpr (IsMap) {
                     return el.first;
                 } else {
@@ -1104,7 +1138,7 @@ namespace small {
 
             template <class EL>
             constexpr static auto
-            maybe_base(EL &el) {
+            maybe_base(EL &&el) {
                 if constexpr (IsMap) {
                     return el.base();
                 } else {

@@ -94,6 +94,17 @@ namespace small {
             using first_type_or_void_t = typename first_type_or_void<T>::type;
             template <class T>
             using second_type_or_void_t = typename second_type_or_void<T>::type;
+            template <class, class = void>
+            struct is_transparent : std::false_type
+            {};
+            template <class Func>
+            struct is_transparent<
+                Func,
+                std::void_t<typename Func::is_transparent>> : std::true_type
+            {};
+            template <typename Func>
+            static auto constexpr is_transparent_v = is_transparent<Func>::value;
+            static auto constexpr is_comp_tr = is_transparent_v<Compare>;
 
             /* static asserts */
             static_assert(
@@ -496,7 +507,9 @@ namespace small {
 
             /// \brief Get reference to element in buffered map
             template <class K>
-            constexpr mapped_type &
+            constexpr std::enable_if_t<
+                is_comp_tr || std::is_same_v<K, key_type>,
+                mapped_type &>
             operator[](K &&k) {
                 return element_access_implementation<true>(std::forward<K>(k));
             }
@@ -509,7 +522,9 @@ namespace small {
 
             /// \brief Check bound and get reference to element in buffered map
             template <class K>
-            constexpr mapped_type &
+            constexpr std::enable_if_t<
+                is_comp_tr || std::is_same_v<K, key_type>,
+                mapped_type &>
             at(const K &k) {
                 return element_access_implementation<false>(k);
             }
@@ -522,7 +537,9 @@ namespace small {
 
             /// \brief Check bound and get reference to element in buffered map
             template <class K>
-            constexpr const mapped_type &
+            constexpr std::enable_if_t<
+                is_comp_tr || std::is_same_v<K, key_type>,
+                const mapped_type &>
             at(const K &k) const {
                 return element_access_implementation(k);
             }
@@ -705,7 +722,11 @@ namespace small {
 
             /// \brief Emplace if key doesn't exist yet
             template <class K, class... Args>
-            std::pair<iterator, bool>
+            std::enable_if_t<
+                !std::is_convertible_v<K &&, iterator>
+                    && !std::is_convertible_v<K &&, const_iterator>
+                    && (is_comp_tr || std::is_same_v<K, key_type>),
+                std::pair<iterator, bool>>
             try_emplace(K &&x, Args &&...args) {
                 return emplace(value_type(
                     std::piecewise_construct,
@@ -735,7 +756,7 @@ namespace small {
 
             /// \brief Emplace if key doesn't exist yet
             template <class K, class... Args>
-            iterator
+            std::enable_if_t<is_comp_tr || std::is_same_v<K, key_type>, iterator>
             try_emplace(const_iterator hint, K &&x, Args &&...args) {
                 return emplace_hint(
                     std::move(hint),
@@ -867,7 +888,7 @@ namespace small {
 
             /// \brief Find element in the small map
             template <typename K>
-            iterator
+            std::enable_if_t<is_comp_tr || std::is_same_v<K, key_type>, iterator>
             find(const K &x) {
                 if (!IsOrdered || data_.size() < 100) {
                     for (auto it = data_.begin(); it != data_.end(); ++it) {
@@ -895,7 +916,9 @@ namespace small {
 
             /// \brief Count elements with a given key (0 or 1)
             template <typename K>
-            size_type
+            std::enable_if_t<
+                is_comp_tr || std::is_same_v<K, key_type>,
+                size_type>
             count(const K &x) const {
                 return find(x) != end() ? 1 : 0;
             }
@@ -908,7 +931,7 @@ namespace small {
 
             /// \brief Check if elements with a given key exists
             template <typename K>
-            bool
+            std::enable_if_t<is_comp_tr || std::is_same_v<K, key_type>, bool>
             contains(const K &x) const {
                 return count(x) > 0;
             }
@@ -1015,7 +1038,7 @@ namespace small {
             /// \brief Iterator to first element not less than key
             /// This will only work properly for ordered containers
             template <typename K>
-            iterator
+            std::enable_if_t<is_comp_tr || std::is_same_v<K, key_type>, iterator>
             lower_bound_partial(
                 const_iterator first,
                 const_iterator last,
@@ -1043,7 +1066,7 @@ namespace small {
 
             /// \brief Iterator to first element not less than key
             template <typename K>
-            iterator
+            std::enable_if_t<is_comp_tr || std::is_same_v<K, key_type>, iterator>
             upper_bound_partial(
                 const_iterator first,
                 const_iterator last,

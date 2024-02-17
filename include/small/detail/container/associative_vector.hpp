@@ -852,21 +852,7 @@ namespace small::detail {
         /// \brief Find element in the small map
         iterator
         find(const key_type &k) {
-            if (!IsOrdered || data_.size() < 100) {
-                for (auto it = data_.begin(); it != data_.end(); ++it) {
-                    if (keys_equivalent(maybe_first(*it), k)) {
-                        return iterator(it);
-                    }
-                }
-                return end();
-            } else {
-                auto it = lower_bound(k);
-                if (keys_equivalent(maybe_first(*it), k)) {
-                    return it;
-                } else {
-                    return end();
-                }
-            }
+            return find<decltype(k)>(k);
         }
 
         /// \brief Find element in the small map
@@ -881,14 +867,14 @@ namespace small::detail {
         find(const K &x) {
             if (!IsOrdered || data_.size() < 100) {
                 for (auto it = data_.begin(); it != data_.end(); ++it) {
-                    if (it->first == x) {
+                    if (keys_equivalent(maybe_first(*it), x)) {
                         return iterator(it);
                     }
                 }
                 return end();
             } else {
                 auto it = lower_bound(x);
-                if (it->first == x) {
+                if (it != end() && keys_equivalent(maybe_first(*it), x)) {
                     return it;
                 } else {
                     return end();

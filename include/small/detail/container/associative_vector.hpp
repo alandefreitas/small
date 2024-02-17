@@ -489,7 +489,7 @@ namespace small {
             /// \brief Get reference to element in buffered map
             constexpr mapped_type &
             operator[](const key_type &k) {
-                return element_access_implementation<true>(std::move(k));
+                return element_access_implementation<true>(k);
             }
 
             /// \brief Get reference to element in buffered map

@@ -232,8 +232,10 @@ namespace small {
 
             public:
                 /// Evaluate the comparison function to sort elements
-                constexpr bool
-                operator()(const value_type &x, const value_type &y) const {
+                constexpr result_type
+                operator()(
+                    const first_argument_type &x,
+                    const second_argument_type &y) const {
                     if constexpr (IsMap) {
                         return comp(x.first, y.first);
                     } else {
@@ -391,25 +393,25 @@ namespace small {
             /// \brief Get iterator to first element in reverse order
             constexpr reverse_iterator
             rbegin() noexcept {
-                return std::reverse_iterator<iterator>(end());
+                return reverse_iterator(end());
             }
 
             /// \brief Get constant iterator to first element in reverse order
             constexpr const_reverse_iterator
             rbegin() const noexcept {
-                return std::reverse_iterator<const_iterator>(end());
+                return const_reverse_iterator(end());
             }
 
             /// \brief Get iterator to last element in reverse order
             constexpr reverse_iterator
             rend() noexcept {
-                return std::reverse_iterator<iterator>(begin());
+                return reverse_iterator(begin());
             }
 
             /// \brief Get constant iterator to last element in reverse order
             constexpr const_reverse_iterator
             rend() const noexcept {
-                return std::reverse_iterator<const_iterator>(begin());
+                return const_reverse_iterator(begin());
             }
 
             /// \brief Get constant iterator to first element
@@ -427,13 +429,13 @@ namespace small {
             /// \brief Get constant iterator to first element in reverse order
             constexpr const_reverse_iterator
             crbegin() const noexcept {
-                return std::reverse_iterator<const_iterator>(cend());
+                return const_reverse_iterator(cend());
             }
 
             /// \brief Get constant iterator to last element in reverse order
             constexpr const_reverse_iterator
             crend() const noexcept {
-                return std::reverse_iterator<const_iterator>(cbegin());
+                return const_reverse_iterator(cbegin());
             }
 
         public /* capacity */:
@@ -849,8 +851,7 @@ namespace small {
             constexpr iterator
             erase(const_iterator first, const_iterator last) {
                 if constexpr (IsMap) {
-                    return const_key_iterator(
-                        data_.erase(first.base(), last.base()));
+                    return iterator(data_.erase(first.base(), last.base()));
                 } else {
                     return iterator(data_.erase(first, last));
                 }
@@ -933,7 +934,7 @@ namespace small {
                 if (!IsOrdered || data_.size() < 100) {
                     for (auto it = data_.begin(); it != data_.end(); ++it) {
                         if (it->first == x) {
-                            return const_key_iterator(it);
+                            return iterator(it);
                         }
                     }
                     return end();
@@ -1007,7 +1008,7 @@ namespace small {
             template <typename K>
             iterator
             lower_bound(const K &x) {
-                return const_key_iterator(std::lower_bound(
+                return iterator(std::lower_bound(
                     data_.begin(),
                     data_.end(),
                     x,
@@ -1028,7 +1029,7 @@ namespace small {
             /// \brief Iterator to first element greater than key
             iterator
             upper_bound(const key_type &k) {
-                return const_key_iterator(std::upper_bound(
+                return iterator(std::upper_bound(
                     data_.begin(),
                     data_.end(),
                     k,
@@ -1049,7 +1050,7 @@ namespace small {
             template <typename K>
             iterator
             upper_bound(const K &x) {
-                return const_key_iterator(std::upper_bound(
+                return iterator(std::upper_bound(
                     data_.begin(),
                     data_.end(),
                     x,

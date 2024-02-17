@@ -12,6 +12,7 @@
 #include <string>
 #include <catch2/catch.hpp>
 #include <string_view>
+#include <utility>
 
 TEST_CASE("Small Map") {
     using namespace small;
@@ -23,6 +24,7 @@ TEST_CASE("Small Map") {
     };
 
     using small_map_type = map<int, int, 5>;
+    using small_map_type_2 = map<std::pair<int, int>, int, 5>;
 
     SECTION("Constructor") {
         SECTION("Default") {
@@ -296,6 +298,36 @@ TEST_CASE("Small Map") {
         REQUIRE((a.data() + a.size() - 1)->first == 3);
         REQUIRE((a.data() + a.size() - 2)->first == 2);
         REQUIRE((a.data() + a.size() - 3)->first == 1);
+    }
+
+    SECTION("Element access non-trivial key") {
+        small_map_type_2 a = {
+            { { 1, 1 }, 1 },
+            { { 2, 2 }, 2 },
+            { { 3, 3 }, 3 }
+        };
+        REQUIRE(a[{ 1, 1 }] == 1);
+        REQUIRE(a[{ 2, 2 }] == 2);
+        REQUIRE(a[{ 3, 3 }] == 3);
+        REQUIRE(a[std::pair{ 1, 1 }] == 1);
+        REQUIRE(a[std::pair{ 2, 2 }] == 2);
+        REQUIRE(a[std::pair{ 3, 3 }] == 3);
+        REQUIRE(a.at({ 1, 1 }) == 1);
+        REQUIRE(a.at({ 2, 2 }) == 2);
+        REQUIRE(a.at({ 3, 3 }) == 3);
+        REQUIRE(a.at(std::pair{ 1, 1 }) == 1);
+        REQUIRE(a.at(std::pair{ 2, 2 }) == 2);
+        REQUIRE(a.at(std::pair{ 3, 3 }) == 3);
+        REQUIRE_THROWS(a.at({ 4, 1 }));
+        REQUIRE_THROWS(a.at({ 5, 1 }));
+        REQUIRE(a.front().first == std::pair{ 1, 1 });
+        REQUIRE(a.back().first == std::pair{ 3, 3 });
+        REQUIRE(a.data()->first == std::pair{ 1, 1 });
+        REQUIRE((a.data() + 1)->first == std::pair{ 2, 2 });
+        REQUIRE((a.data() + 2)->first == std::pair{ 3, 3 });
+        REQUIRE((a.data() + a.size() - 1)->first == std::pair{ 3, 3 });
+        REQUIRE((a.data() + a.size() - 2)->first == std::pair{ 2, 2 });
+        REQUIRE((a.data() + a.size() - 3)->first == std::pair{ 1, 1 });
     }
 
     SECTION("Modifiers") {

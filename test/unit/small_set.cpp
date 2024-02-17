@@ -12,6 +12,7 @@
 #include <string>
 #include <catch2/catch.hpp>
 #include <string_view>
+#include <utility>
 
 TEST_CASE("Small Set") {
     using namespace small;
@@ -22,6 +23,7 @@ TEST_CASE("Small Set") {
     };
 
     using small_set_type = set<int, 5>;
+    using small_set_type_2 = set<std::pair<int, int>, 5>;
 
     SECTION("Constructor") {
         SECTION("Default") {
@@ -204,6 +206,26 @@ TEST_CASE("Small Set") {
         REQUIRE(*(a.data() + a.size() - 1) == 3);
         REQUIRE(*(a.data() + a.size() - 2) == 2);
         REQUIRE(*(a.data() + a.size() - 3) == 1);
+    }
+
+    SECTION("Element access with non-trivial key") {
+        small_set_type_2 a = { { 1, 1 }, { 2, 2 }, { 3, 3 } };
+        REQUIRE(a[0] == std::pair{ 1, 1 });
+        REQUIRE(a[1] == std::pair{ 2, 2 });
+        REQUIRE(a[2] == std::pair{ 3, 3 });
+        REQUIRE(a.at(0) == std::pair{ 1, 1 });
+        REQUIRE(a.at(1) == std::pair{ 2, 2 });
+        REQUIRE(a.at(2) == std::pair{ 3, 3 });
+        REQUIRE_THROWS(a.at(4));
+        REQUIRE_THROWS(a.at(5));
+        REQUIRE(a.front() == std::pair{ 1, 1 });
+        REQUIRE(a.back() == std::pair{ 3, 3 });
+        REQUIRE(*a.data() == std::pair{ 1, 1 });
+        REQUIRE(*(a.data() + 1) == std::pair{ 2, 2 });
+        REQUIRE(*(a.data() + 2) == std::pair{ 3, 3 });
+        REQUIRE(*(a.data() + a.size() - 1) == std::pair{ 3, 3 });
+        REQUIRE(*(a.data() + a.size() - 2) == std::pair{ 2, 2 });
+        REQUIRE(*(a.data() + a.size() - 3) == std::pair{ 1, 1 });
     }
 
     SECTION("Modifiers") {

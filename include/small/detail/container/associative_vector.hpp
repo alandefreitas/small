@@ -100,7 +100,7 @@ namespace small::detail {
         struct is_transparent<Func, std::void_t<typename Func::is_transparent>>
             : std::true_type
         {};
-        template <typename Func>
+        template <class Func>
         static auto constexpr is_transparent_v = is_transparent<Func>::value;
         static auto constexpr is_comp_tr = is_transparent_v<Compare>;
 
@@ -865,21 +865,18 @@ namespace small::detail {
         template <typename K>
         std::enable_if_t<is_comp_tr || std::is_same_v<K, key_type>, iterator>
         find(const K &x) {
-            if (!IsOrdered || data_.size() < 100) {
-                for (auto it = data_.begin(); it != data_.end(); ++it) {
+            if (!IsOrdered || size() < 100) {
+                for (auto it = begin(), last = end(); it != last; ++it) {
                     if (keys_equivalent(maybe_first(*it), x)) {
-                        return iterator(it);
+                        return it;
                     }
                 }
-                return end();
-            } else {
-                auto it = lower_bound(x);
-                if (it != end() && keys_equivalent(maybe_first(*it), x)) {
-                    return it;
-                } else {
-                    return end();
-                }
+            } else if (auto it = lower_bound(x);
+                       it != end() && keys_equivalent(maybe_first(*it), x))
+            {
+                return it;
             }
+            return end();
         }
 
         /// \brief Find element in the small map

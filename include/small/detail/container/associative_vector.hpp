@@ -53,7 +53,7 @@ namespace small {
             class Compare = std::less<>>
         class associative_vector
         {
-            public /* types */:
+        public /* types */:
             typedef Vector vector_type;
 
             template <class, class = void>
@@ -211,7 +211,7 @@ namespace small {
                 }
             }
 
-            public /* Comparison type */:
+        public /* Comparison type */:
             /// Object encapsulating the comparison function for values from
             /// the comparison function for keys
             class value_compare
@@ -242,12 +242,12 @@ namespace small {
                 }
             };
 
-            public /* constructors */:
+        public /* constructors */:
             /// \brief Construct empty small map with default allocator
             constexpr associative_vector() noexcept(
-                std::is_nothrow_default_constructible<allocator_type>::value &&
-                    std::is_nothrow_default_constructible<key_compare>::value &&
-                        std::is_nothrow_copy_constructible<key_compare>::value)
+                std::is_nothrow_default_constructible<allocator_type>::value
+                && std::is_nothrow_default_constructible<key_compare>::value
+                && std::is_nothrow_copy_constructible<key_compare>::value)
                 : associative_vector(key_compare(), allocator_type()) {}
 
             /// \brief Construct empty small map with comparison function
@@ -334,13 +334,13 @@ namespace small {
             constexpr void
             swap(associative_vector &a) noexcept(
                 std::allocator_traits<allocator_type>::is_always_equal::value
-                    &&std::is_nothrow_swappable<key_compare>::value) {
+                && std::is_nothrow_swappable<key_compare>::value) {
                 std::swap(comp_, a.comp_);
                 data_.swap(a.data_);
                 assert(invariants());
             }
 
-            public /* observers */:
+        public /* observers */:
             /// \brief Get copy of allocator for dynamic vector
             allocator_type
             get_allocator() const noexcept {
@@ -363,7 +363,7 @@ namespace small {
                 return value_compare(comp_);
             }
 
-            public /* iterators */:
+        public /* iterators */:
             /// \brief Get iterator to first element
             constexpr iterator
             begin() noexcept {
@@ -436,7 +436,7 @@ namespace small {
                 return std::reverse_iterator<const_iterator>(cbegin());
             }
 
-            public /* capacity */:
+        public /* capacity */:
             /// \brief Check if small map is empty
             [[nodiscard]] constexpr bool
             empty() const noexcept {
@@ -483,7 +483,7 @@ namespace small {
                 }
             }
 
-            public /* element access */:
+        public /* element access */:
             /// \brief Get reference to element in buffered map
             constexpr mapped_type &
             operator[](const key_type &k) {
@@ -599,7 +599,7 @@ namespace small {
                 return reinterpret_cast<const_pointer>(data_.data());
             }
 
-            public /* modifiers */:
+        public /* modifiers */:
             /// \brief Emplace element at hint position of the small map
             /// \param position Position before element will be constructed
             template <class... Args>
@@ -608,7 +608,8 @@ namespace small {
                 value_type obj(std::forward<Args>(args)...);
                 // Handle iterator to end()
                 if (position == end()
-                    && comp_(maybe_first(data_.back()), maybe_first(obj))) {
+                    && comp_(maybe_first(data_.back()), maybe_first(obj)))
+                {
                     return iterator(data_.emplace(data_.end(), std::move(obj)));
                 } else {
                     // else, check if object should come after position...
@@ -884,7 +885,7 @@ namespace small {
                 }
             }
 
-            public /* map operations */:
+        public /* map operations */:
             /// \brief Find element in the small map
             iterator
             find(const key_type &k) {
@@ -989,7 +990,7 @@ namespace small {
                     k,
                     [this](const auto &p, const auto &v) {
                     return comp_(maybe_first(p), v);
-                    }));
+                }));
             }
 
             /// \brief Iterator to first element not less than key
@@ -1054,7 +1055,7 @@ namespace small {
                     x,
                     [this](const auto &p, const auto &v) {
                     return comp_(p.first, v);
-                    }));
+                }));
             }
 
             /// \brief Iterator to first element greater than key
@@ -1092,8 +1093,7 @@ namespace small {
                 return std::make_pair(lower_bound(x), upper_bound(x));
             }
 
-        private:
-            private /* element access */:
+        private /* element access */:
             /// \brief Logic to access a mapped_type
             template <bool create_if_not_found, class K>
             constexpr mapped_type &

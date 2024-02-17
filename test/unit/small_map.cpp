@@ -361,7 +361,7 @@ TEST_CASE("Small Map") {
                 { 5, 5 }
         }));
 
-        a.erase(5);
+        REQUIRE(a.erase(5) == 1);
         REQUIRE(a.size() == 4);
         REQUIRE(a.max_size() > 5);
         REQUIRE(a.capacity() == 5);
@@ -422,8 +422,8 @@ TEST_CASE("Small Map") {
                 { 10, 10 }
         }));
 
-        a.erase(10);
-        a.erase(4);
+        REQUIRE(a.erase(10) == 1);
+        REQUIRE(a.erase(4) == 1);
         REQUIRE(a.size() == 3);
         REQUIRE(a.max_size() > 5);
         REQUIRE(a.capacity() == 5);
@@ -457,9 +457,10 @@ TEST_CASE("Small Map") {
                 { 7, 7 }
         }));
 
-        a.erase(3);
-        a.erase(5);
-        a.erase(6);
+        REQUIRE(a.erase(3) == 1);
+        REQUIRE(a.erase(5) == 1);
+        REQUIRE(a.erase(6) == 1);
+        REQUIRE(a.erase(8) == 0);
         REQUIRE(a.size() == 3);
         REQUIRE(a.max_size() > 5);
         REQUIRE(a.capacity() >= 3);
@@ -1029,7 +1030,7 @@ TEST_CASE("Max Size Map") {
                 { 5, 5 }
         }));
 
-        a.erase(5);
+        REQUIRE(a.erase(5) == 1);
         REQUIRE(a.size() == 4);
         REQUIRE(a.max_size() == 5);
         REQUIRE(a.capacity() == 5);
@@ -1090,8 +1091,8 @@ TEST_CASE("Max Size Map") {
                 { 10, 10 }
         }));
 
-        a.erase(10);
-        a.erase(4);
+        REQUIRE(a.erase(10) == 1);
+        REQUIRE(a.erase(4) == 1);
         REQUIRE(a.size() == 3);
         REQUIRE(a.max_size() == 5);
         REQUIRE(a.capacity() == 5);
@@ -1123,9 +1124,10 @@ TEST_CASE("Max Size Map") {
                 { 6, 6 }
         }));
 
-        a.erase(3);
-        a.erase(5);
-        a.erase(6);
+        REQUIRE(a.erase(3) == 1);
+        REQUIRE(a.erase(5) == 1);
+        REQUIRE(a.erase(6) == 1);
+        REQUIRE(a.erase(7) == 0);
         REQUIRE(a.size() == 2);
         REQUIRE(a.max_size() == 5);
         REQUIRE(a.capacity() == 5);
@@ -1261,17 +1263,19 @@ TEST_CASE("Small Multi Map") {
             std::vector<std::pair<int, int>> dv = {
                 { 4, 5 },
                 { 5, 6 },
-                { 7, 8 }
+                { 7, 8 },
+                { 7, 9 }
             };
             small_map_type d(dv.begin(), dv.end(), alloc);
-            REQUIRE(d.size() == 3);
+            REQUIRE(d.size() == 4);
             REQUIRE_FALSE(d.empty());
             REQUIRE(equal_il(
                 d,
                 {
                     { 4, 5 },
                     { 5, 6 },
-                    { 7, 8 }
+                    { 7, 8 },
+                    { 7, 9 }
             }));
             REQUIRE(d.get_allocator() == alloc);
         }
@@ -1279,15 +1283,17 @@ TEST_CASE("Small Multi Map") {
         SECTION("From initializer list") {
             small_map_type e = {
                 { 1, 2 },
-                { 2, 3 }
+                { 2, 3 },
+                { 2, 5 }
             };
-            REQUIRE(e.size() == 2);
+            REQUIRE(e.size() == 3);
             REQUIRE_FALSE(e.empty());
             REQUIRE(equal_il(
                 e,
                 {
                     { 1, 2 },
-                    { 2, 3 }
+                    { 2, 3 },
+                    { 2, 5 }
             }));
         }
     }
@@ -1299,14 +1305,16 @@ TEST_CASE("Small Multi Map") {
             a = {
                 { 6, 7 },
                 { 5, 4 },
-                { 4, 5 }
+                { 4, 5 },
+                { 4, 8 }
             };
-            REQUIRE(a.size() == 3);
+            REQUIRE(a.size() == 4);
             REQUIRE_FALSE(a.empty());
             REQUIRE(equal_il(
                 a,
                 {
                     { 4, 5 },
+                    { 4, 8 },
                     { 5, 4 },
                     { 6, 7 }
             }));
@@ -1318,13 +1326,14 @@ TEST_CASE("Small Multi Map") {
             a = {
                 { 6, 7 },
                 { 5, 6 },
+                { 5, 4 },
                 { 4, 5 }
             };
 
             small_map_type b;
             REQUIRE(b.empty());
             b = a;
-            REQUIRE(b.size() == 3);
+            REQUIRE(b.size() == 4);
             REQUIRE_FALSE(b.empty());
             REQUIRE(a == b);
             REQUIRE(equal_il(
@@ -1332,6 +1341,7 @@ TEST_CASE("Small Multi Map") {
                 {
                     { 4, 5 },
                     { 5, 6 },
+                    { 5, 4 },
                     { 6, 7 }
             }));
         }
@@ -1342,15 +1352,17 @@ TEST_CASE("Small Multi Map") {
             std::vector<std::pair<int, int>> v = {
                 { 6, 4 },
                 { 5, 6 },
-                { 4, 6 }
+                { 4, 6 },
+                { 4, 5 }
             };
             a.assign(v.begin(), v.end());
-            REQUIRE(a.size() == 3);
+            REQUIRE(a.size() == 4);
             REQUIRE_FALSE(a.empty());
             REQUIRE(equal_il(
                 a,
                 {
                     { 4, 6 },
+                    { 4, 5 },
                     { 5, 6 },
                     { 6, 4 }
             }));
@@ -1362,14 +1374,16 @@ TEST_CASE("Small Multi Map") {
             a.assign({
                 { 6, 5 },
                 { 5, 2 },
-                { 4, 2 }
+                { 4, 2 },
+                { 4, 3 }
             });
-            REQUIRE(a.size() == 3);
+            REQUIRE(a.size() == 4);
             REQUIRE_FALSE(a.empty());
             REQUIRE(equal_il(
                 a,
                 {
                     { 4, 2 },
+                    { 4, 3 },
                     { 5, 2 },
                     { 6, 5 }
             }));
@@ -1431,7 +1445,8 @@ TEST_CASE("Small Multi Map") {
         small_map_type a = {
             { 1, 2 },
             { 2, 3 },
-            { 3, 3 }
+            { 3, 3 },
+            { 3, 4 }
         };
 
         REQUIRE(a.begin().operator->() == a.data());
@@ -1457,27 +1472,28 @@ TEST_CASE("Small Multi Map") {
         small_map_type a = {
             { 1, 1 },
             { 2, 2 },
-            { 3, 3 }
+            { 3, 3 },
+            { 4, 5 }
         };
-        REQUIRE(a.size() == 3);
+        REQUIRE(a.size() == 4);
         REQUIRE(a.max_size() > 5);
         REQUIRE_FALSE(a.empty());
         REQUIRE(a.capacity() == 5);
 
         a.reserve(10);
-        REQUIRE(a.size() == 3);
+        REQUIRE(a.size() == 4);
         REQUIRE(a.max_size() > 5);
         REQUIRE_FALSE(a.empty());
         REQUIRE(a.capacity() >= 10);
 
         a.shrink_to_fit();
-        REQUIRE(a.size() == 3);
+        REQUIRE(a.size() == 4);
         REQUIRE(a.max_size() > 5);
         REQUIRE_FALSE(a.empty());
         REQUIRE(a.capacity() == 5);
 
         a.shrink_to_fit();
-        REQUIRE(a.size() == 3);
+        REQUIRE(a.size() == 4);
         REQUIRE(a.max_size() > 5);
         REQUIRE_FALSE(a.empty());
         REQUIRE(a.capacity() == (std::max)(size_t(5), a.size()));
@@ -1486,24 +1502,16 @@ TEST_CASE("Small Multi Map") {
     SECTION("Element access") {
         small_map_type a = {
             { 1, 1 },
-            { 2, 2 },
+            { 1, 2 },
             { 3, 3 }
         };
-        REQUIRE(a[1] == 1);
-        REQUIRE(a[2] == 2);
-        REQUIRE(a[3] == 3);
-        REQUIRE(a.at(1) == 1);
-        REQUIRE(a.at(2) == 2);
-        REQUIRE(a.at(3) == 3);
-        REQUIRE_THROWS(a.at(4));
-        REQUIRE_THROWS(a.at(5));
         REQUIRE(a.front().first == 1);
         REQUIRE(a.back().first == 3);
         REQUIRE(a.data()->first == 1);
-        REQUIRE((a.data() + 1)->first == 2);
+        REQUIRE((a.data() + 1)->first == 1);
         REQUIRE((a.data() + 2)->first == 3);
         REQUIRE((a.data() + a.size() - 1)->first == 3);
-        REQUIRE((a.data() + a.size() - 2)->first == 2);
+        REQUIRE((a.data() + a.size() - 2)->first == 1);
         REQUIRE((a.data() + a.size() - 3)->first == 1);
     }
 
@@ -1546,7 +1554,7 @@ TEST_CASE("Small Multi Map") {
                 { 5, 5 }
         }));
 
-        a.erase(5);
+        REQUIRE(a.erase(5) == 1);
         REQUIRE(a.size() == 4);
         REQUIRE(a.max_size() > 5);
         REQUIRE(a.capacity() == 5);
@@ -1607,8 +1615,8 @@ TEST_CASE("Small Multi Map") {
                 { 10, 10 }
         }));
 
-        a.erase(10);
-        a.erase(4);
+        REQUIRE(a.erase(10) == 1);
+        REQUIRE(a.erase(4) == 1);
         REQUIRE(a.size() == 3);
         REQUIRE(a.max_size() > 5);
         REQUIRE(a.capacity() == 5);
@@ -1642,9 +1650,10 @@ TEST_CASE("Small Multi Map") {
                 { 7, 7 }
         }));
 
-        a.erase(3);
-        a.erase(5);
-        a.erase(6);
+        REQUIRE(a.erase(3) == 1);
+        REQUIRE(a.erase(5) == 1);
+        REQUIRE(a.erase(6) == 1);
+        REQUIRE(a.erase(8) == 0);
         REQUIRE(a.size() == 3);
         REQUIRE(a.max_size() > 5);
         REQUIRE(a.capacity() >= 3);
@@ -1660,11 +1669,12 @@ TEST_CASE("Small Multi Map") {
         a.insert({
             { 4, 4 },
             { 5, 5 },
-            { 6, 6 }
+            { 6, 6 },
+            { 7, 8 }
         });
-        REQUIRE(a.size() == 6);
+        REQUIRE(a.size() == 7);
         REQUIRE(a.max_size() > 5);
-        REQUIRE(a.capacity() >= 6);
+        REQUIRE(a.capacity() >= 7);
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(
             a,
@@ -1674,14 +1684,15 @@ TEST_CASE("Small Multi Map") {
                 { 4, 4 },
                 { 5, 5 },
                 { 6, 6 },
-                { 7, 7 }
+                { 7, 7 },
+                { 7, 8 }
         }));
 
         it = a.erase(a.begin() + 1);
         REQUIRE(it == a.begin() + 1);
-        REQUIRE(a.size() == 5);
+        REQUIRE(a.size() == 6);
         REQUIRE(a.max_size() > 5);
-        REQUIRE(a.capacity() >= 5);
+        REQUIRE(a.capacity() >= 6);
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(
             a,
@@ -1690,12 +1701,13 @@ TEST_CASE("Small Multi Map") {
                 { 4, 4 },
                 { 5, 5 },
                 { 6, 6 },
-                { 7, 7 }
+                { 7, 7 },
+                { 7, 8 }
         }));
 
         it = a.erase(a.begin() + 1, a.begin() + 3);
         REQUIRE(it == a.begin() + 1);
-        REQUIRE(a.size() == 3);
+        REQUIRE(a.size() == 4);
         REQUIRE(a.max_size() > 5);
         REQUIRE(a.capacity() >= 5);
         REQUIRE_FALSE(a.empty());
@@ -1704,7 +1716,20 @@ TEST_CASE("Small Multi Map") {
             {
                 { 1, 1 },
                 { 6, 6 },
-                { 7, 7 }
+                { 7, 7 },
+                { 7, 8 }
+        }));
+
+        REQUIRE(a.erase(7) == 2);
+        REQUIRE(a.size() == 2);
+        REQUIRE(a.max_size() > 5);
+        REQUIRE(a.capacity() >= 5);
+        REQUIRE_FALSE(a.empty());
+        REQUIRE(equal_il(
+            a,
+            {
+                { 1, 1 },
+                { 6, 6 }
         }));
 
         a.clear();

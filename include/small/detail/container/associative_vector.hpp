@@ -236,11 +236,7 @@ namespace small {
                 operator()(
                     const first_argument_type &x,
                     const second_argument_type &y) const {
-                    if constexpr (IsMap) {
-                        return comp(x.first, y.first);
-                    } else {
-                        return comp(x, y);
-                    }
+                    return comp(maybe_first(x), maybe_first(y));
                 }
             };
 
@@ -493,13 +489,6 @@ namespace small {
             }
 
             /// \brief Get reference to element in buffered map
-            template <class K>
-            constexpr mapped_type &
-            operator[](const K &k) {
-                return element_access_implementation<true>(k);
-            }
-
-            /// \brief Get reference to element in buffered map
             constexpr mapped_type &
             operator[](key_type &&k) {
                 return element_access_implementation<true>(std::move(k));
@@ -526,28 +515,9 @@ namespace small {
             }
 
             /// \brief Check bound and get reference to element in buffered map
-            constexpr mapped_type &
-            at(key_type &&k) {
-                return element_access_implementation<false>(std::move(k));
-            }
-
-            /// \brief Check bound and get reference to element in buffered map
-            template <class K>
-            constexpr mapped_type &
-            at(K &&k) {
-                return element_access_implementation<false>(std::forward<K>(k));
-            }
-
-            /// \brief Check bound and get reference to element in buffered map
             constexpr const mapped_type &
             at(const key_type &k) const {
                 return element_access_implementation<false>(k);
-            }
-
-            /// \brief Check bound and get reference to element in buffered map
-            constexpr const mapped_type &
-            at(key_type &&k) const {
-                return element_access_implementation<false>(std::move(k));
             }
 
             /// \brief Check bound and get reference to element in buffered map
@@ -555,13 +525,6 @@ namespace small {
             constexpr const mapped_type &
             at(const K &k) const {
                 return element_access_implementation<false>(k);
-            }
-
-            /// \brief Check bound and get reference to element in buffered map
-            template <class K>
-            constexpr const mapped_type &
-            at(K &&k) const {
-                return element_access_implementation<false>(std::forward<K>(k));
             }
 
             /// \brief Get reference to first element in small array
@@ -717,8 +680,7 @@ namespace small {
                 InputIterator first,
                 enable_if_iterator_t<InputIterator, value_type> last) {
                 while (first != last) {
-                    insert(*first);
-                    ++first;
+                    insert(*first++);
                 }
             }
 
@@ -823,17 +785,7 @@ namespace small {
             /// \brief Erase element at a position in small map
             constexpr iterator
             erase(const_iterator position) {
-                return data_.erase(position.base());
-            }
-
-            /// \brief Erase element at a position in small map
-            iterator
-            erase(iterator position) {
-                if constexpr (IsMap) {
-                    return iterator(data_.erase(position.base()));
-                } else {
-                    return iterator(data_.erase(position));
-                }
+                return iterator(data_.erase(maybe_base(position)));
             }
 
             /// \brief Erase element at a position in small map
@@ -850,11 +802,8 @@ namespace small {
             /// \brief Erase range of elements in the small map
             constexpr iterator
             erase(const_iterator first, const_iterator last) {
-                if constexpr (IsMap) {
-                    return iterator(data_.erase(first.base(), last.base()));
-                } else {
-                    return iterator(data_.erase(first, last));
-                }
+                return iterator(
+                    data_.erase(maybe_base(first), maybe_base(last)));
             }
 
             /// \brief Clear elements in the small map
@@ -1098,29 +1047,6 @@ namespace small {
             /// \brief Logic to access a mapped_type
             template <bool create_if_not_found, class K>
             constexpr mapped_type &
-            element_access_implementation(const K &k) {
-                if constexpr (IsMap) {
-                    iterator it = find(k);
-                    if (it == end()) {
-                        if constexpr (create_if_not_found) {
-                            std::tie(it, std::ignore) = emplace(
-                                std::piecewise_construct,
-                                std::forward_as_tuple(k),
-                                std::tuple<>());
-                        } else {
-                            throw_exception<std::out_of_range>(
-                                "at(): cannot find element in vector map");
-                        }
-                    }
-                    return it->second;
-                } else {
-                    return data_.at(k);
-                }
-            }
-
-            /// \brief Logic to access a mapped_type
-            template <bool create_if_not_found, class K>
-            constexpr mapped_type &
             element_access_implementation(K &&k) {
                 if constexpr (IsMap) {
                     iterator it = find(k);
@@ -1139,14 +1065,6 @@ namespace small {
                 } else {
                     return data_.at(k);
                 }
-            }
-
-            /// \brief Logic to access a mapped_type
-            template <bool create_if_not_found, class K>
-            constexpr mapped_type &
-            element_access_implementation(const K &k) const {
-                return (const_cast<associative_vector *>(this))
-                    ->template element_access_implementation<false>(k);
             }
 
             /// \brief Logic to access a mapped_type

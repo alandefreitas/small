@@ -485,13 +485,13 @@ namespace small {
             /// \brief Get reference to element in buffered map
             constexpr mapped_type &
             operator[](const key_type &k) {
-                return element_access_implementation<true>(k);
+                return operator[]<decltype(k)>(k);
             }
 
             /// \brief Get reference to element in buffered map
             constexpr mapped_type &
             operator[](key_type &&k) {
-                return element_access_implementation<true>(std::move(k));
+                return operator[]<decltype(k)>(std::move(k));
             }
 
             /// \brief Get reference to element in buffered map
@@ -504,7 +504,7 @@ namespace small {
             /// \brief Check bound and get reference to element in buffered map
             constexpr mapped_type &
             at(const key_type &k) {
-                return element_access_implementation<false>(k);
+                return at<decltype(k)>(k);
             }
 
             /// \brief Check bound and get reference to element in buffered map
@@ -517,7 +517,7 @@ namespace small {
             /// \brief Check bound and get reference to element in buffered map
             constexpr const mapped_type &
             at(const key_type &k) const {
-                return element_access_implementation(k);
+                return at<decltype(k)>(k);
             }
 
             /// \brief Check bound and get reference to element in buffered map
@@ -636,13 +636,13 @@ namespace small {
             /// \brief Insert value type - copy
             std::pair<iterator, bool>
             insert(const value_type &v) {
-                return emplace(v);
+                return insert<decltype(v)>(v);
             }
 
             /// \brief Insert value type - move
             std::pair<iterator, bool>
             insert(value_type &&v) {
-                return emplace(std::move(v));
+                return insert<decltype(v)>(std::move(v));
             }
 
             /// \brief Insert value - construct
@@ -657,20 +657,20 @@ namespace small {
             /// \brief Insert in position - copy
             iterator
             insert(const_iterator position, const value_type &v) {
-                return emplace_hint(position, v);
+                return insert<decltype(v)>(std::move(position), v);
             }
 
             /// \brief Insert in position - move
             iterator
             insert(const_iterator position, value_type &&v) {
-                return emplace_hint(position, std::move(v));
+                return insert<decltype(v)>(std::move(position), std::move(v));
             }
 
             /// \brief Insert value with hint
             template <class P>
             std::enable_if_t<std::is_constructible_v<value_type, P &&>, iterator>
             insert(const_iterator position, P &&p) {
-                return emplace_hint(position, std::forward<P>(p));
+                return emplace_hint(std::move(position), std::forward<P>(p));
             }
 
             /// \brief Insert all values from iterators
@@ -694,19 +694,24 @@ namespace small {
             template <class... Args>
             std::pair<iterator, bool>
             try_emplace(const key_type &k, Args &&...args) {
-                return emplace(value_type(
-                    std::piecewise_construct,
-                    std::forward_as_tuple(k),
-                    std::forward_as_tuple(std::forward<Args>(args)...)));
+                return try_emplace<decltype(k)>(k, std::forward<Args>(args)...);
             }
 
             /// \brief Emplace if key doesn't exist yet
             template <class... Args>
             std::pair<iterator, bool>
             try_emplace(key_type &&k, Args &&...args) {
+                return try_emplace<
+                    decltype(k)>(std::move(k), std::forward<Args>(args)...);
+            }
+
+            /// \brief Emplace if key doesn't exist yet
+            template <class K, class... Args>
+            std::pair<iterator, bool>
+            try_emplace(K &&x, Args &&...args) {
                 return emplace(value_type(
                     std::piecewise_construct,
-                    std::forward_as_tuple(std::move(k)),
+                    std::forward_as_tuple(std::forward<K>(x)),
                     std::forward_as_tuple(std::forward<Args>(args)...)));
             }
 
@@ -714,23 +719,31 @@ namespace small {
             template <class... Args>
             iterator
             try_emplace(const_iterator hint, const key_type &k, Args &&...args) {
-                return emplace_hint(
-                    hint,
-                    value_type(
-                        std::piecewise_construct,
-                        std::forward_as_tuple(k),
-                        std::forward_as_tuple(std::forward<Args>(args)...)));
+                return try_emplace<decltype(k)>(
+                    std::move(hint),
+                    k,
+                    std::forward<Args>(args)...);
             }
 
             /// \brief Emplace if key doesn't exist yet
             template <class... Args>
             iterator
             try_emplace(const_iterator hint, key_type &&k, Args &&...args) {
+                return try_emplace<decltype(k)>(
+                    std::move(hint),
+                    std::move(k),
+                    std::forward<Args>(args)...);
+            }
+
+            /// \brief Emplace if key doesn't exist yet
+            template <class K, class... Args>
+            iterator
+            try_emplace(const_iterator hint, K &&x, Args &&...args) {
                 return emplace_hint(
-                    hint,
+                    std::move(hint),
                     value_type(
                         std::piecewise_construct,
-                        std::forward_as_tuple(std::move(k)),
+                        std::forward_as_tuple(std::forward<K>(x)),
                         std::forward_as_tuple(std::forward<Args>(args)...)));
             }
 
@@ -738,11 +751,7 @@ namespace small {
             template <class M>
             std::pair<iterator, bool>
             insert_or_assign(const key_type &k, M &&obj) {
-                auto [it, ok] = insert(value_type(k, std::forward<M>(obj)));
-                if (!ok) {
-                    it->second = std::forward<M>(obj);
-                }
-                return std::make_pair(it, ok);
+                return insert_or_assign<decltype(k)>(k, std::forward<M>(obj));
             }
 
             /// \brief Insert if key doesn't exist, assign if key already exists
@@ -761,12 +770,8 @@ namespace small {
             template <class M>
             iterator
             insert_or_assign(const_iterator hint, const key_type &k, M &&obj) {
-                auto [it, ok]
-                    = insert(hint, value_type(k, std::forward<M>(obj)));
-                if (!ok) {
-                    it->second = std::forward<M>(obj);
-                }
-                return std::make_pair(it, ok);
+                return insert_or_assign<
+                    decltype(k)>(std::move(hint), k, std::forward<M>(obj));
             }
 
             /// \brief Insert if key doesn't exist, assign if key already exists
@@ -914,7 +919,7 @@ namespace small {
             /// \brief Count elements with a given key (0 or 1)
             size_type
             count(const key_type &k) const {
-                return find(k) != end() ? 1 : 0;
+                return count<decltype(k)>(k);
             }
 
             /// \brief Check if elements with a given key exists
@@ -926,8 +931,8 @@ namespace small {
 
             /// \brief Check if elements with a given key exists
             bool
-            contains(const key_type &x) const {
-                return count(x) > 0;
+            contains(const key_type &k) const {
+                return contains<decltype(k)>(k);
             }
 
             /// \brief Iterator to first element not less than key

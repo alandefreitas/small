@@ -61,7 +61,8 @@ namespace small {
             }
             constexpr void
             swap_allocator(Allocator &&alloc) const noexcept {
-                std::swap(alloc_, alloc);
+                using std::swap;
+                swap(alloc_, alloc);
             }
 
         private:

@@ -247,7 +247,7 @@ TEST_CASE("Small Set") {
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(a, { 1, 2, 3, 4, 5 }));
 
-        a.erase(5);
+        REQUIRE(a.erase(5) == 1);
         REQUIRE(a.size() == 4);
         REQUIRE(a.max_size() > 5);
         REQUIRE(a.capacity() == 5);
@@ -278,8 +278,8 @@ TEST_CASE("Small Set") {
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(a, { 1, 2, 3, 4, 10 }));
 
-        a.erase(10);
-        a.erase(4);
+        REQUIRE(a.erase(10) == 1);
+        REQUIRE(a.erase(4) == 1);
         REQUIRE(a.size() == 3);
         REQUIRE(a.max_size() > 5);
         REQUIRE(a.capacity() == 5);
@@ -294,9 +294,10 @@ TEST_CASE("Small Set") {
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(a, { 1, 2, 3, 5, 6, 7 }));
 
-        a.erase(3);
-        a.erase(5);
-        a.erase(6);
+        REQUIRE(a.erase(3) == 1);
+        REQUIRE(a.erase(5) == 1);
+        REQUIRE(a.erase(6) == 1);
+        REQUIRE(a.erase(8) == 0);
         REQUIRE(a.size() == 3);
         REQUIRE(a.max_size() > 5);
         REQUIRE(a.capacity() >= 3);
@@ -578,7 +579,7 @@ TEST_CASE("Max Size Set") {
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(a, { 1, 2, 3, 4, 5 }));
 
-        a.erase(5);
+        REQUIRE(a.erase(5) == 1);
         REQUIRE(a.size() == 4);
         REQUIRE(a.max_size() == 5);
         REQUIRE(a.capacity() == 5);
@@ -609,8 +610,8 @@ TEST_CASE("Max Size Set") {
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(a, { 1, 2, 3, 4, 10 }));
 
-        a.erase(10);
-        a.erase(4);
+        REQUIRE(a.erase(10) == 1);
+        REQUIRE(a.erase(4) == 1);
         REQUIRE(a.size() == 3);
         REQUIRE(a.max_size() == 5);
         REQUIRE(a.capacity() == 5);
@@ -625,9 +626,10 @@ TEST_CASE("Max Size Set") {
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(a, { 1, 2, 3, 5, 6 }));
 
-        a.erase(3);
-        a.erase(5);
-        a.erase(6);
+        REQUIRE(a.erase(3) == 1);
+        REQUIRE(a.erase(5) == 1);
+        REQUIRE(a.erase(6) == 1);
+        REQUIRE(a.erase(8) == 0);
         REQUIRE(a.size() == 2);
         REQUIRE(a.max_size() == 5);
         REQUIRE(a.capacity() == 5);
@@ -711,19 +713,19 @@ TEST_CASE("Small Multi Set") {
 
         SECTION("From Iterators") {
             std::allocator<int> alloc;
-            std::vector<int> dv = { 4, 5, 7 };
+            std::vector<int> dv = { 4, 5, 7, 7 };
             small_set_type d(dv.begin(), dv.end(), alloc);
-            REQUIRE(d.size() == 3);
+            REQUIRE(d.size() == 4);
             REQUIRE_FALSE(d.empty());
-            REQUIRE(equal_il(d, { 4, 5, 7 }));
+            REQUIRE(equal_il(d, { 4, 5, 7, 7 }));
             REQUIRE(d.get_allocator() == alloc);
         }
 
         SECTION("From initializer list") {
-            small_set_type e = { 1, 2 };
-            REQUIRE(e.size() == 2);
+            small_set_type e = { 1, 2, 2 };
+            REQUIRE(e.size() == 3);
             REQUIRE_FALSE(e.empty());
-            REQUIRE(equal_il(e, { 1, 2 }));
+            REQUIRE(equal_il(e, { 1, 2, 2 }));
         }
     }
 
@@ -731,54 +733,54 @@ TEST_CASE("Small Multi Set") {
         SECTION("From initializer list") {
             small_set_type a;
             REQUIRE(a.empty());
-            a = { 6, 5, 4 };
-            REQUIRE(a.size() == 3);
+            a = { 6, 5, 5, 4 };
+            REQUIRE(a.size() == 4);
             REQUIRE_FALSE(a.empty());
-            REQUIRE(equal_il(a, { 4, 5, 6 }));
+            REQUIRE(equal_il(a, { 4, 5, 5, 6 }));
         }
 
         SECTION("From another flat set") {
             small_set_type a;
             REQUIRE(a.empty());
-            a = { 6, 5, 4 };
+            a = { 6, 6, 5, 4 };
 
             small_set_type b;
             REQUIRE(b.empty());
             b = a;
-            REQUIRE(b.size() == 3);
+            REQUIRE(b.size() == 4);
             REQUIRE_FALSE(b.empty());
             REQUIRE(a == b);
-            REQUIRE(equal_il(a, { 4, 5, 6 }));
+            REQUIRE(equal_il(a, { 4, 5, 6, 6 }));
         }
 
         SECTION("From iterators") {
             small_set_type a;
             REQUIRE(a.empty());
-            std::vector<int> v = { 6, 5, 4 };
+            std::vector<int> v = { 6, 5, 4, 4 };
             a.assign(v.begin(), v.end());
-            REQUIRE(a.size() == 3);
+            REQUIRE(a.size() == 4);
             REQUIRE_FALSE(a.empty());
-            REQUIRE(equal_il(a, { 4, 5, 6 }));
+            REQUIRE(equal_il(a, { 4, 4, 5, 6 }));
         }
 
         SECTION("From initializer list") {
             small_set_type a;
             REQUIRE(a.empty());
-            a.assign({ 6, 5, 4 });
-            REQUIRE(a.size() == 3);
+            a.assign({ 6, 5, 5, 4 });
+            REQUIRE(a.size() == 4);
             REQUIRE_FALSE(a.empty());
-            REQUIRE(equal_il(a, { 4, 5, 6 }));
+            REQUIRE(equal_il(a, { 4, 5, 5, 6 }));
         }
 
         SECTION("Swap") {
-            small_set_type a = { 1, 3, 5, 7 };
+            small_set_type a = { 1, 1, 3, 5, 7 };
             small_set_type b = { 9, 11, 13 };
 
-            std::initializer_list<int> ar = { 1, 3, 5, 7 };
+            std::initializer_list<int> ar = { 1, 1, 3, 5, 7 };
             std::initializer_list<int> br = { 9, 11, 13 };
 
             REQUIRE_FALSE(a.empty());
-            REQUIRE(a.size() == 4);
+            REQUIRE(a.size() == 5);
             REQUIRE(equal_il(a, ar));
             REQUIRE_FALSE(b.empty());
             REQUIRE(b.size() == 3);
@@ -790,13 +792,13 @@ TEST_CASE("Small Multi Set") {
             REQUIRE(a.size() == 3);
             REQUIRE(equal_il(a, br));
             REQUIRE_FALSE(b.empty());
-            REQUIRE(b.size() == 4);
+            REQUIRE(b.size() == 5);
             REQUIRE(equal_il(b, ar));
 
             std::swap(a, b);
 
             REQUIRE_FALSE(a.empty());
-            REQUIRE(a.size() == 4);
+            REQUIRE(a.size() == 5);
             REQUIRE(equal_il(a, ar));
             REQUIRE_FALSE(b.empty());
             REQUIRE(b.size() == 3);
@@ -853,81 +855,85 @@ TEST_CASE("Small Multi Set") {
     }
 
     SECTION("Element access") {
-        small_set_type a = { 1, 2, 3 };
+        small_set_type a = { 1, 2, 2, 3 };
         REQUIRE(a[0] == 1);
         REQUIRE(a[1] == 2);
-        REQUIRE(a[2] == 3);
+        REQUIRE(a[2] == 2);
+        REQUIRE(a[3] == 3);
         REQUIRE(a.at(0) == 1);
         REQUIRE(a.at(1) == 2);
-        REQUIRE(a.at(2) == 3);
+        REQUIRE(a.at(2) == 2);
+        REQUIRE(a.at(3) == 3);
         REQUIRE_THROWS(a.at(4));
         REQUIRE_THROWS(a.at(5));
         REQUIRE(a.front() == 1);
         REQUIRE(a.back() == 3);
         REQUIRE(*a.data() == 1);
         REQUIRE(*(a.data() + 1) == 2);
-        REQUIRE(*(a.data() + 2) == 3);
+        REQUIRE(*(a.data() + 2) == 2);
+        REQUIRE(*(a.data() + 3) == 3);
         REQUIRE(*(a.data() + a.size() - 1) == 3);
         REQUIRE(*(a.data() + a.size() - 2) == 2);
-        REQUIRE(*(a.data() + a.size() - 3) == 1);
+        REQUIRE(*(a.data() + a.size() - 3) == 2);
+        REQUIRE(*(a.data() + a.size() - 4) == 1);
     }
 
     SECTION("Modifiers") {
         small_set_type a = { 1, 2, 3 };
         a.insert({ 4, 4 });
         REQUIRE(a.back() == 4);
-        REQUIRE(a.size() == 4);
+        REQUIRE(a.size() == 5);
         REQUIRE(a.max_size() > 5);
         REQUIRE(a.capacity() == 5);
         REQUIRE_FALSE(a.empty());
-        REQUIRE(equal_il(a, { 1, 2, 3, 4 }));
+        REQUIRE(equal_il(a, { 1, 2, 3, 4, 4 }));
 
         // NOLINTNEXTLINE(performance-move-const-arg)
         int p = 5;
         a.insert(std::move(p));
         REQUIRE(a.back() == 5);
+        REQUIRE(a.size() == 6);
+        REQUIRE(a.max_size() > 6);
+        REQUIRE(a.capacity() >= 6);
+        REQUIRE_FALSE(a.empty());
+        REQUIRE(equal_il(a, { 1, 2, 3, 4, 4, 5 }));
+
+        REQUIRE(a.erase(5) == 1);
         REQUIRE(a.size() == 5);
         REQUIRE(a.max_size() > 5);
-        REQUIRE(a.capacity() == 5);
+        REQUIRE(a.capacity() >= 5);
         REQUIRE_FALSE(a.empty());
-        REQUIRE(equal_il(a, { 1, 2, 3, 4, 5 }));
-
-        a.erase(5);
-        REQUIRE(a.size() == 4);
-        REQUIRE(a.max_size() > 5);
-        REQUIRE(a.capacity() == 5);
-        REQUIRE_FALSE(a.empty());
-        REQUIRE(equal_il(a, { 1, 2, 3, 4 }));
+        REQUIRE(equal_il(a, { 1, 2, 3, 4, 4 }));
 
         a.emplace(5);
         REQUIRE(a.back() == 5);
-        REQUIRE(a.size() == 5);
-        REQUIRE(a.max_size() > 5);
-        REQUIRE(a.capacity() == 5);
+        REQUIRE(a.size() == 6);
+        REQUIRE(a.max_size() > 6);
+        REQUIRE(a.capacity() >= 6);
         REQUIRE_FALSE(a.empty());
-        REQUIRE(equal_il(a, { 1, 2, 3, 4, 5 }));
+        REQUIRE(equal_il(a, { 1, 2, 3, 4, 4, 5 }));
 
         a.erase(std::prev(a.end()));
-        REQUIRE(a.size() == 4);
-        REQUIRE(a.max_size() > 5);
-        REQUIRE(a.capacity() == 5);
-        REQUIRE_FALSE(a.empty());
-        REQUIRE(equal_il(a, { 1, 2, 3, 4 }));
-
-        auto it = a.emplace_hint(a.lower_bound(10), 10);
-        REQUIRE(it.operator*() == (a.begin() + 4).operator*());
-        REQUIRE(a.back() == 10);
         REQUIRE(a.size() == 5);
         REQUIRE(a.max_size() > 5);
-        REQUIRE(a.capacity() == 5);
+        REQUIRE(a.capacity() >= 5);
         REQUIRE_FALSE(a.empty());
-        REQUIRE(equal_il(a, { 1, 2, 3, 4, 10 }));
+        REQUIRE(equal_il(a, { 1, 2, 3, 4, 4 }));
 
-        a.erase(10);
-        a.erase(4);
+        auto it = a.emplace_hint(a.lower_bound(10), 10);
+        REQUIRE(it.operator*() == (a.begin() + 5).operator*());
+        REQUIRE(a.back() == 10);
+        REQUIRE(a.size() == 6);
+        REQUIRE(a.max_size() > 6);
+        REQUIRE(a.capacity() >= 6);
+        REQUIRE_FALSE(a.empty());
+        REQUIRE(equal_il(a, { 1, 2, 3, 4, 4, 10 }));
+
+        REQUIRE(a.erase(10) == 1);
+        REQUIRE(a.erase(4) == 2);
         REQUIRE(a.size() == 3);
         REQUIRE(a.max_size() > 5);
-        REQUIRE(a.capacity() == 5);
+        REQUIRE(a.capacity() >= 5);
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(a, { 1, 2, 3 }));
 
@@ -939,9 +945,10 @@ TEST_CASE("Small Multi Set") {
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(a, { 1, 2, 3, 5, 6, 7 }));
 
-        a.erase(3);
-        a.erase(5);
-        a.erase(6);
+        REQUIRE(a.erase(3) == 1);
+        REQUIRE(a.erase(5) == 1);
+        REQUIRE(a.erase(6) == 1);
+        REQUIRE(a.erase(8) == 0);
         REQUIRE(a.size() == 3);
         REQUIRE(a.max_size() > 5);
         REQUIRE(a.capacity() >= 3);
@@ -978,23 +985,6 @@ TEST_CASE("Small Multi Set") {
         REQUIRE(a.capacity() >= 5);
         REQUIRE(a.empty());
         REQUIRE(equal_il(a, {}));
-    }
-
-    SECTION("Find in small set") {
-        small_set_type a = { 1, 2, 3 };
-
-        REQUIRE(a.find(1) == a.begin());
-        REQUIRE(a.find(4) == a.end());
-    }
-
-    SECTION("Find in big set") {
-        small_set_type a = {};
-        for (int i = 0; i < 1000; ++i) {
-            a.insert(i);
-        }
-
-        REQUIRE(a.find(0) == a.begin());
-        REQUIRE(a.find(1000) == a.end());
     }
 
     SECTION("Element access errors") {

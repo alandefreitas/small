@@ -35,15 +35,7 @@ TEST_CASE("Small Map") {
 
         SECTION("Allocator") {
             std::allocator<int> alloc;
-            detail::associative_vector<
-                true,
-                false,
-                true,
-                vector<
-                    std::pair<int, int>,
-                    5,
-                    std::allocator<std::pair<int, int>>>>
-                a(alloc);
+            small_map_type a(alloc);
             REQUIRE(a.empty());
             REQUIRE(equal_il(a, {}));
             REQUIRE(a.get_allocator() == alloc);
@@ -596,15 +588,7 @@ TEST_CASE("Max Size Map") {
 
         SECTION("Allocator") {
             std::allocator<int> alloc;
-            detail::associative_vector<
-                true,
-                false,
-                true,
-                vector<
-                    std::pair<int, int>,
-                    5,
-                    std::allocator<std::pair<int, int>>>>
-                a(alloc);
+            max_size_map_type a(alloc);
             REQUIRE(a.empty());
             REQUIRE(equal_il(a, {}));
             REQUIRE(a.get_allocator() == alloc);

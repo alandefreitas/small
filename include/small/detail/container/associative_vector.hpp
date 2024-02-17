@@ -517,14 +517,14 @@ namespace small {
             /// \brief Check bound and get reference to element in buffered map
             constexpr const mapped_type &
             at(const key_type &k) const {
-                return element_access_implementation<false>(k);
+                return element_access_implementation(k);
             }
 
             /// \brief Check bound and get reference to element in buffered map
             template <class K>
             constexpr const mapped_type &
             at(const K &k) const {
-                return element_access_implementation<false>(k);
+                return element_access_implementation(k);
             }
 
             /// \brief Get reference to first element in small array
@@ -1068,7 +1068,7 @@ namespace small {
             }
 
             /// \brief Logic to access a mapped_type
-            template <bool create_if_not_found, class K>
+            template <class K>
             constexpr mapped_type &
             element_access_implementation(K &&k) const {
                 return (const_cast<associative_vector *>(this))

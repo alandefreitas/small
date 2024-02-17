@@ -786,11 +786,22 @@ namespace small::detail {
         /// \brief Erase element at a position in small map
         size_type
         erase(const key_type &k) {
+            return erase<decltype(k)>(k);
+        }
+
+        /// \brief Erase element at a position in small map
+        template <typename K>
+        std::enable_if_t<
+            !std::is_convertible_v<K &&, iterator>
+                && !std::is_convertible_v<K &&, const_iterator>
+                && (is_comp_tr || std::is_same_v<K, key_type>),
+            size_type>
+        erase(K &&x) {
             if constexpr (IsMulti) {
-                return erase_if([this, &k](const value_type &v) {
-                    return keys_equivalent(maybe_first(v), k);
+                return erase_if([this, &x](const value_type &v) {
+                    return keys_equivalent(maybe_first(v), x);
                 });
-            } else if (auto it = find(k); it != end()) {
+            } else if (auto it = find(x); it != end()) {
                 erase(it);
                 return 1;
             }

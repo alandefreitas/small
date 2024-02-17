@@ -10,9 +10,9 @@
 #include <array>
 #include <set>
 #include <string>
+#include <utility>
 #include <catch2/catch.hpp>
 #include <string_view>
-#include <utility>
 
 TEST_CASE("Small Set") {
     using namespace small;
@@ -209,7 +209,11 @@ TEST_CASE("Small Set") {
     }
 
     SECTION("Element access with non-trivial key") {
-        small_set_type_2 a = { { 1, 1 }, { 2, 2 }, { 3, 3 } };
+        small_set_type_2 a = {
+            { 1, 1 },
+            { 2, 2 },
+            { 3, 3 }
+        };
         REQUIRE(a[0] == std::pair{ 1, 1 });
         REQUIRE(a[1] == std::pair{ 2, 2 });
         REQUIRE(a[2] == std::pair{ 3, 3 });

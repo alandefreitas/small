@@ -797,15 +797,20 @@ namespace small::detail {
                 && (is_comp_tr || std::is_same_v<K, key_type>),
             size_type>
         erase(K &&x) {
-            if constexpr (IsMulti) {
+            if constexpr (IsMulti && !IsOrdered) {
                 return erase_if([this, &x](const value_type &v) {
                     return keys_equivalent(maybe_first(v), x);
                 });
-            } else if (auto it = find(x); it != end()) {
-                erase(it);
-                return 1;
             }
-            return 0;
+
+            auto const first = find(x);
+            auto const last = std::
+                find_if(first, end(), [this, &x](auto const &v) {
+                return !keys_equivalent(maybe_first(v), x);
+            });
+            auto const ret = std::distance(first, last);
+            erase(first, last);
+            return ret;
         }
 
         /// \brief Erase range of elements in the small map

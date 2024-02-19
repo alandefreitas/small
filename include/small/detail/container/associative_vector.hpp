@@ -1123,8 +1123,13 @@ namespace small::detail {
         }
 
         /// \brief Check if 2 keys are equivalent
-        bool
-        keys_equivalent(const key_type &lhs, const key_type &rhs) {
+        template <class K1, class K2>
+        std::enable_if<
+            is_comp_tr
+                || (std::is_same_v<K1, key_type>
+                    && std::is_same_v<K2, key_type>),
+            bool>
+        keys_equivalent(const K1 &lhs, const K2 &rhs) {
             return !comp_(lhs, rhs) && !comp_(rhs, lhs);
         }
 

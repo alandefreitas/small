@@ -1014,7 +1014,9 @@ namespace small {
             template <typename K>
             std::pair<iterator, iterator>
             equal_range(const K &x) {
-                return std::make_pair(lower_bound(x), upper_bound(x));
+                auto first = lower_bound(x);
+                auto last = upper_bound_partial(first, end(), x);
+                return std::make_pair(std::move(first), std::move(last));
             }
 
             /// \brief Get pair with lower_bound and upper_bound

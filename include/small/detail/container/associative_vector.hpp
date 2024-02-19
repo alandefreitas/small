@@ -1051,7 +1051,8 @@ namespace small::detail {
                 ->lower_bound_partial(begin, end, x);
         }
 
-        /// \brief Iterator to first element not less than key
+        /// \brief Iterator to first element greater than key
+        /// This will only work properly for ordered containers
         template <typename K>
         std::enable_if_t<is_comp_tr || std::is_same_v<K, key_type>, iterator>
         upper_bound_partial(
@@ -1067,7 +1068,7 @@ namespace small::detail {
             }));
         }
 
-        /// \brief Iterator to first element not less than key
+        /// \brief Iterator to first element greater than key
         /// This will only work properly for ordered containers
         template <typename K>
         const_iterator

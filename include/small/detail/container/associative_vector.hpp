@@ -583,76 +583,15 @@ namespace small::detail {
         template <class... Args>
         iterator
         emplace_hint(const_iterator hint, Args &&...args) {
-            if constexpr (!IsOrdered) {
-                return iterator(
-                    data_
-                        .emplace(maybe_base(hint), std::forward<Args>(args)...));
-            }
-
-            // the algorithm below is adapted from libc++
-            value_type obj(std::forward<Args>(args)...);
-            value_compare const val_comp = value_comp();
-
-            // obj < *hint
-            if (hint == end() || val_comp(obj, *hint)) {
-                // *prev(hint) <= obj < *hint
-                if (auto prev = std::prev(hint);
-                    hint == begin() || !val_comp(obj, *prev))
-                {
-                    if constexpr (IsMulti) {
-                        return iterator(
-                            data_.emplace(maybe_base(hint), std::move(obj)));
-                    }
-                    // *prev(hint) == obj
-                    if (!val_comp(*prev, obj)) {
-                        return prev;
-                    }
-                    return iterator(
-                        data_.emplace(maybe_base(hint), std::move(obj)));
-                }
-
-                auto it = lower_bound_partial(begin(), hint, maybe_first(obj));
-                if (!IsMulti
-                    && keys_equivalent(maybe_first(*it), maybe_first(obj)))
-                {
-                    return it;
-                }
-                return iterator(data_.emplace(maybe_base(it), std::move(obj)));
-            }
+            return emplace_hint_impl(std::move(hint), std::forward<Args>(args)...)
+                .first;
         }
 
-        /// \brief Emplace element to end of small map
-        /// In a usual map, the node would be constructed in-place and then
-        /// attached to its proper position. We unfortunately cannot do this
-        /// here because we need to construct the object before find its
-        /// proper position in the vector. We can then move the object, if
-        /// this is possible.
+        /// \brief Emplace element to small map
         template <class... Args>
         constexpr std::pair<iterator, bool>
         emplace(Args &&...args) {
-            value_type tmp(std::forward<Args>(args)...);
-            iterator emplace_pos;
-            if constexpr (IsOrdered) {
-                emplace_pos = lower_bound(maybe_first(tmp));
-            } else {
-                emplace_pos = end();
-            }
-            if (emplace_pos == end()) {
-                data_.emplace_back(std::move(tmp));
-                return std::make_pair(std::prev(end()), true);
-            } else {
-                const bool same_key
-                    = !comp_(maybe_first(*emplace_pos), maybe_first(tmp))
-                      && !comp_(maybe_first(tmp), maybe_first(*emplace_pos));
-                if (IsMulti || !same_key) {
-                    typename vector_type::iterator emplaced_it = data_.emplace(
-                        maybe_base(emplace_pos),
-                        std::move(tmp));
-                    return std::make_pair(iterator(emplaced_it), true);
-                } else {
-                    return std::make_pair(emplace_pos, false);
-                }
-            }
+            return emplace_hint_impl(end(), std::forward<Args>(args)...);
         }
 
         /// \brief Insert value type - copy
@@ -1016,6 +955,42 @@ namespace small::detail {
         std::pair<const_iterator, const_iterator>
         equal_range(const K &x) const {
             return const_cast<associative_vector *>(this)->equal_range(x);
+        }
+
+    private /* modifier implementations */:
+        /// \brief Emplace element at hint hint of the small map
+        /// \param hint Position before element will be constructed
+        /// In a usual map, the node would be constructed in-place and then
+        /// attached to its proper position. We unfortunately cannot do this
+        /// here because we need to construct the object before find its
+        /// proper position in the vector. We can then move the object, if
+        /// this is possible.
+        template <class... Args>
+        std::pair<iterator, bool>
+        emplace_hint_impl(const_iterator hint, Args &&...args) {
+            value_type obj(std::forward<Args>(args)...);
+
+            if constexpr (!IsOrdered) {
+                if constexpr (!IsMulti) {
+                    if (auto const it = find(maybe_first(obj)); it != end()) {
+                        return std::make_pair(it, false);
+                    }
+                }
+                return std::make_pair(
+                    iterator(data_.emplace(maybe_base(hint), std::move(obj))),
+                    true);
+            }
+
+            auto const it = upper_bound_hint(hint, maybe_first(obj));
+            if constexpr (!IsMulti)
+            {
+                if (it != begin() && !value_comp()(*std::prev(it), obj)) {
+                    return std::make_pair(std::prev(it), false);
+                }
+            }
+            return std::make_pair(
+                iterator(data_.emplace(maybe_base(it), std::move(obj))),
+                true);
         }
 
     private /* element lookup */:

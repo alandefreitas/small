@@ -1004,7 +1004,7 @@ namespace small::detail {
             return const_cast<associative_vector *>(this)->equal_range(x);
         }
 
-    private /* element access */:
+    private /* element lookup */:
         /// \brief Iterator to first element not less than key
         /// This will only work properly for ordered containers
         template <typename K>
@@ -1014,8 +1014,8 @@ namespace small::detail {
             const_iterator last,
             const K &x) {
             return iterator(std::lower_bound(
-                maybe_base(begin() + (first - cbegin())),
-                maybe_base(begin() + (last - cbegin())),
+                maybe_base(unconst(first)),
+                maybe_base(unconst(last)),
                 x,
                 [this](const auto &p, const auto &v) {
                 return comp_(maybe_first(p), v);
@@ -1043,8 +1043,8 @@ namespace small::detail {
             const_iterator last,
             const K &x) {
             return iterator(std::upper_bound(
-                maybe_base(begin() + (first - cbegin())),
-                maybe_base(begin() + (last - cbegin())),
+                maybe_base(unconst(first)),
+                maybe_base(unconst(last)),
                 x,
                 [this](const auto &v, const auto &p) {
                 return comp_(v, maybe_first(p));
@@ -1063,6 +1063,7 @@ namespace small::detail {
                 ->upper_bound_partial(begin, end, x);
         }
 
+    private /* element access */:
         /// \brief Logic to access a mapped_type
         template <bool create_if_not_found, class K>
         constexpr mapped_type &
@@ -1105,6 +1106,7 @@ namespace small::detail {
             }
         }
 
+    private /* helpers */:
         /// \brief Check if 2 keys are equivalent
         template <class K1, class K2>
         std::enable_if_t<
@@ -1134,6 +1136,11 @@ namespace small::detail {
             } else {
                 return el;
             }
+        }
+
+        constexpr iterator
+        unconst(const_iterator it) {
+            return begin() + (it - cbegin());
         }
 
     private:

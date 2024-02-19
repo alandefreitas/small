@@ -578,33 +578,47 @@ namespace small::detail {
         }
 
     public /* modifiers */:
-        /// \brief Emplace element at hint position of the small map
-        /// \param position Position before element will be constructed
+        /// \brief Emplace element at hint hint of the small map
+        /// \param hint Position before element will be constructed
         template <class... Args>
         iterator
-        emplace_hint(const_iterator position, Args &&...args) {
-            value_type obj(std::forward<Args>(args)...);
-            value_compare val_comp = value_comp();
-            // Handle iterator to end()
-            if (position == end() && val_comp(data_.back(), obj)) {
-                return iterator(data_.emplace(data_.end(), std::move(obj)));
-            } else {
-                // else, check if object should come after position...
-                if (val_comp(*position, obj)) {
-                    // ... and check if object should come before next
-                    // position
-                    auto next_position = std::next(position);
-                    if (next_position == end() || val_comp(obj, *position)) {
-                        // If so, insert element there with this correct
-                        // hint and return
-                        return iterator(
-                            data_.emplace(maybe_base(position), std::move(obj)));
-                    }
-                }
+        emplace_hint(const_iterator hint, Args &&...args) {
+            if constexpr (!IsOrdered) {
+                return iterator(
+                    data_
+                        .emplace(maybe_base(hint), std::forward<Args>(args)...));
             }
 
-            // Otherwise, use normal emplace instead of failing
-            return emplace(std::move(obj)).first;
+            // the algorithm below is adapted from libc++
+            value_type obj(std::forward<Args>(args)...);
+            value_compare const val_comp = value_comp();
+
+            // obj < *hint
+            if (hint == end() || val_comp(obj, *hint)) {
+                // *prev(hint) <= obj < *hint
+                if (auto prev = std::prev(hint);
+                    hint == begin() || !val_comp(obj, *prev))
+                {
+                    if constexpr (IsMulti) {
+                        return iterator(
+                            data_.emplace(maybe_base(hint), std::move(obj)));
+                    }
+                    // *prev(hint) == obj
+                    if (!val_comp(*prev, obj)) {
+                        return prev;
+                    }
+                    return iterator(
+                        data_.emplace(maybe_base(hint), std::move(obj)));
+                }
+
+                auto it = lower_bound_partial(begin(), hint, maybe_first(obj));
+                if (!IsMulti
+                    && keys_equivalent(maybe_first(*it), maybe_first(obj)))
+                {
+                    return it;
+                }
+                return iterator(data_.emplace(maybe_base(it), std::move(obj)));
+            }
         }
 
         /// \brief Emplace element to end of small map
@@ -1005,6 +1019,33 @@ namespace small::detail {
         }
 
     private /* element lookup */:
+        /// \brief Iterator to first element not less than key (with hint)
+        /// This will only work properly for ordered containers
+        /// Adapted from libc++
+        template <typename K>
+        iterator
+        upper_bound_hint(const_iterator hint, K &&x) {
+            // x < hint
+            if (hint == end() || comp_(x, maybe_first(*hint))) {
+                // prev(hint) <= x < hint
+                if (hint == begin() || !comp_(x, maybe_first(*std::prev(hint))))
+                {
+                    return unconst(hint);
+                }
+
+                return upper_bound_partial(begin(), hint, x);
+            } // else hint <= x
+
+            auto const next = std::next(hint);
+
+            // hint <= x < next(hint)
+            if (next == end() || comp_(x, maybe_first(*next))) {
+                return unconst(next);
+            }
+
+            return upper_bound_partial(next, end(), x);
+        }
+
         /// \brief Iterator to first element not less than key
         /// This will only work properly for ordered containers
         template <typename K>

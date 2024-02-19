@@ -720,19 +720,27 @@ namespace small::detail {
         template <class M>
         std::pair<iterator, bool>
         insert_or_assign(const key_type &k, M &&obj) {
-            return insert_or_assign<decltype(k)>(k, std::forward<M>(obj));
+            return insert_or_assign<decltype(k), M>(k, std::forward<M>(obj));
         }
 
         /// \brief Insert if key doesn't exist, assign if key already exists
         template <class M>
         std::pair<iterator, bool>
         insert_or_assign(key_type &&k, M &&obj) {
-            auto [it, ok] = insert(
-                value_type(std::move(k), std::forward<M>(obj)));
-            if (!ok) {
-                it->second = std::forward<M>(obj);
+            return insert_or_assign<decltype(k), M>(
+                std::move(k),
+                std::forward<M>(obj));
+        }
+
+        /// \brief Insert if key doesn't exist, assign if key already exists
+        template <class K, class M>
+        std::pair<iterator, bool>
+        insert_or_assign(K &&k, M &&obj) {
+            auto res = try_emplace(std::forward<K>(k), std::forward<M>(obj));
+            if (!res.second) {
+                res.first->second = std::forward<M>(obj);
             }
-            return std::make_pair(it, ok);
+            return res;
         }
 
         /// \brief Insert if key doesn't exist, assign if key already exists
@@ -740,19 +748,33 @@ namespace small::detail {
         iterator
         insert_or_assign(const_iterator hint, const key_type &k, M &&obj) {
             return insert_or_assign<
-                decltype(k)>(std::move(hint), k, std::forward<M>(obj));
+                decltype(k),
+                M>(std::move(hint), k, std::forward<M>(obj));
         }
 
         /// \brief Insert if key doesn't exist, assign if key already exists
         template <class M>
         iterator
         insert_or_assign(const_iterator hint, key_type &&k, M &&obj) {
-            auto [it, ok]
-                = insert(hint, value_type(std::move(k), std::forward<M>(obj)));
+            return insert_or_assign<
+                decltype(k),
+                M>(std::move(hint), std::move(k), std::forward<M>(obj));
+        }
+
+        /// \brief Insert if key doesn't exist, assign if key already exists
+        template <class K, class M>
+        iterator
+        insert_or_assign(const_iterator hint, K &&k, M &&obj) {
+            auto [it, ok] = emplace_hint_impl_key(
+                std::move(hint),
+                k,
+                std::piecewise_construct,
+                std::forward_as_tuple(std::forward<K>(k)),
+                std::forward_as_tuple(std::forward<M>(obj)));
             if (!ok) {
                 it->second = std::forward<M>(obj);
             }
-            return std::make_pair(it, ok);
+            return it;
         }
 
         /// \brief Erase element at a position in small map

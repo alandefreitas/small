@@ -655,29 +655,33 @@ namespace small::detail {
         template <class... Args>
         std::pair<iterator, bool>
         try_emplace(const key_type &k, Args &&...args) {
-            return try_emplace<decltype(k)>(k, std::forward<Args>(args)...);
+            return try_emplace<decltype(k), Args...>(
+                k,
+                std::forward<Args>(args)...);
         }
 
         /// \brief Emplace if key doesn't exist yet
         template <class... Args>
         std::pair<iterator, bool>
         try_emplace(key_type &&k, Args &&...args) {
-            return try_emplace<
-                decltype(k)>(std::move(k), std::forward<Args>(args)...);
+            return try_emplace<decltype(k), Args...>(
+                std::move(k),
+                std::forward<Args>(args)...);
         }
 
         /// \brief Emplace if key doesn't exist yet
         template <class K, class... Args>
         std::enable_if_t<
             !std::is_convertible_v<K &&, iterator>
-                && !std::is_convertible_v<K &&, const_iterator>
-                && (is_comp_tr || std::is_same_v<K, key_type>),
+                && !std::is_convertible_v<K &&, const_iterator>,
             std::pair<iterator, bool>>
-        try_emplace(K &&x, Args &&...args) {
-            return emplace(value_type(
+        try_emplace(K &&k, Args &&...args) {
+            return emplace_hint_impl_key(
+                end(),
+                k,
                 std::piecewise_construct,
-                std::forward_as_tuple(std::forward<K>(x)),
-                std::forward_as_tuple(std::forward<Args>(args)...)));
+                std::forward_as_tuple(std::forward<K>(k)),
+                std::forward_as_tuple(std::forward<Args>(args)...));
         }
 
         /// \brief Emplace if key doesn't exist yet
@@ -685,14 +689,15 @@ namespace small::detail {
         iterator
         try_emplace(const_iterator hint, const key_type &k, Args &&...args) {
             return try_emplace<
-                decltype(k)>(std::move(hint), k, std::forward<Args>(args)...);
+                decltype(k),
+                Args...>(std::move(hint), k, std::forward<Args>(args)...);
         }
 
         /// \brief Emplace if key doesn't exist yet
         template <class... Args>
         iterator
         try_emplace(const_iterator hint, key_type &&k, Args &&...args) {
-            return try_emplace<decltype(k)>(
+            return try_emplace<decltype(k), Args...>(
                 std::move(hint),
                 std::move(k),
                 std::forward<Args>(args)...);
@@ -700,14 +705,15 @@ namespace small::detail {
 
         /// \brief Emplace if key doesn't exist yet
         template <class K, class... Args>
-        std::enable_if_t<is_comp_tr || std::is_same_v<K, key_type>, iterator>
-        try_emplace(const_iterator hint, K &&x, Args &&...args) {
-            return emplace_hint(
-                std::move(hint),
-                value_type(
-                    std::piecewise_construct,
-                    std::forward_as_tuple(std::forward<K>(x)),
-                    std::forward_as_tuple(std::forward<Args>(args)...)));
+        iterator
+        try_emplace(const_iterator hint, K &&k, Args &&...args) {
+            return emplace_hint_impl_key(
+                       std::move(hint),
+                       k,
+                       std::piecewise_construct,
+                       std::forward_as_tuple(std::forward<K>(k)),
+                       std::forward_as_tuple(std::forward<Args>(args)...))
+                .first;
         }
 
         /// \brief Insert if key doesn't exist, assign if key already exists
@@ -969,27 +975,42 @@ namespace small::detail {
         std::pair<iterator, bool>
         emplace_hint_impl(const_iterator hint, Args &&...args) {
             value_type obj(std::forward<Args>(args)...);
+            return emplace_hint_impl_key(
+                std::move(hint),
+                maybe_first(obj),
+                std::move(obj));
+        }
 
+        /// \brief Emplace element at hint hint of the small map
+        /// \param hint Position before element will be constructed
+        template <class K, class... Args>
+        std::enable_if_t<
+            is_comp_tr || std::is_same_v<K, key_type>,
+            std::pair<iterator, bool>>
+        emplace_hint_impl_key(const_iterator hint, const K &k, Args &&...args) {
             if constexpr (!IsOrdered) {
                 if constexpr (!IsMulti) {
-                    if (auto const it = find(maybe_first(obj)); it != end()) {
+                    if (auto const it = find(k); it != end()) {
                         return std::make_pair(it, false);
                     }
                 }
                 return std::make_pair(
-                    iterator(data_.emplace(maybe_base(hint), std::move(obj))),
+                    iterator(data_.emplace(
+                        maybe_base(hint),
+                        std::forward<Args>(args)...)),
                     true);
             }
 
-            auto const it = upper_bound_hint(hint, maybe_first(obj));
+            auto const it = upper_bound_hint(hint, k);
             if constexpr (!IsMulti)
             {
-                if (it != begin() && !value_comp()(*std::prev(it), obj)) {
+                if (it != begin() && !comp_(maybe_first(*std::prev(it)), k)) {
                     return std::make_pair(std::prev(it), false);
                 }
             }
             return std::make_pair(
-                iterator(data_.emplace(maybe_base(it), std::move(obj))),
+                iterator(
+                    data_.emplace(maybe_base(it), std::forward<Args>(args)...)),
                 true);
         }
 

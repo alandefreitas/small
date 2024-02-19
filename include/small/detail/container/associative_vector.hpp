@@ -1066,8 +1066,8 @@ namespace small {
                     maybe_base(begin() + (first - cbegin())),
                     maybe_base(begin() + (last - cbegin())),
                     x,
-                    [this](const auto &p, const auto &v) {
-                    return comp_(maybe_first(p), v);
+                    [this](const auto &v, const auto &p) {
+                    return comp_(v, maybe_first(p));
                 }));
             }
 

@@ -236,6 +236,7 @@ TEST_CASE("Small Set") {
         REQUIRE(a.capacity() == 5);
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(a, { 1, 2, 3, 4 }));
+        REQUIRE(a.count(4) == 1);
 
         // NOLINTNEXTLINE(performance-move-const-arg)
         int p = 5;
@@ -246,6 +247,7 @@ TEST_CASE("Small Set") {
         REQUIRE(a.capacity() == 5);
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(a, { 1, 2, 3, 4, 5 }));
+        REQUIRE(a.count(5) == 1);
 
         REQUIRE(a.erase(5) == 1);
         REQUIRE(a.size() == 4);
@@ -253,6 +255,7 @@ TEST_CASE("Small Set") {
         REQUIRE(a.capacity() == 5);
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(a, { 1, 2, 3, 4 }));
+        REQUIRE(a.count(5) == 0);
 
         a.emplace(5);
         REQUIRE(a.back() == 5);
@@ -261,6 +264,7 @@ TEST_CASE("Small Set") {
         REQUIRE(a.capacity() == 5);
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(a, { 1, 2, 3, 4, 5 }));
+        REQUIRE(a.count(5) == 1);
 
         a.erase(std::prev(a.end()));
         REQUIRE(a.size() == 4);
@@ -277,6 +281,7 @@ TEST_CASE("Small Set") {
         REQUIRE(a.capacity() == 5);
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(a, { 1, 2, 3, 4, 10 }));
+        REQUIRE(a.count(10) == 1);
 
         REQUIRE(a.erase(10) == 1);
         REQUIRE(a.erase(4) == 1);
@@ -285,6 +290,7 @@ TEST_CASE("Small Set") {
         REQUIRE(a.capacity() == 5);
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(a, { 1, 2, 3 }));
+        REQUIRE(a.count(10) == 0);
 
         std::initializer_list<int> src = { 6, 5, 7 };
         a.insert(src.begin(), src.end());
@@ -887,6 +893,7 @@ TEST_CASE("Small Multi Set") {
         REQUIRE(a.capacity() == 5);
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(a, { 1, 2, 3, 4, 4 }));
+        REQUIRE(a.count(4) == 2);
 
         // NOLINTNEXTLINE(performance-move-const-arg)
         int p = 5;
@@ -897,6 +904,7 @@ TEST_CASE("Small Multi Set") {
         REQUIRE(a.capacity() >= 6);
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(a, { 1, 2, 3, 4, 4, 5 }));
+        REQUIRE(a.count(5) == 1);
 
         REQUIRE(a.erase(5) == 1);
         REQUIRE(a.size() == 5);
@@ -904,6 +912,7 @@ TEST_CASE("Small Multi Set") {
         REQUIRE(a.capacity() >= 5);
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(a, { 1, 2, 3, 4, 4 }));
+        REQUIRE(a.count(5) == 0);
 
         a.emplace(5);
         REQUIRE(a.back() == 5);
@@ -912,6 +921,7 @@ TEST_CASE("Small Multi Set") {
         REQUIRE(a.capacity() >= 6);
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(a, { 1, 2, 3, 4, 4, 5 }));
+        REQUIRE(a.count(5) == 1);
 
         a.erase(std::prev(a.end()));
         REQUIRE(a.size() == 5);
@@ -928,6 +938,7 @@ TEST_CASE("Small Multi Set") {
         REQUIRE(a.capacity() >= 6);
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(a, { 1, 2, 3, 4, 4, 10 }));
+        REQUIRE(a.count(10) == 1);
 
         REQUIRE(a.erase(10) == 1);
         REQUIRE(a.erase(4) == 2);
@@ -936,6 +947,7 @@ TEST_CASE("Small Multi Set") {
         REQUIRE(a.capacity() >= 5);
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(a, { 1, 2, 3 }));
+        REQUIRE(a.count(4) == 0);
 
         std::initializer_list<int> src = { 6, 5, 7 };
         a.insert(src.begin(), src.end());

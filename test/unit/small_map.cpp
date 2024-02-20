@@ -522,6 +522,71 @@ TEST_CASE("Small Map") {
                 { 7, 7 }
         }));
 
+        bool ok = false;
+        std::tie(it, ok) = a.try_emplace(1, 8);
+        REQUIRE_FALSE(ok);
+        REQUIRE(it == a.begin());
+        REQUIRE(a.size() == 3);
+        REQUIRE(a.max_size() > 5);
+        REQUIRE(a.capacity() >= 5);
+        REQUIRE_FALSE(a.empty());
+        REQUIRE(equal_il(
+            a,
+            {
+                { 1, 1 },
+                { 6, 6 },
+                { 7, 7 }
+        }));
+
+        std::tie(it, ok) = a.try_emplace(2, 2);
+        REQUIRE(ok);
+        REQUIRE(it == a.begin() + 1);
+        REQUIRE(a.size() == 4);
+        REQUIRE(a.max_size() > 5);
+        REQUIRE(a.capacity() >= 5);
+        REQUIRE_FALSE(a.empty());
+        REQUIRE(equal_il(
+            a,
+            {
+                { 1, 1 },
+                { 2, 2 },
+                { 6, 6 },
+                { 7, 7 }
+        }));
+
+        std::tie(it, ok) = a.insert_or_assign(1, 8);
+        REQUIRE_FALSE(ok);
+        REQUIRE(it == a.begin());
+        REQUIRE(a.size() == 4);
+        REQUIRE(a.max_size() > 5);
+        REQUIRE(a.capacity() >= 5);
+        REQUIRE_FALSE(a.empty());
+        REQUIRE(equal_il(
+            a,
+            {
+                { 1, 8 },
+                { 2, 2 },
+                { 6, 6 },
+                { 7, 7 }
+        }));
+
+        std::tie(it, ok) = a.insert_or_assign(3, 3);
+        REQUIRE(ok);
+        REQUIRE(it == a.begin() + 2);
+        REQUIRE(a.size() == 5);
+        REQUIRE(a.max_size() > 5);
+        REQUIRE(a.capacity() >= 5);
+        REQUIRE_FALSE(a.empty());
+        REQUIRE(equal_il(
+            a,
+            {
+                { 1, 8 },
+                { 2, 2 },
+                { 3, 3 },
+                { 6, 6 },
+                { 7, 7 }
+        }));
+
         a.clear();
         // NOLINTNEXTLINE(readability-container-size-empty)
         REQUIRE(a.size() == 0);
@@ -529,6 +594,65 @@ TEST_CASE("Small Map") {
         REQUIRE(a.capacity() >= 5);
         REQUIRE(a.empty());
         REQUIRE(equal_il(a, {}));
+    }
+
+    SECTION("try_emplace() has no effect if didn't insert") {
+        struct A
+        {
+            A() = default;
+            A(A&& a) noexcept {
+                *this = std::move(a);
+            }
+            A(A const& a) {
+                *this = a;
+            }
+            A&
+            operator=(A&& a) noexcept {
+                moved = a.moved;
+                copied = a.copied;
+                a.moved = true;
+                return *this;
+            }
+            A&
+            operator=(A const& a) {
+                moved = a.moved;
+                copied = a.copied;
+                a.copied = true;
+                return *this;
+            }
+
+            mutable bool moved = false;
+            mutable bool copied = false;
+        };
+        small::map<int, A> a = {};
+
+        A obj = {};
+        a.try_emplace(1, obj);
+        REQUIRE(a.size() == 1);
+        REQUIRE_FALSE(a.empty());
+        REQUIRE_FALSE(obj.moved);
+        REQUIRE(obj.copied);
+
+        obj = {};
+        a.try_emplace(2, std::move(obj));
+        REQUIRE(a.size() == 2);
+        REQUIRE_FALSE(a.empty());
+        REQUIRE(obj.moved);
+        REQUIRE_FALSE(obj.copied);
+
+        obj = {};
+        a.try_emplace(1, obj);
+        REQUIRE(a.size() == 2);
+        REQUIRE_FALSE(a.empty());
+        REQUIRE_FALSE(obj.moved);
+        REQUIRE_FALSE(obj.copied);
+
+        obj = {};
+        a.try_emplace(2, std::move(obj));
+        REQUIRE(a.size() == 2);
+        REQUIRE_FALSE(a.empty());
+        REQUIRE_FALSE(obj.moved);
+        REQUIRE_FALSE(obj.copied);
     }
 
     SECTION("Element access errors") {

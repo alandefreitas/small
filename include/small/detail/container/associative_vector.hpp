@@ -1124,7 +1124,7 @@ namespace small::detail {
 
         /// \brief Check if 2 keys are equivalent
         template <class K1, class K2>
-        std::enable_if<
+        std::enable_if_t<
             is_comp_tr
                 || (std::is_same_v<K1, key_type>
                     && std::is_same_v<K2, key_type>),

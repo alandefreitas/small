@@ -897,14 +897,25 @@ namespace small::detail {
             return (const_cast<associative_vector *>(this))->find(x);
         }
 
-        /// \brief Count elements with a given key (0 or 1)
+        /// \brief Count elements with a given key
         template <typename K>
         std::enable_if_t<is_comp_tr || std::is_same_v<K, key_type>, size_type>
         count(const K &x) const {
-            return find(x) != end() ? 1 : 0;
+            if constexpr (!IsMulti) {
+                return find(x) != end() ? 1 : 0;
+            }
+
+            if constexpr (IsOrdered) {
+                auto [first, last] = equal_range(x);
+                return std::distance(first, last);
+            }
+
+            return std::count_if(begin(), end(), [this, &x](auto const &v) {
+                return keys_equivalent(maybe_first(v), x);
+            });
         }
 
-        /// \brief Count elements with a given key (0 or 1)
+        /// \brief Count elements with a given key
         size_type
         count(const key_type &k) const {
             return count<decltype(k)>(k);

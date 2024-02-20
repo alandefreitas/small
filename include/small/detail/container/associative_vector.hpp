@@ -902,7 +902,7 @@ namespace small::detail {
         std::enable_if_t<is_comp_tr || std::is_same_v<K, key_type>, size_type>
         count(const K &x) const {
             if constexpr (!IsMulti) {
-                return find(x) != end() ? 1 : 0;
+                return contains(x) ? 1 : 0;
             }
 
             if constexpr (IsOrdered) {
@@ -925,7 +925,7 @@ namespace small::detail {
         template <typename K>
         std::enable_if_t<is_comp_tr || std::is_same_v<K, key_type>, bool>
         contains(const K &x) const {
-            return count(x) > 0;
+            return find(x) != end();
         }
 
         /// \brief Check if elements with a given key exists

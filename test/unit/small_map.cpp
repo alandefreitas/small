@@ -342,6 +342,7 @@ TEST_CASE("Small Map") {
                 { 3, 3 },
                 { 4, 4 }
         }));
+        REQUIRE(a.count(4) == 1);
 
         // NOLINTNEXTLINE(performance-move-const-arg)
         auto p = std::make_pair(5, 5);
@@ -360,6 +361,7 @@ TEST_CASE("Small Map") {
                 { 4, 4 },
                 { 5, 5 }
         }));
+        REQUIRE(a.count(5) == 1);
 
         REQUIRE(a.erase(5) == 1);
         REQUIRE(a.size() == 4);
@@ -374,6 +376,7 @@ TEST_CASE("Small Map") {
                 { 3, 3 },
                 { 4, 4 }
         }));
+        REQUIRE(a.count(5) == 0);
 
         a.emplace(5, 5);
         REQUIRE(a.back().first == 5);
@@ -390,6 +393,7 @@ TEST_CASE("Small Map") {
                 { 4, 4 },
                 { 5, 5 }
         }));
+        REQUIRE(a.count(5) == 1);
 
         a.erase(std::prev(a.end()));
         REQUIRE(a.size() == 4);
@@ -421,6 +425,7 @@ TEST_CASE("Small Map") {
                 {  4,  4 },
                 { 10, 10 }
         }));
+        REQUIRE(a.count(10) == 1);
 
         REQUIRE(a.erase(10) == 1);
         REQUIRE(a.erase(4) == 1);
@@ -435,6 +440,7 @@ TEST_CASE("Small Map") {
                 { 2, 2 },
                 { 3, 3 }
         }));
+        REQUIRE(a.count(10) == 0);
 
         std::initializer_list<std::pair<const int, int>> src = {
             { 6, 6 },
@@ -1535,6 +1541,7 @@ TEST_CASE("Small Multi Map") {
                 { 3, 3 },
                 { 4, 4 }
         }));
+        REQUIRE(a.count(4) == 1);
 
         // NOLINTNEXTLINE(performance-move-const-arg)
         auto p = std::make_pair(5, 5);
@@ -1553,6 +1560,7 @@ TEST_CASE("Small Multi Map") {
                 { 4, 4 },
                 { 5, 5 }
         }));
+        REQUIRE(a.count(5) == 1);
 
         REQUIRE(a.erase(5) == 1);
         REQUIRE(a.size() == 4);
@@ -1567,6 +1575,7 @@ TEST_CASE("Small Multi Map") {
                 { 3, 3 },
                 { 4, 4 }
         }));
+        REQUIRE(a.count(5) == 0);
 
         a.emplace(5, 5);
         REQUIRE(a.back().first == 5);
@@ -1583,6 +1592,7 @@ TEST_CASE("Small Multi Map") {
                 { 4, 4 },
                 { 5, 5 }
         }));
+        REQUIRE(a.count(5) == 1);
 
         a.erase(std::prev(a.end()));
         REQUIRE(a.size() == 4);
@@ -1614,6 +1624,7 @@ TEST_CASE("Small Multi Map") {
                 {  4,  4 },
                 { 10, 10 }
         }));
+        REQUIRE(a.count(10) == 1);
 
         REQUIRE(a.erase(10) == 1);
         REQUIRE(a.erase(4) == 1);
@@ -1628,6 +1639,7 @@ TEST_CASE("Small Multi Map") {
                 { 2, 2 },
                 { 3, 3 }
         }));
+        REQUIRE(a.count(10) == 0);
 
         std::initializer_list<std::pair<const int, int>> src = {
             { 6, 6 },
@@ -1687,6 +1699,7 @@ TEST_CASE("Small Multi Map") {
                 { 7, 7 },
                 { 7, 8 }
         }));
+        REQUIRE(a.count(7) == 2);
 
         it = a.erase(a.begin() + 1);
         REQUIRE(it == a.begin() + 1);
@@ -1731,6 +1744,7 @@ TEST_CASE("Small Multi Map") {
                 { 1, 1 },
                 { 6, 6 }
         }));
+        REQUIRE(a.count(7) == 0);
 
         a.clear();
         // NOLINTNEXTLINE(readability-container-size-empty)

@@ -799,6 +799,7 @@ namespace small::detail {
         erase(K &&x) {
             if constexpr (IsMulti && !IsOrdered) {
                 return erase_if([this, &x](const value_type &v) {
+                    (void)this; // clang warns -Wunused-lambda-capture otherwise
                     return keys_equivalent(maybe_first(v), x);
                 });
             }
@@ -806,6 +807,7 @@ namespace small::detail {
             auto const first = find(x);
             auto const last = std::
                 find_if(first, end(), [this, &x](auto const &v) {
+                (void)this; // clang warns -Wunused-lambda-capture otherwise
                 return !keys_equivalent(maybe_first(v), x);
             });
             auto const ret = std::distance(first, last);
@@ -911,6 +913,7 @@ namespace small::detail {
             }
 
             return std::count_if(begin(), end(), [this, &x](auto const &v) {
+                (void)this; // clang warns -Wunused-lambda-capture otherwise
                 return keys_equivalent(maybe_first(v), x);
             });
         }

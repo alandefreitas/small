@@ -405,7 +405,7 @@ TEST_CASE("Small Map") {
                 { 4, 4 }
         }));
 
-        auto it = a.emplace_hint(a.lower_bound(10), 10, 10);
+        auto it = a.emplace_hint(a.upper_bound(10), 10, 10);
         REQUIRE(it->first == (a.begin() + 4)->first);
         REQUIRE(a.back().first == 10);
         REQUIRE(a.size() == 5);
@@ -949,7 +949,7 @@ TEST_CASE("Max Size Map") {
                 { 4, 4 }
         }));
 
-        auto it = a.emplace_hint(a.lower_bound(10), 10, 10);
+        auto it = a.emplace_hint(a.upper_bound(10), 10, 10);
         REQUIRE(it->first == (a.begin() + 4)->first);
         REQUIRE(a.back().first == 10);
         REQUIRE(a.size() == 5);

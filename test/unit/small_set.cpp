@@ -269,7 +269,7 @@ TEST_CASE("Small Set") {
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(a, { 1, 2, 3, 4 }));
 
-        auto it = a.emplace_hint(a.lower_bound(10), 10);
+        auto it = a.emplace_hint(a.upper_bound(10), 10);
         REQUIRE(it.operator*() == (a.begin() + 4).operator*());
         REQUIRE(a.back() == 10);
         REQUIRE(a.size() == 5);
@@ -600,7 +600,7 @@ TEST_CASE("Max Size Set") {
         REQUIRE_FALSE(a.empty());
         REQUIRE(equal_il(a, { 1, 2, 3, 4 }));
 
-        auto it = a.emplace_hint(a.lower_bound(10), 10);
+        auto it = a.emplace_hint(a.upper_bound(10), 10);
         REQUIRE(it.operator*() == (a.begin() + 4).operator*());
         REQUIRE(a.back() == 10);
         REQUIRE(a.size() == 5);

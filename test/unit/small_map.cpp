@@ -561,6 +561,22 @@ TEST_CASE("Small Map") {
                 { 7, 7 }
         }));
 
+        it = a.try_emplace(a.upper_bound(10), 10, 10);
+        REQUIRE(it == std::prev(a.end()));
+        REQUIRE(a.size() == 5);
+        REQUIRE(a.max_size() > 5);
+        REQUIRE(a.capacity() >= 5);
+        REQUIRE_FALSE(a.empty());
+        REQUIRE(equal_il(
+            a,
+            {
+                { 1, 1 },
+                { 2, 2 },
+                { 6, 6 },
+                { 7, 7 },
+                { 10, 10 }
+        }));REQUIRE(a.erase(10) == 1);
+
         std::tie(it, ok) = a.insert_or_assign(1, 8);
         REQUIRE_FALSE(ok);
         REQUIRE(it == a.begin());
@@ -592,6 +608,40 @@ TEST_CASE("Small Map") {
                 { 3, 3 },
                 { 6, 6 },
                 { 7, 7 }
+        }));
+
+        it = a.insert_or_assign(a.upper_bound(10), 10, 10);
+        REQUIRE(it == std::prev(a.end()));
+        REQUIRE(a.size() == 6);
+        REQUIRE(a.max_size() > 6);
+        REQUIRE(a.capacity() >= 6);
+        REQUIRE_FALSE(a.empty());
+        REQUIRE(equal_il(
+            a,
+            {
+                { 1, 8 },
+                { 2, 2 },
+                { 3, 3 },
+                { 6, 6 },
+                { 7, 7 },
+                { 10, 10 }
+        }));
+
+        it = a.insert_or_assign(a.upper_bound(10), 10, 10);
+        REQUIRE(it == std::prev(a.end()));
+        REQUIRE(a.size() == 6);
+        REQUIRE(a.max_size() > 6);
+        REQUIRE(a.capacity() >= 6);
+        REQUIRE_FALSE(a.empty());
+        REQUIRE(equal_il(
+            a,
+            {
+                { 1, 8 },
+                { 2, 2 },
+                { 3, 3 },
+                { 6, 6 },
+                { 7, 7 },
+                { 10, 10 }
         }));
 
         a.clear();

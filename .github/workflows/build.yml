@@ -44,7 +44,7 @@ jobs:
             name: "Windows-MSVC/2019/Static/X86/Release",
             os: windows-2019,
             config: Release,
-            cmake_extra_args: -G "Visual Studio 16 2019" -A Win32,
+            cmake_extra_args: -G "Visual Studio 16 2019" -A Win32 -DCMAKE_CXX_FLAGS="/O2",
             sudocmd: "",
             artifact_name: "Windows x86",
             cores: 2,

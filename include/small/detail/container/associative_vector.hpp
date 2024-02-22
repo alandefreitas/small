@@ -878,7 +878,14 @@ namespace small::detail {
         template <typename K>
         std::enable_if_t<is_comp_tr || std::is_same_v<K, key_type>, iterator>
         find(const K &x) {
-            if (!IsOrdered || size() < 100) {
+            if constexpr (!IsOrdered) {
+                // blame MSVC warning C4127 for this travesty of code >:(
+                for (auto it = begin(), last = end(); it != last; ++it) {
+                    if (keys_equivalent(maybe_first(*it), x)) {
+                        return it;
+                    }
+                }
+            } else if (size() < 100) {
                 for (auto it = begin(), last = end(); it != last; ++it) {
                     if (keys_equivalent(maybe_first(*it), x)) {
                         return it;

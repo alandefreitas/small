@@ -912,17 +912,15 @@ namespace small::detail {
         count(const K &x) const {
             if constexpr (!IsMulti) {
                 return contains(x) ? 1 : 0;
-            }
-
-            if constexpr (IsOrdered) {
+            } else if constexpr (IsOrdered) {
                 auto [first, last] = equal_range(x);
                 return std::distance(first, last);
+            } else {
+                return std::count_if(begin(), end(), [this, &x](auto const &v) {
+                    (void) this; // clang warns -Wunused-lambda-capture otherwise
+                    return keys_equivalent(maybe_first(v), x);
+                });
             }
-
-            return std::count_if(begin(), end(), [this, &x](auto const &v) {
-                (void)this; // clang warns -Wunused-lambda-capture otherwise
-                return keys_equivalent(maybe_first(v), x);
-            });
         }
 
         /// \brief Count elements with a given key

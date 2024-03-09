@@ -183,8 +183,8 @@ namespace small {
 
         /// \brief True if we should just copy the inline storage
         static constexpr bool should_copy_inline
-            = std::is_trivially_copyable_v<
-                  value_type> && sizeof(inline_storage_type) <= cache_line_size / 2;
+            = std::is_trivially_copyable_v<value_type>
+              && sizeof(inline_storage_type) <= cache_line_size / 2;
 
         /// \brief True if we are using the std::allocator
         static constexpr bool using_std_allocator = std::
@@ -201,8 +201,8 @@ namespace small {
 
         /// \brief Use memcpy to copy items
         /// If type is relocatable, we just use memcpy
-        static constexpr bool relocate_use_memcpy
-            = is_relocatable_v<T> && using_std_allocator;
+        static constexpr bool relocate_use_memcpy = is_relocatable_v<T>
+                                                    && using_std_allocator;
 
     public:
         /// \section Rule of five constructors
@@ -284,7 +284,8 @@ namespace small {
                 } else {
                     auto n = rhs.size();
                     if constexpr (std::is_trivially_move_constructible_v<
-                                      value_type>) {
+                                      value_type>)
+                    {
                         std::memcpy(
                             (void *) begin().base(),
                             (void *) rhs.begin().base(),
@@ -368,7 +369,8 @@ namespace small {
                         } else {
                             const size_t n = rhs.size();
                             if constexpr (std::is_trivially_move_assignable_v<
-                                              value_type>) {
+                                              value_type>)
+                            {
                                 std::memcpy(
                                     (void *) data_.buffer(),
                                     (void *) rhs.data_.buffer(),
@@ -423,7 +425,7 @@ namespace small {
             assert(invariants());
         }
 
-        public /* constructors */:
+    public /* constructors */:
         /// \section Initialization constructors
 
         /// \brief Construct empty small array
@@ -441,20 +443,14 @@ namespace small {
         constexpr explicit vector(
             size_type n,
             const allocator_type &alloc = allocator_type())
-            : vector(
-                n,
-                [&](void *p) { new (p) value_type(); },
-                alloc) {}
+            : vector(n, [&](void *p) { new (p) value_type(); }, alloc) {}
 
         /// \brief Construct small array with size n and fill with single value
         constexpr vector(
             size_type n,
             const value_type &value,
             const allocator_type &alloc = allocator_type())
-            : vector(
-                n,
-                [&](void *p) { new (p) value_type(value); },
-                alloc) {}
+            : vector(n, [&](void *p) { new (p) value_type(value); }, alloc) {}
 
         /// \brief Construct small array from a pair of iterators
         template <class Iterator>
@@ -555,7 +551,7 @@ namespace small {
         constexpr void
         swap(vector &rhs) noexcept(
             std::is_nothrow_move_constructible_v<value_type>
-                &&std::is_nothrow_swappable_v<value_type>) {
+            && std::is_nothrow_swappable_v<value_type>) {
             // Allow ADL on swap for our value_type.
             using std::swap;
 
@@ -668,7 +664,7 @@ namespace small {
             assert(invariants());
         }
 
-        public /* iterators */:
+    public /* iterators */:
         /// \brief Get iterator to first element
         constexpr iterator
         begin() noexcept {
@@ -741,7 +737,7 @@ namespace small {
             return std::reverse_iterator<const_iterator>(cbegin());
         }
 
-        public /* capacity */:
+    public /* capacity */:
         /// \brief Get small array size
         [[nodiscard]] constexpr size_type
         size() const noexcept {
@@ -816,7 +812,7 @@ namespace small {
             tmp.swap(*this);
         }
 
-        public /* element access */:
+    public /* element access */:
         /// \brief Get reference to n-th element in small array
         constexpr reference
         operator[](size_type n) {
@@ -892,7 +888,7 @@ namespace small {
             return this->is_external() ? data_.heap() : data_.buffer();
         }
 
-        public /* modifiers */:
+    public /* modifiers */:
         /// \brief Copy element to end of small array
         constexpr void
         push_back(const value_type &v) {
@@ -911,7 +907,8 @@ namespace small {
         emplace_back(Args &&...args) {
             // Handle inline vector
             if (size_ < num_inline_elements) {
-                auto* ptr = new (data_.buffer() + size_) value_type(std::forward<Args>(args)...);
+                auto *ptr = new (data_.buffer() + size_)
+                    value_type(std::forward<Args>(args)...);
                 this->increment_internal_size(1);
                 return *ptr;
             } else {
@@ -925,12 +922,9 @@ namespace small {
                     const bool needs_to_grow = old_capacity == old_size;
                     if (needs_to_grow) {
                         // Internal vector
-                        make_size(
-                            old_size + 1,
-                            [&](void *p) {
+                        make_size(old_size + 1, [&](void *p) {
                             new (p) value_type(std::forward<Args>(args)...);
-                            },
-                            old_size);
+                        }, old_size);
                     } else {
                         // External vector
                         new (data_.heap() + old_size)
@@ -983,10 +977,9 @@ namespace small {
             auto old_size = size();
             const bool must_grow = capacity() == old_size;
             if (must_grow) {
-                make_size(
-                    old_size + 1,
-                    [&x](void *ptr) { new (ptr) value_type(std::move(x)); },
-                    offset);
+                make_size(old_size + 1, [&x](void *ptr) {
+                    new (ptr) value_type(std::move(x));
+                }, offset);
                 this->increment_internal_size(1);
             } else {
                 shift_right_and_construct(
@@ -1078,16 +1071,16 @@ namespace small {
                     std::memcpy(
                         (void *) first.base(),
                         (void *) last.base(),
-                        (cend() - last) * sizeof(value_type));
+                        n_after_erase * sizeof(value_type));
                 } else {
                     std::memmove(
                         (void *) first.base(),
                         (void *) last.base(),
-                        (cend() - last) * sizeof(value_type));
+                        n_after_erase * sizeof(value_type));
                 }
             } else {
                 // Move elements in memory
-                std::move(unconst(last), end(), unconst(first));
+                std::move(last, cend(), unconst(first));
 
                 // Destruct elements that were moved from and no longer in-use
                 // N.B. Only do this for non-relocatable types, otherwise you'd
@@ -1269,13 +1262,10 @@ namespace small {
             if (new_size <= capacity()) {
                 return;
             }
-            make_size_internal<std::false_type>(
-                new_size,
-                [](void *) {
+            make_size_internal<std::false_type>(new_size, [](void *) {
                 detail::throw_exception<std::logic_error>(
                     "Should not emplace when changing size");
-                },
-                0);
+            }, 0);
         }
 
         /// \brief Change the size and emplace the elements as we go
@@ -1536,7 +1526,8 @@ namespace small {
                     --out;
                     --in;
                     if constexpr (
-                        is_relocatable_v<value_type> && using_std_allocator) {
+                        is_relocatable_v<value_type> && using_std_allocator)
+                    {
                         byte_copy(out, in, sizeof(value_type));
                     } else {
                         new (out) T(std::move(*in));
@@ -1548,7 +1539,8 @@ namespace small {
                     --out;
                     --in;
                     if constexpr (
-                        is_relocatable_v<value_type> && using_std_allocator) {
+                        is_relocatable_v<value_type> && using_std_allocator)
+                    {
                         byte_copy(out, in, sizeof(value_type));
                     } else {
                         *out = std::move(*in);
@@ -1565,7 +1557,8 @@ namespace small {
                 while (out != first) {
                     --out;
                     if constexpr (
-                        is_relocatable_v<value_type> && using_std_allocator) {
+                        is_relocatable_v<value_type> && using_std_allocator)
+                    {
                         new (out) T(create());
                     } else {
                         *out = create();
@@ -1814,16 +1807,14 @@ namespace small {
 
     template <
         class T,
-        size_t N
-        = (std::max)((24 * 2) / sizeof(T), std::size_t(5)),
+        size_t N = (std::max)((24 * 2) / sizeof(T), std::size_t(5)),
         class Allocator = std::allocator<T>,
         class SizeType = size_t>
     using max_size_vector = vector<T, N, Allocator, std::false_type, SizeType>;
 
     template <
         class T,
-        size_t N
-        = (std::max)((24 * 2) / sizeof(T), std::size_t(5)),
+        size_t N = (std::max)((24 * 2) / sizeof(T), std::size_t(5)),
         class Allocator = std::allocator<T>,
         class SizeType = size_t>
     using inline_vector = vector<T, N, Allocator, std::true_type, SizeType>;

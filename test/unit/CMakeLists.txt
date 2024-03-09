@@ -83,6 +83,7 @@ add_small_test(ptr_wrapper small::small)
 add_small_test(pod_small_vector small::small)
 add_small_test(string_small_vector small::small)
 add_small_test(custom_small_vector small::small)
+add_small_test(shared_ptr_small_vector small::small)
 
 add_small_test(unicode_functions small::small)
 add_small_test(small_string_make small::small)

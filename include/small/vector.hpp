@@ -16,6 +16,7 @@
 #include <small/detail/traits/enable_allocator_from_this.hpp>
 #include <small/detail/traits/is_range.hpp>
 #include <small/detail/traits/is_relocatable.hpp>
+#include <algorithm>
 #include <cassert>
 #include <cstddef>
 #include <cstdlib>
@@ -1068,33 +1069,38 @@ namespace small {
             if (first == last) {
                 return unconst(first);
             }
-            
-            // Directly destroy elements before mem moving
-            if constexpr (!std::is_trivially_destructible_v<T>) {
-                for (auto it = first; it != last; ++it) {
-                    it->~value_type();
-                }
-            }
-            
+
+            const auto n_erase = last - first;
             if constexpr (is_relocatable_v<value_type> && using_std_allocator) {
                 // Move elements directly in memory
-                const auto n_erase = last - first;
                 const auto n_after_erase = cend() - last;
                 if (n_erase >= n_after_erase) {
                     std::memcpy(
                         (void *) first.base(),
                         (void *) last.base(),
-                        (cend() - last) * sizeof(T));
+                        (cend() - last) * sizeof(value_type));
                 } else {
                     std::memmove(
                         (void *) first.base(),
                         (void *) last.base(),
-                        (cend() - last) * sizeof(T));
+                        (cend() - last) * sizeof(value_type));
                 }
             } else {
                 // Move elements in memory
                 std::move(unconst(last), end(), unconst(first));
+
+                // Destruct elements that were moved from and no longer in-use
+                // N.B. Only do this for non-relocatable types, otherwise you'd
+                // be running the destructor on exact byte copies of in-use
+                // elements, and you might free their internal buffers (oh no!).
+                if constexpr (!std::is_trivially_destructible_v<value_type>) {
+                    std::for_each_n(
+                        crbegin(),
+                        n_erase,
+                        [](value_type const &ele) { ele.~value_type(); });
+                }
             }
+
             // Directly set internal size. Elements are already destroyed.
             set_internal_size(size() - std::distance(first, last));
             return unconst(first);

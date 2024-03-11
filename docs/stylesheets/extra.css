@@ -1,0 +1,10 @@
+[data-md-color-scheme="small"] {
+    --md-primary-fg-color: #4d90ab;
+    --md-primary-fg-color--light: #5B91A3;
+    --md-primary-fg-color--dark: #5B91A3;
+    --md-typeset-a-color: var(--md-primary-fg-color--light);
+    --md-accent-fg-color: var(--md-primary-fg-color--dark);
+    --md-accent-fg-color--transparent: #dcdcdc;
+    --md-accent-bg-color:                hsla(0, 0%, 100%, 1);
+    --md-accent-bg-color--light:         hsla(0, 0%, 100%, 0.7);
+}

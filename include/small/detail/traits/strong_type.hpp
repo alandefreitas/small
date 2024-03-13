@@ -1226,7 +1226,7 @@ namespace strong {
         template <typename T>
         struct modifier : impl::implicit_converter<T, Ts>...
         {};
-    };
+    }   ;
 
 } // namespace strong
 

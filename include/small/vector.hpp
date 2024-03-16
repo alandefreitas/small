@@ -1087,10 +1087,7 @@ namespace small {
                 // be running the destructor on exact byte copies of in-use
                 // elements, and you might free their internal buffers (oh no!).
                 if constexpr (!std::is_trivially_destructible_v<value_type>) {
-                    std::for_each_n(
-                        crbegin(),
-                        n_erase,
-                        [](value_type const &ele) { ele.~value_type(); });
+                    std::destroy_n(crbegin(), n_erase);
                 }
             }
 

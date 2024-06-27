@@ -436,7 +436,9 @@ namespace small {
 
         /// \brief Construct small vector with a given allocator
         constexpr explicit vector(const allocator_type &alloc)
-            : vector(0, alloc) {}
+            : enable_allocator_type() {
+            enable_allocator_type::set_allocator(alloc);
+        }
 
         /// \brief Construct small array with size n
         /// Any of the n values should be constructed with new (p) value_type();

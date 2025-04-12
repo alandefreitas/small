@@ -1243,8 +1243,8 @@ namespace small {
             std::enable_if_t<!std::is_trivially_copyable_v<T2>, int> = 0>
         void
         copy_inline_trivial(vector const &) {
-            throw std::logic_error(
-                "Attempting to trivially copy not trivially copyable type");
+            small::detail::throw_exception(std::logic_error(
+                "Attempting to trivially copy not trivially copyable type"));
         }
 
         /// \brief Make it empty and with no heap

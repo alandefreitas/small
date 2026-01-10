@@ -44,7 +44,7 @@ jobs:
             name: "Windows-MSVC/2019/Static/X86/Release",
             os: windows-2019,
             config: Release,
-            cmake_extra_args: -G "Visual Studio 16 2019" -A Win32 -DCMAKE_CXX_FLAGS="/O2",
+            cmake_extra_args: -G "Visual Studio 16 2019" -A Win32,
             sudocmd: "",
             artifact_name: "Windows x86",
             cores: 2,
@@ -54,19 +54,19 @@ jobs:
             name: "Windows-MSVC/2019/Static/X64/Release",
             os: windows-2019,
             config: Release,
-            cmake_extra_args: -G "Visual Studio 16 2019" -A x64 -DCMAKE_CXX_FLAGS="/O2",
+            cmake_extra_args: -G "Visual Studio 16 2019" -A x64,
             sudocmd: "",
             artifact_name: "Windows x64",
             cores: 2,
             install_dir: "C:/Program Files/small"
           }
           - {
-            name: "Ubuntu/20.04/Static/X64/Release",
-            os: ubuntu-20.04,
+            name: "Ubuntu/22.04/Static/X64/Release",
+            os: ubuntu-22.04,
             config: Release,
-            cmake_extra_args: "-DCMAKE_C_COMPILER=/usr/bin/gcc-10 -DCMAKE_CXX_COMPILER=/usr/bin/g++-10 -DCMAKE_CXX_FLAGS=\"-O2\"",
+            cmake_extra_args: "",
             sudocmd: "sudo",
-            artifact_name: "Linux",
+            artifact_name: "Ubuntu 22.04",
             cores: 2,
             install_dir: "/usr/local/"
           }
@@ -76,22 +76,22 @@ jobs:
             config: Debug,
             cmake_extra_args: "-DCMAKE_C_COMPILER=/usr/bin/clang-15 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-15 -DCMAKE_C_FLAGS='-fsanitize=address,pointer-compare,pointer-subtract,leak,undefined' -DCMAKE_CXX_FLAGS='-fsanitize=address,pointer-compare,pointer-subtract,leak,undefined'",
             sudocmd: "sudo",
-            artifact_name: "Linux",
+            artifact_name: "Ubuntu 22.04 fsanitize",
             cores: 2,
             install_dir: "/usr/local/"
           }
           - {
-            name: "MacOSX/12/Static/X64/Release",
-            os: macos-12,
+            name: "MacOSX/15/Static/X64/Release",
+            os: macos-15,
             config: Release,
-            cmake_extra_args: "-DCMAKE_CXX_FLAGS=\"-O2\"",
+            cmake_extra_args: "",
             sudocmd: "sudo",
-            artifact_name: "MacOSX",
+            artifact_name: "MacOSX 15",
             cores: 4,
             install_dir: "/usr/local/"
           }
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: Create Work Dir
         run: mkdir build
       - name: Configure
@@ -127,11 +127,7 @@ jobs:
         working-directory: ./build
         run: ${{ matrix.config.sudocmd }} cpack
       - name: Archive Packages
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v6
         with:
           name: Binary Packages ${{ matrix.config.artifact_name }}
-          path: build/small-?.?.?-*.*
-      - name: Archive Installer Packages as is
-        uses: kittaakos/upload-artifact-as-is@v0
-        with:
           path: build/small-?.?.?-*.*

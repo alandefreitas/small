@@ -206,9 +206,7 @@ namespace small {
             std::negation<std::is_same<detail::extract_value_type_t<T>, void>>,
             std::is_convertible<
                 const T &,
-                std::basic_string_view<
-                    detail::extract_value_type_t<T>,
-                    std::char_traits<detail::extract_value_type_t<T>>>>,
+                std::basic_string_view<detail::extract_value_type_t<T>>>,
             std::negation<std::is_convertible<
                 const T &,
                 const detail::extract_value_type_t<T> *>>>;

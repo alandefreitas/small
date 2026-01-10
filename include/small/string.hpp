@@ -3147,7 +3147,7 @@ namespace small {
                 // return pos
                 return pos;
             }
-            if (not(pos <= size() - count)) {
+            if (pos > size() - count) {
                 return npos;
             }
             if (pos >= size()) {

@@ -28,6 +28,11 @@ namespace small {
             typedef
                 typename std::iterator_traits<iterator_type>::iterator_category
                     iterator_category;
+#if cpp_lib_ranges >= 201811L
+            typedef
+                typename std::iterator_traits<iterator_type>::iterator_concept
+                    iterator_concept;
+#endif
             typedef typename std::iterator_traits<iterator_type>::value_type
                 value_type;
             typedef

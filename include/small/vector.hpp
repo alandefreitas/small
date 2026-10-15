@@ -1082,7 +1082,7 @@ namespace small {
                 }
             } else {
                 // Move elements in memory
-                std::move(last, cend(), unconst(first));
+                std::move(unconst(last), end(), unconst(first));
 
                 // Destruct elements that were moved from and no longer in-use
                 // N.B. Only do this for non-relocatable types, otherwise you'd
